@@ -1,0 +1,26 @@
+{
+    "name": "joeyk4816/TheTempusProject",
+    "description": "The aim of this project is to provide a simple and stable platform from which to easily add functionality and build applications suited for your needs.",
+    "type": "project",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Joey Kimsey",
+            "email": "joeyk4816@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "TheTempusProject/TempusProjectCore": "*",
+        "twbs/bootstrap": "*",
+        "FortAwesome/Font-Awesome": "*",
+        "tinymce/tinymce": "*",
+        "abraham/twitteroauth": "*",
+        "knplabs/github-api": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "TempusProjectCore\\": "vendor/joeyk4816/tempus-project-core"
+        }
+    }
+}

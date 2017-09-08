@@ -1,0 +1,8 @@
+{
+    "name": "Default",
+    "is_admin": false,
+    "is_member": false,
+    "upload_images": false,
+    "view_users": true,
+    "view_hashtags": true
+}
