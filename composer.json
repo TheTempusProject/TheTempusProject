@@ -1,5 +1,5 @@
 {
-    "name": "joeyk4816/TheTempusProject",
+    "name": "TheTempusProject/TheTempusProject",
     "description": "The aim of this project is to provide a simple and stable platform from which to easily add functionality and build applications suited for your needs.",
     "type": "project",
     "license": "GNU",
@@ -15,12 +15,10 @@
         "twbs/bootstrap": "*",
         "FortAwesome/Font-Awesome": "*",
         "tinymce/tinymce": "*",
-        "abraham/twitteroauth": "*",
-        "knplabs/github-api": "*"
     },
     "autoload": {
         "psr-4": {
-            "TempusProjectCore\\": "vendor/joeyk4816/tempus-project-core"
+            "TempusProjectCore\\": "vendor/TheTempusProject/TempusProjectCore"
         }
     }
 }
