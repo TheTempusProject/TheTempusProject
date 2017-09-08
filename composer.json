@@ -1,5 +1,5 @@
 {
-    "name": "TheTempusProject/TheTempusProject",
+    "name": "thetempusproject/thetempusproject",
     "description": "The aim of this project is to provide a simple and stable platform from which to easily add functionality and build applications suited for your needs.",
     "type": "project",
     "license": "GNU",
@@ -14,7 +14,7 @@
         "TheTempusProject/TempusProjectCore": "*",
         "twbs/bootstrap": "*",
         "FortAwesome/Font-Awesome": "*",
-        "tinymce/tinymce": "*",
+        "tinymce/tinymce": "*"
     },
     "autoload": {
         "psr-4": {
