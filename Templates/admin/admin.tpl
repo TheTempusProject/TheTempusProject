@@ -60,9 +60,9 @@
             </div>
             {/UI}
             <div class="row">
-            <div class="col-xlg-11 col-xlg-offset-1 col-lg-10 col-lg-offset-2 col-med-offset-2 col-md-10 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9 main">
-                {CONTENT}
-            </div>
+                <div class="col-xlg-11 col-xlg-offset-1 col-lg-10 col-lg-offset-2 col-med-offset-2 col-md-10 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9 main">
+                    {CONTENT}
+                </div>
             </div>
             <div class="row">
                 <footer>

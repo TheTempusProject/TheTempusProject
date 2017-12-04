@@ -1,1 +1,1 @@
-oh shit, error 533 bro.
+htaccess is missing and so is the installer

@@ -1,88 +1,94 @@
 <?php
 /**
- * index.php.
+ * index.php
  *
- * All traffic should be run through this page via get variables.
+ * Using the .htaccess rerouting: all traffic should be directed to/through index.php.
+ * In this file we initiate all models we will need, authenticate sessions, set
+ * template objects, and call appload to initialize the appropriate controller/method.
  *
  * @version 1.0
  *
- * @author  Joey Kimsey <joeyk4816@gmail.com>
+ * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
- * @link    https://github.com/JoeyK4816/TheTempusProject
+ * @link    https://TheTempusProject.com
  *
- * @license https://www.gnu.org/licenses/gpl-3.0.en.html [GNU GENERAL PUBLIC LICENSE]
+ * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 
 namespace TheTempusProject;
 
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Core\Template as Template;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Cookie as Cookie;
 use TempusProjectCore\Classes\Pagination as Pagination;
+use TempusProjectCore\Core\Controller as Controller;
+use TempusProjectCore\Functions\Docroot as Docroot;
+use TempusProjectCore\Core\Template as Template;
+use TempusProjectCore\Classes\Config as Config;
+use TempusProjectCore\Classes\Debug as Debug;
 use TempusProjectCore\Classes\Issue as Issue;
+use TempusProjectCore\App as App;
 
 require_once "init.php";
 
-Debug::log('Initiating New Application');
-
-class appload extends Controller
+class Appload extends Controller
 {
-    public function __construct() 
+    // Prevents the application from initiating twice.
+    private static $initiated = false;
+    
+    /**
+     * The constructor takes care of everything that we will need before
+     * finally calling appload to instantiate the appropriate controller/method.
+     *
+     * @param string $urlDirected - A custom url string to be used when initiating
+     *                              the application.
+     */
+    public function __construct($urlDirected = null)
     {
-        parent::__construct();
-        Self::$_log = $this->model('log');
-        Self::$_user = $this->model('user');
-        Self::$_blog = $this->model('blog');
-        Self::$_group = $this->model('group');
-        Self::$_message = $this->model('message');
-        Self::$_session = $this->model('session');
-        Self::$_subscribe = $this->model('subscribe');
-        Self::$_comment = $this->model('comment');
-        if (Self::$_session->authenticate() !== false) {
-            Self::$_is_logged_in = true;
-            Self::$_active_user = Self::$_session->user_data();
-            Self::$_active_group = Self::$_session->group_data();
-            Self::$_active_prefs = json_decode(Self::$_active_user->prefs);
-            Self::$_is_member = Self::$_active_group->member;
-            Self::$_is_mod = Self::$_active_group->mod_cp;
-            Self::$_is_admin = Self::$_active_group->admin_cp;
+        if (self::$initiated === true) {
+            return;
         } else {
-            Self::$_active_prefs = (object) Self::$_user->prefs();
+            self::$initiated = true;
         }
-        Pagination::update_prefs(Self::$_active_prefs->page_limit);
-        Pagination::generate();
-        Self::$_template->add_filter('member', '#{MEMBER}(.*?){/MEMBER}#is', Self::$_is_member);
-        Self::$_template->add_filter('mod', '#{MOD}(.*?){/MOD}#is', Self::$_is_mod);
-        Self::$_template->add_filter('admin', '#{ADMIN}(.*?){/ADMIN}#is', Self::$_is_admin);
-        if (Self::$_is_admin) {
-            if (file_exists(Self::$_location . "install.php")) {
-                if (!Debug::status()) {
-                    Issue::error("You have not removed the installer. This is a security risk that should be corrected immediately.");
-                } else {
+        parent::__construct();
+
+        // Authenticate our session
+        self::$session->authenticate();
+
+        // Populate some of the Template Data
+        self::$template->set('SITENAME', Config::get('main/name'));
+        self::$template->set('RURL', Docroot::getUrl());
+        self::$template->addFilter('member', '#{MEMBER}(.*?){/MEMBER}#is', self::$isMember);
+        self::$template->addFilter('mod', '#{MOD}(.*?){/MOD}#is', self::$isMod);
+        self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', self::$isAdmin);
+        self::$message->loadInterface();
+        
+        // This also needs to be moved somewhere else
+        if (self::$isAdmin) {
+            if (file_exists(self::$location . "install.php")) {
+                if (Debug::status()) {
                     Debug::warn("You have not removed the installer yet.");
+                } else {
+                    Issue::error("You have not removed the installer. This is a security risk that should be corrected immediately.");
                 }
             }
         }
-        if (Self::$_message->unread_count() > 0) {
-            $data = array('MESSAGE_COUNT' => Self::$_message->unread_count());
-            Self::$_unread = Template::standard_view('message_badge', $data);
+        
+        if (!empty($urlDirected)) {
+            $app = new App($urlDirected);
         } else {
-            Self::$_unread = '';
+            $app = new App();
         }
-        if (Self::$_is_logged_in) {
-            $data = Self::$_message->recent();
-            $stuff = Template::standard_view('message.recent', $data);
-            Self::$_template->set('RECENT_MESSAGES', $stuff);
-        } else {
-            Self::$_template->set('RECENT_MESSAGES', '');
-        }
-        Self::$_template->set('SITENAME', Config::get('main/name'));
     }
 }
 
-//Instantiate a new instance of our application.
-$appload = new appload();
-$app = new \TempusProjectCore\App();
+/**
+ * Instantiate the new instance of our application.
+ *
+ * You can add to the conditional for any pages that you want to have
+ * access to outside of the typical .htaccess redirect method.
+ */
+Debug::group('Initiating TTP Application');
+if (stripos($_SERVER['REQUEST_URI'], 'install.php')) {
+    $appload = new Appload('install/index');
+} else {
+    $appload = new Appload();
+}
+Debug::gend();

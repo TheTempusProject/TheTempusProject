@@ -1,48 +1,38 @@
 # The Tempus Project
 #### Rapid Prototyping Framework
-###### Developer: Joey Kimsey
+###### Developer(s): Joey Kimsey
 
-**Notice: This code is in _no way production ready_!!! This framework is provided as is, so use at your own risk.**
+The aim of this project is to provide a simple and stable platform from which to easily add functionality. The goal being the ability to quickly build and test new projects with a lightweight ecosystem to help.
 
-The aim of this project is to provide a very simple and stable platform from which to easily add functionality and build applications suited for your needs.
+**Notice: This code is in _still_ not production ready. This framework is provided as is, use at your own risk.**
+I am working very hard to ensure the system is safe and reliable enough for me to endorse its widespread use, but it still needs a lot of QA and improvements.
 
-Currently I am in the process of testing all the systems in preparation for the first production ready release.
+Currently I am in the process of testing all the systems in preparation for the first production ready release. The beta is still on-going. If you would like to participate or stay up to date with the latest, you can find more information at: https://TheTempusProject.com/beta
 
 ## Installation
 
 Preferred method for installation is using composer.
-1. Clone the directory to wherever you want the framework
-2. Open your terminal to the directory you have cloned the repository and install using composer:
+1. Clone the directory to wherever you want to install the framework.
+2. Open your terminal to the directory you previously cloned the repository.
+3. Install using composer:
 `php composer.phar install`
-Included with this repository is an install.php file. You simply: 
-3. Open your browser and navigate to install.php (it will be in the root directory)
-4. Fill out the form fields and click submit
-5. If everything was successful, you should be good to go.
+4. Open your browser and navigate to install.php (it will be in the root directory of your installation)
+5. When prompted, complete the form and submit.
 
-If you would like a full copy of the project with all of its included dependencies you can find it at http://www.github.com/joeyk4816/TheTempusProjectComplete
-Please note this repository is always up to the latest _stable_ release.
+If you have any trouble with the installation, you can check out our FAQ page on the wiki for answers to comon issues.
 
-If any errors occur with installation you can delete the settings file App/settings.php and try again.
+If you would like a full copy of the project with all of its included dependencies you can find it at https://github.com/TheTempusProject/TempusProjectFull
+Please note this repository is only up to the latest _stable_ release. Please continue to use composer update to get the latest development releases.
 
 **Do not forget to remove install.php once you have finished installation!**
 
 #### Currently being developed:
-- [x] #hashtag functionality (1.0)
-- [x] @user functionality (1.0)
-- [x] BB or text editing codes. (1.0)
-- [X] Support for groups (1.0)
-- [X] Full permissions system/support (1.0)
-- [x] Avatar/Image upload ability (1.0)
-- [x] Timezone/ Formatting settings in User Preferences. (1.0)
-- [x] Pagination (1.0)
-- [x] Newsletter/Mass email support for admin panel (1.0)
-- [x] Convert to bootstrap for easy customization of templates.(1.0)
-- [ ] Update installer to account for upgrades.
-- [ ] Make the DB feature set more versatile
-- [ ] Search Functionality
-- [ ] Admin logs
+- [ ] Code refactoring
+- [ ] Adding documentation
+- [ ] Unit tests
+- [ ] Edits for PSR conformity
 
 #### Future updates
 - [ ] Expansion of PDO to allow different database types
-- [ ] Convert Bug Reports and Feedback into a model functionality.
-- [ ] Ad RSS for the blog.
+- [ ] Update installer to account for updates.
+- [ ] Impliment uniformity in terms of error reporting, exceptions, logging.

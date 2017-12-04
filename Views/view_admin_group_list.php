@@ -17,7 +17,7 @@
             {LOOP}
             <tr>
                 <td><a href="{BASE}admin/groups/view/{ID}">{name}</a></td>
-                <td><a href="{BASE}admin/groups/listmembers/{ID}">{user_count}</a></td>
+                <td><a href="{BASE}admin/groups/listmembers/{ID}">{userCount}</a></td>
                 <td><a href="{BASE}admin/groups/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
                 <td><a href="{BASE}admin/groups/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
                 <td>
@@ -34,6 +34,6 @@
             {/ALT}
         </tbody>
     </table>
-    <a href="{BASE}admin/groups/new" class="btn btn-sm btn-success" role="button">Create</a>
+    <a href="{BASE}admin/groups/new" class="btn btn-sm btn-primary" role="button">Create</a>
     <button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button>
 </form>

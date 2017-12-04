@@ -1,1 +1,1 @@
- class="bg-success"
+ class="bg-info"

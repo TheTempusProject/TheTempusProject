@@ -16,10 +16,10 @@
 		<tbody>
 			{LOOP}
 			<tr>
-				<td>{user_to}</td>
-				<td><a href="{BASE}usercp/messages/view_message?ID={ID}">{subject}</a></td>
+				<td><a href="{BASE}home/profile/{userTo}">{userTo}</a></td>
+				<td><a href="{BASE}usercp/messages/viewmessage/{ID}">{subject}</a></td>
 				<td>{DTC date}{sent}{/DTC}</td>
-				<td><a href="{BASE}usercp/messages/delete?ID={ID}">Delete</a></td>
+				<td><a href="{BASE}usercp/messages/delete/{ID}">Delete</a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="F_[]">
 				</td>
@@ -27,7 +27,7 @@
 			{/LOOP}
 			{ALT}
 			<tr>
-				<td colspan="6">
+				<td align="center" colspan="6">
 					No Messages
 				</td>
 			</tr>

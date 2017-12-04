@@ -13,7 +13,7 @@
         {LOOP}
         <tr>
             <td>{title}</td>
-            <td>{content_short}</td>
+            <td>{contentSummary}</td>
             <td><a href="{BASE}admin/blog/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
             <td><a href="{BASE}admin/blog/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
             <td width="30px"><a href="{BASE}admin/blog/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>

@@ -16,12 +16,12 @@
 		</thead>
 		<tbody>
 			{LOOP}
-			<tr {read}>
-				<td>{user_from}</td>
-				<td><a href="{BASE}usercp/messages/view_message?ID={ID}">{subject}</a></td>
-				<td>{DTC}{last_reply}{/DTC}</td>
-				<td><a href="{BASE}usercp/messages/mark_read?ID={ID}">Mark as read</a></td>
-				<td><a href="{BASE}usercp/messages/delete?ID={ID}">Delete</a></td>
+			<tr {unreadBadge}>
+				<td><a href="{BASE}home/profile/{userFrom}">{userFrom}</a></td>
+				<td><a href="{BASE}usercp/messages/viewMessage/{ID}">{subject}</a></td>
+				<td>{DTC}{lastReply}{/DTC}</td>
+				<td><a href="{BASE}usercp/messages/markRead/{ID}">Mark as read</a></td>
+				<td><a href="{BASE}usercp/messages/delete/{ID}">Delete</a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="T_[]">
 				</td>
@@ -36,5 +36,5 @@
 			{/ALT}
 		</tbody>
 	</table>
-	<button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button> <a href="{BASE}usercp/messages/new_message" class="btn btn-sm btn-success">New message</a>
+	<button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button> <a href="{BASE}usercp/messages/newmessage" class="btn btn-sm btn-primary">New message</a>
 </form>

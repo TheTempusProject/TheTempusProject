@@ -2,9 +2,9 @@
     <legend>New Message</legend>
     <fieldset>
     <div class="form-group">
-        <label for="to_user" class="col-lg-1 control-label">To:</label>
+        <label for="toUser" class="col-lg-1 control-label">To:</label>
         <div class="col-lg-2">
-            <input class="form-control" type="text" name="to_user" id="to_user" value="{prepopuser}">
+            <input class="form-control" type="text" name="toUser" id="toUser" value="{prepopuser}">
         </div>
     </div>
     <div class="form-group">
@@ -21,5 +21,5 @@
     </div>
     </fieldset>
     <input type="hidden" name="token" value="{TOKEN}">
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Send</button><br>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Send</button><br>
 </form>

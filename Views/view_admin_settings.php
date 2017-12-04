@@ -1,5 +1,5 @@
+<legend>Settings</legend>
 <form action="" method="post" class="form-horizontal">
-    <legend>Settings</legend>
     <div class="form-group">
         <label for="name" class="col-lg-3 control-label">Site Name:</label>
         <div class="col-lg-3">
@@ -13,24 +13,31 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="login_limit" class="col-lg-3 control-label">Login Limit::</label>
+        <label for="loginLimit" class="col-lg-3 control-label">Login Limit::</label>
         <div class="col-lg-3">
-            <input type="text" class="form-check-input" name="login_limit" id="login_limit" value="{LIMIT}">
+            <input type="text" class="form-check-input" name="loginLimit" id="loginLimit" value="{LIMIT}">
         </div>
     </div>
     <div class="form-group">
-        <label for="log_F" class="col-lg-3 control-label">Feedback</label>
+        <label for="groupSelect" class="col-lg-3 control-label">Default group for new users:</label>
+        <div class="col-lg-2">
+            {OPTION=userGroup}
+            {groupSelect}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="logF" class="col-lg-3 control-label">Feedback</label>
         <div class="col-lg-3">
             <fieldset class="form-group">
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_F" id="log_F" value="true" {FEEDBACK_T}>
+                        <input type="radio" class="form-check-input" name="logF" id="logF" value="true" {CHECKED:feedback=true}>
                         Enabled
                     </label>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_F" id="log_F" value="false" {FEEDBACK_F}>
+                        <input type="radio" class="form-check-input" name="logF" id="logF" value="false" {CHECKED:feedback=false}>
                         Disabled
                     </label>
                 </div>
@@ -38,18 +45,18 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="log_E" class="col-lg-3 control-label">Errors</label>
+        <label for="logE" class="col-lg-3 control-label">Errors</label>
         <div class="col-lg-3">
             <fieldset class="form-group">
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_E" id="log_E" value="true" {ERRORS_T}>
+                        <input type="radio" class="form-check-input" name="logE" id="logE" value="true" {CHECKED:errors=true}>
                         Enabled
                     </label>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_E" id="log_E" value="false" {ERRORS_F}>
+                        <input type="radio" class="form-check-input" name="logE" id="logE" value="false" {CHECKED:errors=false}>
                         Disabled
                     </label>
                 </div>
@@ -57,18 +64,18 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="log_L" class="col-lg-3 control-label">Logins</label>
+        <label for="logL" class="col-lg-3 control-label">Logins</label>
         <div class="col-lg-9">
             <fieldset class="form-group">
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_L" id="log_L" value="true" {LOGINS_T}>
+                        <input type="radio" class="form-check-input" name="logL" id="logL" value="true" {CHECKED:logins=true}>
                         Enabled
                     </label>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_L" id="log_L" value="false" {LOGINS_F}>
+                        <input type="radio" class="form-check-input" name="logL" id="logL" value="false" {CHECKED:logins=false}>
                         Disabled
                     </label>
                 </div>
@@ -76,24 +83,24 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="log_BR" class="col-lg-3 control-label">Bug Reports</label>
+        <label for="logBR" class="col-lg-3 control-label">Bug Reports</label>
         <div class="col-lg-9">
             <fieldset class="form-group">
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_BR" id="log_BR" value="true" {BUG_REPORTS_T}>
+                        <input type="radio" class="form-check-input" name="logBR" id="logBR" value="true" {CHECKED:bugReports=true}>
                         Enabled
                     </label>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="log_BR" id="log_BR" value="false" {BUG_REPORTS_F}>
+                        <input type="radio" class="form-check-input" name="logBR" id="logBR" value="false" {CHECKED:bugReports=false}>
                         Disabled
                     </label>
                 </div>
             </fieldset>
         </div>
     </div>
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Submit</button>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Submit</button>
     <input type="hidden" name="token" value="{TOKEN}">
 </form>

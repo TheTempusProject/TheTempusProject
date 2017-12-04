@@ -1,4 +1,4 @@
-<legend><h2>Logins</h2></legend>
+<legend>Logins</legend>
 {PAGINATION}
 <form action="{BASE}admin/logins/delete" method="post">
 	<table class="table table-striped">

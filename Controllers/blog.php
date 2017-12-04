@@ -1,16 +1,19 @@
 <?php
 /**
- * Controllers/Home.php.
+ * Controllers/blog.php
  *
- * This is the Home controller.
+ * This is the blog controller.
+ *
+ * @todo  This needs a refactor along with/following
+ *        refactoring of the blog and comments models
  *
  * @version 1.0
  *
- * @author  Joey Kimsey <joeyk4816@gmail.com>
+ * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
- * @link    https://github.com/JoeyK4816/TheTempusProject
+ * @link    https://TheTempusProject.com
  *
- * @license https://www.gnu.org/licenses/gpl-3.0.en.html [GNU GENERAL PUBLIC LICENSE]
+ * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 
 namespace TheTempusProject\Controllers;
@@ -28,87 +31,91 @@ use TempusProjectCore\Classes\Check as Check;
 use TempusProjectCore\Classes\Issue as Issue;
 use TempusProjectCore\Classes\Redirect as Redirect;
 
-class blog extends Controller
+class Blog extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
-        Debug::group("Controller: " . get_class($this), 1);
-        Self::$_template->set_template('blog');
+        self::$template->setTemplate('blog');
     }
+
     public function __destruct()
     {
-        Debug::log('Controller Destructing: '.get_class($this));
-        Self::$_session->update_page(Self::$_title);
-        Debug::gend();
+        Debug::log('Controller Destructing: ' . get_class($this));
+        self::$session->updatePage(self::$title);
         $this->build();
+        Debug::closeAllGroups();
     }
+
     public function index()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = '{SITENAME} Blog';
-        Self::$_page_description = '{SITENAME} blog';
-        $this->view('blog', Self::$_blog->listPosts());
+        self::$title = '{SITENAME} Blog';
+        self::$pageDescription = '{SITENAME} blog';
+        $this->view('blog', self::$blog->listPosts());
         exit();
     }
+
     public function rss()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = '{SITENAME} Feed';
-        Self::$_page_description = '{SITENAME} blog RSS feed.';
-        Self::$_template->set_template('rss');
-        $this->view('blog.rss', Self::$_blog->listPosts());
+        self::$title = '{SITENAME} Feed';
+        self::$pageDescription = '{SITENAME} blog RSS feed.';
+        self::$template->setTemplate('rss');
+        $this->view('blog.rss', self::$blog->listPosts());
         exit();
     }
+
     public function post($data)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = 'Blog Post';
-        $post = Self::$_blog->find($data);
+        self::$title = 'Blog Post';
+        $post = self::$blog->find($data);
         if (Input::exists('submit')) {
-            if (!Self::$_is_logged_in) {
+            if (!self::$isLoggedIn) {
                 Issue::notice('You must be logged in to post comments.');
-                exit();
+            } elseif (!Check::form('newComment')) {
+                Issue::error('There was a problem posting your comment.', Check::userErrors());
+            } elseif (self::$comment->create('blog', $post->ID, Input::post('comment'))) {
+                Issue::success('Comment posted');
             } else {
-                if (!Self::$_comment->create('blog', $post->ID)) {
-                    Issue::error('There was an error posting you comment, please try again.');
-                } else {
-                    Issue::success('Comment posted');
-                }
+                Issue::error('There was an error posting you comment, please try again.');
             }
         }
-        if (Self::$_is_logged_in) {
-            Self::$_template->set('NEWCOMMENT', Self::$_template->standard_view('comment.new'));
+        if (self::$isLoggedIn) {
+            self::$template->set('NEWCOMMENT', self::$template->standardView('comment.new'));
         } else {
-            Self::$_template->set('NEWCOMMENT', '');
+            self::$template->set('NEWCOMMENT', '');
         }
-        Self::$_template->set('count', Self::$_comment->count('blog', $post->ID));
-        Self::$_template->set('COMMENTS', Self::$_template->standard_view('comment.list', Self::$_comment->display(10, 'blog', $post->ID)));
+        self::$template->set('count', self::$comment->count('blog', $post->ID));
+        self::$template->set('COMMENTS', self::$template->standardView('comment.list', self::$comment->display(10, 'blog', $post->ID)));
         $this->view('blog.post', $post);
         exit();
     }
+
     public function author($data)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = 'Posts by author - {SITENAME}';
-        Self::$_page_description = '{SITENAME} blog posts easily and conveniently sorted by author.';
-        $this->view('blog', Self::$_blog->byAuthor($data));
+        self::$title = 'Posts by author - {SITENAME}';
+        self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by author.';
+        $this->view('blog', self::$blog->byAuthor($data));
         exit();
     }
+
     public function month($month, $year = 2017)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = 'Posts By Month - {SITENAME}';
-        Self::$_page_description = '{SITENAME} blog posts easily and conveniently sorted by month.';
-        $this->view('blog', Self::$_blog->byMonth($month, $year));
+        self::$title = 'Posts By Month - {SITENAME}';
+        self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by month.';
+        $this->view('blog', self::$blog->byMonth($month, $year));
         exit();
     }
+
     public function year($year)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Self::$_title = 'Posts by Year - {SITENAME}';
-        Self::$_page_description = '{SITENAME} blog posts easily and conveniently sorted by years.';
-        $this->view('blog', Self::$_blog->byYear($year));
+        self::$title = 'Posts by Year - {SITENAME}';
+        self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by years.';
+        $this->view('blog', self::$blog->byYear($year));
         exit();
     }
 }

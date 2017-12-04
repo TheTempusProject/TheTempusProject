@@ -1,4 +1,6 @@
-<legend><h2>Users in group: {group_name}</h2></legend>
+<div class="page-header">
+    <h1>{groupName} <small>user list</small></h1>
+</div>
 {PAGINATION}
 <form action="{BASE}admin/users/delete" method="post">
     <table class="table table-striped">

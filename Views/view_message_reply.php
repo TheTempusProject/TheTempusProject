@@ -8,7 +8,7 @@
             </div>
         </div>
     </fieldset>
-    <input type="hidden" name="message_ID" value="{message_ID}">
+    <input type="hidden" name="messageID" value="{messageID}">
     <input type="hidden" name="token" value="{TOKEN}">
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Send</button><br>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Send</button><br>
 </form>

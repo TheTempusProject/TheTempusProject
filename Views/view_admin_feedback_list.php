@@ -1,4 +1,4 @@
-<legend><h2>Feedback</h2></legend>
+<legend>Feedback</legend>
 {PAGINATION}
 <form action="{BASE}admin/feedback/delete" method="post">
 	<table class="table table-striped">

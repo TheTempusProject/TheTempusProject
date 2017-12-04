@@ -1,14 +1,14 @@
 <?php
 /**
- * Controllers/userCP.php.
+ * Controllers/usercp.php
  *
  * This is the userCP controller.
  *
  * @version 1.0
  *
- * @author  Joey Kimsey <joeyk4816@gmail.com>
+ * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
- * @link    https://github.com/JoeyK4816/TheTempusProject
+ * @link    https://TheTempusProject.com
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
@@ -16,6 +16,7 @@
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller as Controller;
+use TempusProjectCore\Functions\Docroot as Docroot;
 use TempusProjectCore\Classes\Debug as Debug;
 use TempusProjectCore\Classes\Issue as Issue;
 use TempusProjectCore\Classes\Input as Input;
@@ -25,211 +26,220 @@ use TempusProjectCore\Classes\Hash as Hash;
 use TempusProjectCore\Classes\Code as Code;
 use TempusProjectCore\Classes\Check as Check;
 
-class usercp extends Controller
+class Usercp extends Controller
 {
     public function __construct()
     {
-        parent::__construct(); 
-        Debug::group("Controller: " . get_class($this), 1);
-        Self::$_template->activePageSelect('nav.usercp');
-        Self::$_template->noIndex();
-        if (!Self::$_is_logged_in) {
+        self::$template->activePageSelect('nav.usercp');
+        self::$template->noIndex();
+        if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to view this page!');
             exit();
         }
     }
+
     public function __destruct()
     {
-        Debug::log('Controller Destructing: '.get_class($this));
-        Self::$_session->update_page(Self::$_title);
-        Debug::gend();
+        Debug::log('Controller Destructing: ' . get_class($this));
+        self::$session->updatePage(self::$title);
         $this->build();
+        Debug::closeAllGroups();
     }
+
     public function index()
     {
-        Self::$_title = 'User Control Panel';
+        self::$title = 'User Control Panel';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        $this->view('user', Self::$_active_user);
+        $this->view('user', self::$activeUser);
         exit();
     }
-    public function Settings()
+
+    public function settings()
     {
-        Self::$_title = 'Preferences.';
+        self::$title = 'Preferences';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        if (Input::exists('submit')) {
-            if (Input::exists('avatar')) {
-                if (Image::upload_image('avatar', Self::$_active_user->username)) {
-                    $avatar = 'Images/Uploads/' . Self::$_active_user->username . '/' . Image::last();
-                } else {
-                    $avatar = 'Images/defaultAvatar.png';
-                }
-            } else {
-                $avatar = Self::$_active_prefs->avatar;
+        self::$template->set('TIMEZONELIST', self::$template->standardView('timezone.dropdown'));
+        $a = Input::exists('submit');
+        $value = $a ? Input::post('updates') : self::$activePrefs->email;
+        self::$template->selectRadio('updates', $value);
+        $value = $a ? Input::post('newsletter') : self::$activePrefs->newsletter;
+        self::$template->selectRadio('newsletter', $value);
+        self::$template->selectOption(($a ? Input::post('timezone') : self::$activePrefs->timezone));
+        self::$template->selectOption(($a ? Input::post('dateFormat') : self::$activePrefs->dateFormat));
+        self::$template->selectOption(($a ? Input::post('timeFormat') : self::$activePrefs->timeFormat));
+        self::$template->selectOption(($a ? Input::post('pageLimit') : self::$activePrefs->pageLimit));
+        self::$template->selectOption(($a ? Input::post('gender') : self::$activePrefs->gender));
+        self::$template->set('AVATAR_SETTINGS', self::$activePrefs->avatar);
+        if ($a) {
+            if (!Check::form('userPrefs')) {
+                Issue::error('There was an error with your request.', Check::userErrors());
+                $this->view('usercp.settings', self::$activeUser);
+                exit();
             }
-            Self::$_user->update_prefs(array(
-                'avatar' =>      $avatar,
-                "timezone"=>     Input::post('timezone'),
-                "date_format"=>  Input::post('dateFormat'),
-                "time_format"=>  Input::post('timeFormat'),
-                "page_limit"=>  Input::post('page_limit'),
-                "email"=>  Input::post('updates'),
-                "gender"=>  Input::post('gender'),
-                "newsletter"=>   Input::post('newsletter')
-            ), Self::$_active_user->ID);
+            if (Input::exists('avatar') && Image::upload('avatar', self::$activeUser->username)) {
+                $avatar = 'Images/Uploads/' . self::$activeUser->username . '/' . Image::last();
+            }
+            $fields = [
+                "timezone" =>    Input::post('timezone'),
+                "dateFormat" => Input::post('dateFormat'),
+                "timeFormat" => Input::post('timeFormat'),
+                "pageLimit" => Input::post('pageLimit'),
+                "email" => Input::post('updates'),
+                "gender" => Input::post('gender'),
+                "newsletter" =>  Input::post('newsletter'),
+            ];
+            if (isset($avatar)) {
+                $fields = array_merge($fields, ['avatar' => $avatar]);
+            }
+            self::$user->updatePrefs($fields, self::$activeUser->ID);
         }
-        if ((Input::exists('submit') && (Input::post('updates') === 'true')) || ((Self::$_active_prefs->email === 'true') && (!Input::exists('submit')))) {
-            Self::$_template->set('UPDATE_T', 'checked="checked"');
-            Self::$_template->set('UPDATE_F', '');
-        } else {
-            Self::$_template->set('UPDATE_F', 'checked="checked"');
-            Self::$_template->set('UPDATE_T', '');
+        if (!isset($avatar)) {
+            $avatar = self::$activePrefs->avatar;
         }
-        if ((Input::exists('submit') && (Input::post('newsletter') === 'true')) || ((Self::$_active_prefs->newsletter === 'true') && (!Input::exists('submit')))) {
-            Self::$_template->set('NEWSLETTER_T', 'checked="checked"');
-            Self::$_template->set('NEWSLETTER_F', '');
-        } else {
-            Self::$_template->set('NEWSLETTER_F', 'checked="checked"');
-            Self::$_template->set('NEWSLETTER_T', '');
-        }
-        if (Input::exists('submit')) {
-            Self::$_template->select_option(Input::post('timezone'));
-            Self::$_template->select_option(Input::post('dateFormat'));
-            Self::$_template->select_option(Input::post('timeFormat'));
-            Self::$_template->select_option(Input::post('page_limit'));
-            Self::$_template->select_option(Input::post('gender'));
-        } else {
-            Self::$_template->select_option((Self::$_active_prefs->timezone));
-            Self::$_template->select_option((Self::$_active_prefs->date_format));
-            Self::$_template->select_option((Self::$_active_prefs->time_format));
-            Self::$_template->select_option((Self::$_active_prefs->page_limit));
-            Self::$_template->select_option((Self::$_active_prefs->gender));
-        }
-        if (empty($avatar)) {
-            $avatar = Self::$_active_prefs->avatar;
-        }
-        Self::$_template->set('AVATAR_SETTINGS', $avatar);
-        $this->view('usercp_settings', Self::$_active_user);
+        self::$template->set('AVATAR_SETTINGS', $avatar);
+        $this->view('usercp.settings', self::$activeUser);
         exit();
     }
+
     public function email()
     {
-        Self::$_title = 'Email Settings';
+        self::$title = 'Email Settings';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        if (Self::$_active_user->confirmed != '1') {
-            Issue::error('You need to confirm your email address before you can change it! If you would like to resend that confirmation link, please <a href="{BASE}register/resend">click here</a>');
+
+        if (self::$activeUser->confirmed != '1') {
+            Issue::notice('You need to confirm your email address before you can make modifications. If you would like to resend that confirmation link, please <a href="{BASE}register/resend">click here</a>');
             exit();
         }
-        if (!Input::exists()) {    
+
+        if (!Input::exists()) {
             $this->view('usercp.email.change');
             exit();
         }
-        if (!Check::email(Input::post('email'))) {
-            Issue::error('There was an error with your email format.');
+
+        if (!Check::form('changeEmail')) {
+            Issue::error('There was an error with your request.', Check::userErrors());
             $this->view('usercp.email.change');
             exit();
         }
-        if (!Check::no_email_exists(Input::post('email'))) {
-            Issue::error('That email is already in use by another member.');
-            $this->view('usercp.email.change');
-            exit();
-        }
-        if (Input::post('email') !== Input::post('email2')) {
-            Issue::error('Email Addresses do not match.');
-            $this->view('usercp.email.change');
-            exit();
-        }
-            $Ccode = Code::new_confirmation();
-            Self::$_user->update(array(
-                'Confirmed' => 0,
-                'email' => Input::post('email2'),
-                'Confirmation_code' => $Ccode,
-            ), Self::$_active_user->ID);
-            Email::send(Self::$_active_user->email, 'email_change_notice', $Ccode, array('template' => true));
-            Email::send(Input::post('email2'), 'email_change', $Ccode, array('template' => true));
-            Issue::notice('Email has been changed, please check your email to confirm it.');
-            exit();
+
+        $code = Code::genConfirmation();
+        self::$user->update([
+            'confirmed' => 0,
+            'email' => Input::post('email'),
+            'confirmationCode' => $code,
+            ], self::$activeUser->ID);
+        Email::send(self::$activeUser->email, 'emailChangeNotice', $code, ['template' => true]);
+        Email::send(Input::post('email'), 'emailChange', $code, ['template' => true]);
+        Issue::notice('Email has been changed, please check your email to confirm it.');
     }
+
     public function password()
-    {   
-        Self::$_title = 'Password Settings';
+    {
+        self::$title = 'Password Settings';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         if (!Input::exists()) {
             $this->view('password.change');
             exit();
         }
-        if ((Check::password(Input::post('password'))) && (Input::post('password') === Input::post('password2')) && (Hash::check(Input::post('curpass'), Self::$_active_user->password))) {
-            Self::$_user->update(array(
-                'password' => Hash::make(Input::post('password'))
-            ), Self::$_active_user->ID);
-            Email::send(Self::$_active_user->email, 'password_change', null, array('template' => true));
-            Issue::notice('Your Password has been changed!');
+        if (!Hash::check(Input::post('curpass'), self::$activeUser->password)) {
+            Issue::error('Current password was incorrect.');
+            $this->view('password.change');
             exit();
         }
-        Issue::error('Your password doesn\'t meet the requirements.');
-        $this->view('password.change');
-        exit();
+        if (!Check::form('changePassword')) {
+            Issue::error('There was an error with your request.', Check::userErrors());
+            $this->view('password.change');
+            exit();
+        }
+        self::$user->update(['password' => Hash::make(Input::post('password'))], self::$activeUser->ID);
+        Email::send(self::$activeUser->email, 'passwordChange', null, ['template' => true]);
+        Issue::notice('Your Password has been changed!');
     }
+
     public function messages($action = null, $data = null)
     {
-        Self::$_title = 'Messages';
+        self::$title = 'Messages';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        $messages = $this->model('message');
-        if (!isset($action)) {
-            $messages->inbox();
-            $messages->outbox();
-            exit();
-        }
-        switch($action) {
-            case 'view_message':
-                Self::$_title = $messages->message_title(Input::get('ID'));
-                $messages->view_message(Input::get('ID'));
+        $action = strtolower($action);
+        switch ($action) {
+            case 'viewmessage':
+                self::$title = self::$message->messageTitle($data);
+                $this->view('message', self::$message->getThread($data, true));
                 exit();
-                break;
+
             case 'reply':
-                Self::$_title .= ' - Reply to: ' . $messages->message_title(Input::post('message_ID'));
-                $messages->reply();
-                exit();
+                if (Input::exists('messageID')) {
+                    $data = Input::post('messageID');
+                }
+                if (!Check::id($data)) {
+                    Issue::error('There was an error with your request.');
+                    break;
+                }
+                self::$title .= ' - Reply to: ' . self::$message->messageTitle($data);
+                if (!Input::exists('message')) {
+                    self::$template->set('messageID', $data);
+                    $this->view('message.reply');
+                    exit();
+                }
+                if (!Check::form('replyMessage')) {
+                    Issue::error('There was an problem sending your message.', Check::userErrors());
+                    self::$template->set('messageID', $data);
+                    $this->view('message.reply');
+                    exit();
+                }
+                if (!self::$message->newMessageReply($data, Input::post('message'))) {
+                    Issue::error('There was an error with your request.');
+                    break;
+                }
+                Issue::success('Reply Sent.');
                 break;
-            case 'new_message':
-                Self::$_title .= ' - New Message';
-                if (!Input::exists()) {
-                    if (Input::get('prepopuser')) {
-                        Self::$_template->set('prepopuser', Input::get('prepopuser'));
-                    } elseif (!empty($data)) {
-                        if (Check::username($data)) {
-                            Self::$_template->set('prepopuser', $data);
-                        } else {
-                            Self::$_template->set('prepopuser', '');
-                        }
-                    } else {
-                        Self::$_template->set('prepopuser', '');
-                    }
+
+            case 'newmessage':
+                self::$title .= ' - New Message';
+                if (Input::get('prepopuser')) {
+                    $data = Input::get('prepopuser');
+                }
+                if (!empty($data) && Check::username($data)) {
+                    self::$template->set('prepopuser', $data);
+                } else {
+                    self::$template->set('prepopuser', '');
+                }
+                if (!Input::exists('submit')) {
                     $this->view('message.new');
                     exit();
                 }
-                $messages->new_message();
-                $messages->inbox();
-                $messages->outbox();
-                exit();
+                if (!Check::form('newMessage')) {
+                    Issue::error('There was an problem sending your message.', Check::userErrors());
+                    $this->view('message.new');
+                    exit();
+                }
+                if (self::$message->newThread(Input::post('toUser'), Input::post('subject'), Input::post('message'))) {
+                    Issue::success('Message Sent.');
+                } else {
+                    Issue::notice('There was an problem sending your message.');
+                }
                 break;
-            case 'mark_read':
-                $messages->mark_read(Input::get('ID'));
+
+            case 'markread':
+                self::$message->markRead($data);
                 break;
+
             case 'delete':
                 if (Input::exists('T_')) {
-                    $data[] = Input::post('T_');
-                    $messages->delete_message($data);
-                } 
+                    self::$message->deleteMessage(Input::post('T_'));
+                }
                 if (Input::exists('F_')) {
-                    $data[] = Input::post('F_');
-                    $messages->delete_message($data);
+                    self::$message->deleteMessage(Input::post('F_'));
                 }
                 if (Input::exists('ID')) {
-                    $messages->delete_message(Input::get('ID'));
+                    self::$message->deleteMessage(Input::get('ID'));
+                }
+                if (!empty($data)) {
+                    self::$message->deleteMessage($data);
                 }
                 break;
         }
-        $messages->inbox();
-        $messages->outbox();
+        $this->view('message.inbox', self::$message->getInbox());
+        $this->view('message.outbox', self::$message->getOutbox());
     }
 }

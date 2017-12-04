@@ -1,3 +1,4 @@
+<legend>Subscribers</legend>
 {PAGINATION}
 <form action="{BASE}admin/subscriptions/delete" method="post">
 	<table class="table table-striped">

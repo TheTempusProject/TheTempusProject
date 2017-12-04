@@ -6,4 +6,5 @@
 {value2} is the second value.<br />
 {value3} is the thisrd value.<br />
 {/loop}
+{ALT}No Loop{/ALT}
 {footer}

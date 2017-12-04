@@ -11,7 +11,7 @@
     <tbody>
         {LOOP}
         <tr>
-            <td>{author_name}</td>
+            <td>{authorName}</td>
             <td>{content}</td>
             <td><a href="{BASE}admin/comments/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
             <td><a href="{BASE}admin/comments/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>

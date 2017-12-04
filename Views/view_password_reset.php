@@ -14,6 +14,7 @@
             </div>
         </div>
     </fieldset>
+    <input type="hidden" name="resetCode" value="{resetCode}">
     <input type="hidden" name="token" value="{TOKEN}">
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Submit</button><br>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Submit</button><br>
 </form>

@@ -9,5 +9,5 @@
         </div>
     </fieldset>
     <input type="hidden" name="token" value="{TOKEN}">
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Reset Password</button><br>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Reset Password</button><br>
 </form>

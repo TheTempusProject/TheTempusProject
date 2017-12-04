@@ -7,9 +7,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="page_limit" class="col-lg-3 control-label">Query Limit</label>
+        <label for="pageLimit" class="col-lg-3 control-label">Query Limit</label>
         <div class="col-lg-2">
-            <select name="page_limit" id="page_limit" class="form-control">
+            <select name="pageLimit" id="pageLimit" class="form-control">
                 <option value='5'>5</option>
                 <option value='10'>10</option>
                 <option value='25' selected>25</option>
@@ -20,15 +20,15 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="send_messages" class="col-lg-3 control-label">Send Messages</label>
+        <label for="sendMessages" class="col-lg-3 control-label">Send Messages</label>
         <div class="col-lg-3">
-            <input name="send_messages" id="send_messages" type="checkbox" value="true" checked>
+            <input name="sendMessages" id="sendMessages" type="checkbox" value="true" checked>
         </div>
     </div>
     <div class="form-group">
-        <label for="upload_images" class="col-lg-3 control-label">Upload Images</label>
+        <label for="uploadImages" class="col-lg-3 control-label">Upload Images</label>
         <div class="col-lg-3">
-            <input name="upload_images" id="upload_images" type="checkbox" value="true" checked>
+            <input name="uploadImages" id="uploadImages" type="checkbox" value="true" checked>
         </div>
     </div>
     <div class="form-group">
@@ -38,9 +38,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="bug_report" class="col-lg-3 control-label">Submit Bug Reports</label>
+        <label for="bugreport" class="col-lg-3 control-label">Submit Bug Reports</label>
         <div class="col-lg-3">
-            <input name="bug_report" id="bug_report" type="checkbox" value="true" checked>
+            <input name="bugreport" id="bugreport" type="checkbox" value="true" checked>
         </div>
     </div>
     <div class="form-group">
@@ -50,17 +50,17 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="mod_cp" class="col-lg-3 control-label">Moderator Privileges</label>
+        <label for="modCP" class="col-lg-3 control-label">Moderator Privileges</label>
         <div class="col-lg-3">
-            <input name="mod_cp" id="mod_cp" type="checkbox" value="true">
+            <input name="modCP" id="modCP" type="checkbox" value="true">
         </div>
     </div>
     <div class="form-group">
-        <label for="admin_cp" class="col-lg-3 control-label">Administrator Privileges</label>
+        <label for="adminCP" class="col-lg-3 control-label">Administrator Privileges</label>
         <div class="col-lg-3">
-            <input name="admin_cp" id="admin_cp" type="checkbox" value="true">
+            <input name="adminCP" id="adminCP" type="checkbox" value="true">
         </div>
     </div>
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Create</button>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Create</button>
     <input type="hidden" name="token" value="{TOKEN}">
 </form>

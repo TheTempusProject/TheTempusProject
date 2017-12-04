@@ -1,16 +1,21 @@
 <?php
 /**
- * Templates/Default.inc.php
+ * Templates/default/default.inc.php
  *
- * This is the loader for the Default template.
+ * This is the loader for the default template.
+ *
+ * The template engine will automatically require this file and
+ * initiate its constructor. Next it will call the values function
+ * to load the components array into the Template Engine $values
+ * array for later use.
  *
  * @version 1.0
  *
- * @author  Joey Kimsey <joeyk4816@gmail.com>
+ * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
- * @link    https://github.com/JoeyK4816/TheTempusProject
+ * @link    https://TheTempusProject.com
  *
- * @license https://www.gnu.org/licenses/gpl-3.0.en.html [GNU GENERAL PUBLIC LICENSE]
+ * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 
 namespace TheTempusProject\Templates;
@@ -19,25 +24,42 @@ use TempusProjectCore\Core\Controller as Controller;
 use TempusProjectCore\Core\Template as Template;
 use TempusProjectCore\Classes\Config as Config;
 
-class template_Default extends Controller
+class DefaultLoader extends Controller
 {
-    private $test = array();
+    /**
+     * The array that will be loaded into Template::$values.
+     *
+     * @var array
+     */
+    private $components = [];
+
+    /**
+     * This is the function used to generate any components that may be
+     * needed by this template.
+     */
     public function __construct()
     {
-        $this->test['LOGO'] = Config::get('main/logo');
-        $this->test['FOOT'] = Template::standard_view('foot');
-        $this->test["COPY"] = Template::standard_view('copy');
-        if (Self::$_is_logged_in) {
-            $this->test['STATUS'] = Template::standard_view('status_logged_in');
-            $this->test['USERNAME'] = Self::$_active_user->username;
+        $this->components['LOGO'] = Config::get('main/logo');
+        $this->components['FOOT'] = Template::standardView('foot');
+        $this->components["COPY"] = Template::standardView('copy');
+        if (self::$isLoggedIn) {
+            $this->components['STATUS'] = Template::standardView('status.logged.in');
+            $this->components['USERNAME'] = self::$activeUser->username;
         } else {
-            $this->test['STATUS'] = Template::standard_view('status_logged_out');
+            $this->components['STATUS'] = Template::standardView('status.logged.out');
         }
-        $this->test['MAINNAV'] = Template::standard_view('nav_main');
-        $this->test['MAINNAV'] = Template::activePageSelect(null, null, $this->test['MAINNAV']);
+        $this->components['MAINNAV'] = Template::standardView('nav.main');
+        $this->components['MAINNAV'] = Template::activePageSelect(null, null, $this->components['MAINNAV']);
     }
+
+    /**
+     * This is the default function used to retrieve any
+     * components needed for this template.
+     *
+     * @return string - A serialized version of the components array.
+     */
     public function values()
     {
-        return serialize($this->test);
+        return serialize($this->components);
     }
 }

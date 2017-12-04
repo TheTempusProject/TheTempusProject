@@ -1,7 +1,7 @@
 {LOOP}
     <item>
         <title>{title}</title>
-        <description>{content_short}</description>
+        <description>{contentSummary}</description>
         <link>{BASE}blog/post/{ID}</link>
         <pubDate>{DTC}{created}{/DTC}</pubDate>
     </item>

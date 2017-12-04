@@ -5,12 +5,13 @@
         <thead>
             <tr>
                 <th style="width: 30%">Title</th>
-                <th style="width: 25%">Author</th>
-                <th style="width: 15%">Created</th>
-                <th style="width: 15%">Updated</th>
+                <th style="width: 20%">Author</th>
+                <th style="width: 10%">comments</th>
+                <th style="width: 10%">Created</th>
+                <th style="width: 10%">Updated</th>
                 <th style="width: 5%"></th>
                 <th style="width: 5%"></th>
-                <th style="width: 5%">
+                <th style="width: 10%">
                     <INPUT type="checkbox" onchange="checkAll(this)" name="check.b" value="B_[]"/>
                 </th>
             </tr>
@@ -18,8 +19,9 @@
         <tbody>
             {LOOP}
             <tr>
-                <td><a href="{BASE}admin/blog/view/{ID}">{title}</a>{is_draft}</td>
-                <td>{author_name}</td>
+                <td><a href="{BASE}admin/blog/view/{ID}">{title}</a>{isDraft}</td>
+                <td>{authorName}</td>
+                <td>{commentCount}</td>
                 <td>{DTC}{created}{/DTC}</td>
                 <td>{DTC}{edited}{/DTC}</td>
                 <td><a href="{BASE}admin/blog/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
@@ -38,6 +40,6 @@
             {/ALT}
         </tbody>
     </table>
-    <a href="{BASE}admin/blog/new" class="btn btn-sm btn-success" role="button">Create</a>
+    <a href="{BASE}admin/blog/new" class="btn btn-sm btn-primary" role="button">Create</a>
     <button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button>
 </form>

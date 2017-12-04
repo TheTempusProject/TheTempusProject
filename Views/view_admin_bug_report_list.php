@@ -1,6 +1,6 @@
-<legend><h2>Bug Reports</h2></legend>
+<legend>Bug Reports</legend>
 {PAGINATION}
-<form action="{BASE}admin/bug_reports/delete" method="post">
+<form action="{BASE}admin/bugreports/delete" method="post">
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -20,8 +20,8 @@
 				<td align="center">{ID}</td>
 				<td align="center">{DTC}{time}{/DTC}</td>
 				<td>{description}</td>
-				<td><a href="{BASE}admin/bug_reports/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
-                <td><a href="{BASE}admin/bug_reports/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
+				<td><a href="{BASE}admin/bugreports/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
+                <td><a href="{BASE}admin/bugreports/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="BR_[]">
 				</td>
@@ -39,4 +39,4 @@
 	<button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button>
 </form>
 <br />
-<a href="{BASE}admin/bug_reports/clear">clear all</a>
+<a href="{BASE}admin/bugreports/clear">clear all</a>

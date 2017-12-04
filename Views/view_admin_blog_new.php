@@ -1,4 +1,4 @@
-<script language="JavaScript" type="text/javascript">tinymce.init({ selector:'#blog_post' });</script>
+<script language="JavaScript" type="text/javascript">tinymce.init({ selector:'#blogPost' });</script>
 <form action="" method="post" class="form-horizontal"  enctype="multipart/form-data">
     <legend>New Blog Post</legend>
     <div class="form-group">
@@ -9,23 +9,23 @@
     </div>
     <div class="form-group">
         <div class="col-lg-6 col-lg-offset-3 btn-group">
-            <button type="button" class="btn btn-sm btn-success" onclick="insertTag ('blog_post', 'c');">&#10004;</button>
-            <button type="button" class="btn btn-sm btn-success" onclick="insertTag ('blog_post', 'x');">&#10006;</button>
-            <button type="button" class="btn btn-sm btn-success" onclick="insertTag ('blog_post', '!');">&#10069;</button>
-            <button type="button" class="btn btn-sm btn-success" onclick="insertTag ('blog_post', '?');">&#10068;</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="insertTag ('blogPost', 'c');">&#10004;</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="insertTag ('blogPost', 'x');">&#10006;</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="insertTag ('blogPost', '!');">&#10069;</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="insertTag ('blogPost', '?');">&#10068;</button>
         </div>
     </div>
     <div class="form-group">
-        <label for="blog_post" class="col-lg-3 control-label">Post</label>
+        <label for="blogPost" class="col-lg-3 control-label">Post</label>
         <div class="col-lg-6">
-            <textarea class="form-control" name="blog_post" maxlength="2000" rows="10" cols="50" id="blog_post"></textarea>
+            <textarea class="form-control" name="blogPost" maxlength="2000" rows="10" cols="50" id="blogPost"></textarea>
         </div>
     </div>
     <div class="form-group">
         <div class="col-lg-6 col-lg-offset-3">
-            <button name="submit" value="publish" type="submit" class="btn btn-lg btn-success">Publish</button>
-            <button name="submit" value="saveDraft" type="submit" class="btn btn-lg btn-success">Save as Draft</button>
-            <a href="{BASE}admin/blog/preview" class="btn btn-lg btn-success" role="button">Preview</a>
+            <button name="submit" value="publish" type="submit" class="btn btn-lg btn-primary">Publish</button>
+            <button name="submit" value="saveDraft" type="submit" class="btn btn-lg btn-primary">Save as Draft</button>
+            <button name="submit" value="preview" type="submit" class="btn btn-lg btn-primary">Preview</button>
         </div>
     </div>
     <input type="hidden" name="token" value="{TOKEN}">

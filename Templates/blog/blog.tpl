@@ -64,7 +64,8 @@
                         <div class="row">
                             <div class="col-sm-8 blog-main">
                                 {CONTENT}
-                            </div><!-- /.blog-main -->
+                            </div>
+                            <!-- /.blog-main -->
                             <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
                                 <div class="sidebar-module">
                                     {SIDEBAR}
@@ -72,8 +73,10 @@
                                 <div class="sidebar-module">
                                     {SIDEBAR2}
                                 </div>
-                            </div><!-- /.blog-sidebar -->
-                        </div><!-- /.row -->
+                            </div>
+                            <!-- /.blog-sidebar -->
+                        </div>
+                        <!-- /.row -->
                     </div>
                 </div>
             </div>

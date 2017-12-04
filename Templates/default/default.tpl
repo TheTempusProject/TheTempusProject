@@ -22,7 +22,7 @@
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <!--Brand and toggle should get grouped for better mobile display
-                but I had to account for the additional menus-->
+                but I had to account for additional menus-->
             <div class="navbar-header">
                 <a class="navbar-brand" href="{BASE}">{SITENAME}</a>
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse" style="">

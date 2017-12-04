@@ -5,7 +5,7 @@
     <div class="panel-body">
         <ol class="list-unstyled">
             {LOOP}
-                <li>({count}) <a href="{BASE}blog/month/{month}/{year}">{month_text} {year}</a></li>
+                <li>({count}) <a href="{BASE}blog/month/{month}/{year}">{monthText} {year}</a></li>
             {/LOOP}
             {ALT}
             {/ALT}

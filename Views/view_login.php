@@ -18,7 +18,7 @@
             <input name="remember" id="remember" type="checkbox" value="remember-me">
         </div>
     </div>
-    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-success center-block">Sign in</button>
+    <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Sign in</button>
     <input type="hidden" name="token" value="{TOKEN}">
 </form><br>
 Don't have an account? You can register <a href="{BASE}register">here</a>.<br>

@@ -11,8 +11,8 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-3 col-lg-3 " align="center">
-							<a href="{BASE}home/profile/{user_from}">{user_from}</a><br>
-							<img alt="User Pic" src="{BASE}{from_avatar}" class="img-circle img-responsive">
+							<a href="{BASE}home/profile/{userFrom}">{userFrom}</a><br>
+							<img alt="User Pic" src="{BASE}{fromAvatar}" class="img-circle img-responsive">
 						</div>
 						<div class=" col-md-9 col-lg-9 "> 
 							<table class="table table-user-information">
@@ -35,7 +35,7 @@
 			</div>
 			<form action="{BASE}usercp/messages/reply" method="post">
 				<input type="hidden" name="token" value="{TOKEN}">
-				<input type="hidden" name="message_ID" value="{PID}">
+				<input type="hidden" name="messageID" value="{PID}">
 				<button name="submit" value="reply" type="submit" class="btn btn-sm btn-primary">Reply</button>
 			</form>
 		</div>

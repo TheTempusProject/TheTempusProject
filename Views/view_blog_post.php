@@ -3,7 +3,7 @@
         <div class="blog-post">
             <h2 class="blog-post-title">{title}</h2>
             <hr>
-            <p class="blog-post-meta">{DTC date}{created}{/DTC} by <a href="{BASE}home/profile/{author}">{author_name}</a></p>
+            <p class="blog-post-meta">{DTC date}{created}{/DTC} by <a href="{BASE}home/profile/{author}">{authorName}</a></p>
             {content}
         </div><!-- /.blog-post -->
         {COMMENTS}

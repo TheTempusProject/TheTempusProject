@@ -1,36 +1,45 @@
 <?php
 /**
- * Controllers/DefaultController.php.
+ * Controllers/default.php
  *
  * This is the Default controller design.
  *
  * @version 1.0
  *
- * @author  Joey Kimsey <joeyk4816@gmail.com>
+ * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
- * @link    https://github.com/JoeyK4816/Pyromania
+ * @link    https://TheTempusProject.com
  *
- * @license https://www.gnu.org/licenses/gpl-3.0.en.html [GNU GENERAL PUBLIC LICENSE]
+ * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 
-namespace Pyromania;
+namespace TheTempusProject\Controllers;
+
+use TempusProjectCore\Core\Controller as Controller;
+use TempusProjectCore\Classes\Debug as Debug;
 
 class DefaultController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
-        Debug::group('Controller: '.get_class($this));
+        self::$template->noFollow();
+        self::$template->noIndex();
+        self::$template->setTemplate('default');
     }
+
     public function __destruct()
     {
-        Debug::log('Controller Destructing: '.get_class($this));
-        Debug::gend();
+        Debug::log('Controller Destructing: ' . get_class($this));
+        self::$session->updatePage(self::$title);
         $this->build();
+        Debug::closeAllGroups();
     }
+
     public function index()
     {
-        Debug::log('Controller initiated: '.__METHOD__.'.');
-        Self::$_template->set('TITLE', 'Default - Index');
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Default Controller';
+        $this->view('index');
+        exit();
     }
 }

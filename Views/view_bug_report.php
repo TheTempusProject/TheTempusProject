@@ -28,7 +28,7 @@
     <div class="form-group">
         <label for="entry" class="col-lg-3 control-label">Describe the problem/error as best as you can: (max:2000 characters)</label>
         <div class="col-lg-6">
-            <textarea class="form-control" name="description_" maxlength="2000" rows="10" cols="50" id="entry"></textarea>
+            <textarea class="form-control" name="entry" maxlength="2000" rows="10" cols="50" id="entry"></textarea>
         </div>
     </div>
     <input type="hidden" name="token" value="{TOKEN}">

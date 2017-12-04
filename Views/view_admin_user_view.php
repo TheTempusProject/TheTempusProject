@@ -1,7 +1,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
-			<div class="panel panel-success">
+			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">{username}</h3>
 				</div>
@@ -11,16 +11,16 @@
 							<img alt="User Pic" src="{BASE}{avatar}" class="img-circle img-responsive">
 						</div>
 						<div class=" col-md-9 col-lg-9 "> 
-							<table class="table table-user-success">
+							<table class="table table-user-primary">
 								<tbody>
 									{ADMIN}
 									<tr>
 										<td>Confirmed:</td>
-										<td>{confirmed_text}</td>
+										<td>{confirmedText}</td>
 									</tr>
 									<tr>
 										<td>Group:</td>
-										<td><a href="{BASE}/admin/groups/view/{user_group}">{group_name}</a></td>
+										<td><a href="{BASE}/admin/groups/view/{userGroup}">{groupName}</a></td>
 									</tr>
 									{/ADMIN}
 									<tr>
@@ -29,7 +29,7 @@
 									</tr>
 									<tr>
 										<td>Last seen</td>
-										<td>{DTC date}{last_login}{/DTC}</td>
+										<td>{DTC date}{lastLogin}{/DTC}</td>
 									</tr>
 									<tr>
 										<td>Gender</td>
@@ -50,7 +50,7 @@
 					</div>
 				</div>
 				<div class="panel-footer">
-					<a href="{base}usercp/messages/new_message/{USERNAME}" data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-envelope"></i></a>
+					<a href="{base}usercp/messages/newMessage/{USERNAME}" data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
 					{ADMIN}
 					<span class="pull-right">
 						<form action="{base}admin/users" method="post">
