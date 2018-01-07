@@ -7,7 +7,7 @@ The aim of this project is to provide a simple and stable platform from which to
 **Notice: This code is in _still_ not production ready. This framework is provided as is, use at your own risk.**
 I am working very hard to ensure the system is safe and reliable enough for me to endorse its widespread use, but it still needs a lot of QA and improvements.
 
-Currently I am in the process of testing all the systems in preparation for the first production ready release. The beta is still on-going. If you would like to participate or stay up to date with the latest, you can find more information at: https://TheTempusProject.com/beta
+Currently I am in the process of testing all the systems in preparation for the first production ready release. The beta is still on-going. If you would like to participate or stay up to date with the latest, you can find more information at: https://TheTempusProject.com
 
 ## Installation
 

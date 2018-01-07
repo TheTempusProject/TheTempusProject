@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the blog database table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -36,7 +36,7 @@ class Blog extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('posts');
         self::$db->addfield('author', 'int', '11');
@@ -46,6 +46,10 @@ class Blog extends Controller
         self::$db->addfield('title', 'varchar', '86');
         self::$db->addfield('content', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function installResources()
+    {
         $fields = [
             'title' => 'Welcome',
             'content' =>'<p>This is just a simple message to say thank you for installing The Tempus Project. If you have any questions you can find everything through our website <a href="https://TheTempusProject.com">here</a>.</p>',
@@ -54,8 +58,22 @@ class Blog extends Controller
             'edited' => time(),
             'draft' => 0
             ];
-        self::$db->insert('posts', $fields);
-        return self::$db->getStatus();
+        return self::$db->insert('posts', $fields);
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => true,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     /**

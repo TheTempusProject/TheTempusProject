@@ -51,7 +51,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = '{SITENAME} Blog';
         self::$pageDescription = '{SITENAME} blog';
-        $this->view('blog', self::$blog->listPosts());
+        $this->view('blog.blog', self::$blog->listPosts());
         exit();
     }
 
@@ -82,12 +82,12 @@ class Blog extends Controller
             }
         }
         if (self::$isLoggedIn) {
-            self::$template->set('NEWCOMMENT', self::$template->standardView('comment.new'));
+            self::$template->set('NEWCOMMENT', self::$template->standardView('commentNew'));
         } else {
             self::$template->set('NEWCOMMENT', '');
         }
         self::$template->set('count', self::$comment->count('blog', $post->ID));
-        self::$template->set('COMMENTS', self::$template->standardView('comment.list', self::$comment->display(10, 'blog', $post->ID)));
+        self::$template->set('COMMENTS', self::$template->standardView('commentList', self::$comment->display(10, 'blog', $post->ID)));
         $this->view('blog.post', $post);
         exit();
     }
@@ -97,7 +97,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by author - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by author.';
-        $this->view('blog', self::$blog->byAuthor($data));
+        $this->view('blog.blog', self::$blog->byAuthor($data));
         exit();
     }
 
@@ -106,7 +106,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts By Month - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by month.';
-        $this->view('blog', self::$blog->byMonth($month, $year));
+        $this->view('blog.blog', self::$blog->byMonth($month, $year));
         exit();
     }
 
@@ -115,7 +115,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by Year - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by years.';
-        $this->view('blog', self::$blog->byYear($year));
+        $this->view('blog.blog', self::$blog->byYear($year));
         exit();
     }
 }

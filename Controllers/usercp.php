@@ -30,7 +30,7 @@ class Usercp extends Controller
 {
     public function __construct()
     {
-        self::$template->activePageSelect('nav.usercp');
+        self::$template->activePageSelect('navigation.usercp');
         self::$template->noIndex();
         if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to view this page!');
@@ -58,7 +58,7 @@ class Usercp extends Controller
     {
         self::$title = 'Preferences';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$template->set('TIMEZONELIST', self::$template->standardView('timezone.dropdown'));
+        self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
         $a = Input::exists('submit');
         $value = $a ? Input::post('updates') : self::$activePrefs->email;
         self::$template->selectRadio('updates', $value);
@@ -73,11 +73,11 @@ class Usercp extends Controller
         if ($a) {
             if (!Check::form('userPrefs')) {
                 Issue::error('There was an error with your request.', Check::userErrors());
-                $this->view('usercp.settings', self::$activeUser);
+                $this->view('usercpSettings', self::$activeUser);
                 exit();
             }
             if (Input::exists('avatar') && Image::upload('avatar', self::$activeUser->username)) {
-                $avatar = 'Images/Uploads/' . self::$activeUser->username . '/' . Image::last();
+                $avatar = 'Uploads/Images/' . self::$activeUser->username . '/' . Image::last();
             }
             $fields = [
                 "timezone" =>    Input::post('timezone'),
@@ -97,7 +97,7 @@ class Usercp extends Controller
             $avatar = self::$activePrefs->avatar;
         }
         self::$template->set('AVATAR_SETTINGS', $avatar);
-        $this->view('usercp.settings', self::$activeUser);
+        $this->view('usercpSettings', self::$activeUser);
         exit();
     }
 
@@ -112,13 +112,13 @@ class Usercp extends Controller
         }
 
         if (!Input::exists()) {
-            $this->view('usercp.email.change');
+            $this->view('usercpEmailChange');
             exit();
         }
 
         if (!Check::form('changeEmail')) {
             Issue::error('There was an error with your request.', Check::userErrors());
-            $this->view('usercp.email.change');
+            $this->view('usercpEmailChange');
             exit();
         }
 
@@ -138,17 +138,17 @@ class Usercp extends Controller
         self::$title = 'Password Settings';
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         if (!Input::exists()) {
-            $this->view('password.change');
+            $this->view('passwordChange');
             exit();
         }
         if (!Hash::check(Input::post('curpass'), self::$activeUser->password)) {
             Issue::error('Current password was incorrect.');
-            $this->view('password.change');
+            $this->view('passwordChange');
             exit();
         }
         if (!Check::form('changePassword')) {
             Issue::error('There was an error with your request.', Check::userErrors());
-            $this->view('password.change');
+            $this->view('passwordChange');
             exit();
         }
         self::$user->update(['password' => Hash::make(Input::post('password'))], self::$activeUser->ID);
@@ -164,7 +164,7 @@ class Usercp extends Controller
         switch ($action) {
             case 'viewmessage':
                 self::$title = self::$message->messageTitle($data);
-                $this->view('message', self::$message->getThread($data, true));
+                $this->view('message.message', self::$message->getThread($data, true));
                 exit();
 
             case 'reply':

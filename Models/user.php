@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the user database table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -51,7 +51,7 @@ class User extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('users');
         self::$db->addfield('registered', 'int', '10');
@@ -66,12 +66,30 @@ class User extends Controller
         self::$db->addfield('confirmationCode', 'varchar', '80');
         self::$db->addfield('prefs', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function installPreferences()
+    {
         Preference::addPref('gender', "unspecified");
         Preference::addPref('email', "true");
         Preference::addPref('newsletter', "true");
         Preference::addPref('avatar', "Images/defaultAvatar.png");
-        Preference::savePrefs(true);
-        return self::$db->getStatus();
+        return Preference::savePrefs(true);
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => true
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     /**

@@ -6,7 +6,7 @@
  *
  * @todo  make this send a confirmation email
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -39,7 +39,7 @@ class Feedback extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('feedback');
         self::$db->addfield('name', 'varchar', '32');
@@ -48,15 +48,36 @@ class Feedback extends Controller
         self::$db->addfield('ip', 'varchar', '15');
         self::$db->addfield('feedback', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function installConfigs()
+    {
         Config::addConfigCategory('feedback');
         Config::addConfig('feedback', 'enabled', true);
         Config::addConfig('feedback', 'sendEmail', false);
         Config::addConfig('feedback', 'emailTemplate', 'default');
         Config::addConfig('feedback', 'emailVersion', 'feedbackResponse');
-        Config::saveConfig();
+        return Config::saveConfig();
+    }
+    public static function installPermissions()
+    {
         Permission::addPerm('feedback', false);
-        Permission::savePerms(true);
-        return self::$db->getStatus();
+        return Permission::savePerms(true);
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
     private static function enabled()
     {

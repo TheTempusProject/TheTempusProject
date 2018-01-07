@@ -52,6 +52,7 @@
                     {ERROR}
                     {NOTICE}
                     {SUCCESS}
+                    {INFO}
                 </div>
             </div>
             {/UI}

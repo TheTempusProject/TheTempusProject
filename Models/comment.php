@@ -5,7 +5,7 @@
  * This class is used for the creation, retrieval, and manipulation
  * of the comments table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -42,7 +42,7 @@ class Comment extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('comments');
         self::$db->addfield('author', 'int', '11');
@@ -54,6 +54,21 @@ class Comment extends Controller
         self::$db->addfield('content', 'text', '');
         self::$db->createTable();
         return self::$db->getStatus();
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
     /**
      * Retrieves a comment by its ID and parses it.

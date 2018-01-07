@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the groups database table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -41,15 +41,22 @@ class Group extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
-        Config::addConfigCategory('group');
-        Config::addConfig('group', 'defaultGroup', 5);
-        Config::saveConfig();
         self::$db->newTable('groups');
         self::$db->addfield('name', 'varchar', '32');
         self::$db->addfield('permissions', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function installConfigs()
+    {
+        Config::addConfigCategory('group');
+        Config::addConfig('group', 'defaultGroup', 5);
+        return Config::saveConfig();
+    }
+    public static function installResources()
+    {
         $fields = [
             'name' => 'Admin',
             'permissions' =>'{"uploadImages":true,"sendMessages":true,"pageLimit":100,"adminAccess":true,"modAccess":true,"memberAccess":true,"bugReport":true,"feedback":true}'
@@ -75,7 +82,22 @@ class Group extends Controller
             'permissions' =>'{"uploadImages":false,"sendMessages":false,"pageLimit":10,"adminAccess":false,"modAccess":false,"memberAccess":false,"bugReport":false,"feedback":true}'
             ];
         self::$db->insert('groups', $fields);
-        return self::$db->getStatus();
+        return true;
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => true,
+            'installResources' => true,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     public static function isEmpty($data)

@@ -4,7 +4,7 @@
  *
  * Houses all of the functions for the core messaging system.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -57,7 +57,7 @@ class Message extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('messages');
         self::$db->addfield('userTo', 'int', '11');
@@ -71,9 +71,27 @@ class Message extends Controller
         self::$db->addfield('message', 'text', '');
         self::$db->addfield('subject', 'text', '');
         self::$db->createTable();
-        Permission::addPerm('sendMessage', false);
-        Permission::savePerms(true);
         return self::$db->getStatus();
+    }
+    public static function installPermissions()
+    {
+        Permission::addPerm('sendMessage', false);
+        return Permission::savePerms(true);
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     /**
@@ -184,7 +202,7 @@ class Message extends Controller
                 $message->summary = $summary;
             }
             if ($message->isRead == 0) {
-                $message->unreadBadge = self::$template->standardView('message.unread.badge');
+                $message->unreadBadge = self::$template->standardView('message.unreadBadge');
             } else {
                 $message->unreadBadge = '';
             }

@@ -74,7 +74,7 @@ class Register extends Controller
         ]);
         Email::send(Input::post('email'), 'confirmation', $code, ['template' => true]);
         Session::flash('success', 'Thank you for registering! Please check your email to confirm your account.');
-        Redirect::to('home');
+        Redirect::to('home/index');
     }
     /**
      * @todo  Come back and separate this into multiple forms because this is gross.
@@ -139,7 +139,7 @@ class Register extends Controller
             exit();
         }
         if (!Check::form('confirmationResend')) {
-            $this->view('email.confirmation.resend');
+            $this->view('email.confirmationResend');
             exit();
         }
         Email::send(self::$activeUser->data()->email, 'confirmation', self::$activeUser->data()->confirmationCode, ['template' => true]);
@@ -153,7 +153,7 @@ class Register extends Controller
         self::$title = 'Password Reset';
         if (!isset($code) && !Input::exists('resetCode')) {
             Issue::error('No reset code provided.');
-            $this->view('password.reset.code');
+            $this->view('passwordResetCode');
             exit();
         }
         if (Input::exists('resetCode')) {
@@ -163,17 +163,17 @@ class Register extends Controller
         }
         if (self::$user->checkCode($code)) {
             Issue::error('There was an error with your reset code. Please try again.');
-            $this->view('password.reset.code');
+            $this->view('passwordResetCode');
             exit();
         }
         self::$template->set('resetCode', $code);
         if (!Input::exists()) {
-            $this->view('password.reset');
+            $this->view('passwordReset');
             exit();
         }
         if (!Check::form('passwordReset')) {
             Issue::error('There was an error with your request.', Check::userErrors());
-            $this->view('password.reset');
+            $this->view('passwordReset');
             exit();
         }
         self::$user->changePassword($code, Input::post('password'));

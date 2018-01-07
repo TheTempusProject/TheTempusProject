@@ -16,6 +16,7 @@
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller as Controller;
+use TempusProjectCore\Functions\Docroot as Docroot;
 use TempusProjectCore\Classes\Redirect as Redirect;
 use TempusProjectCore\Classes\Session as Session;
 use TempusProjectCore\Classes\Config as Config;
@@ -61,7 +62,7 @@ class Home extends Controller
             exit();
         }
         if (!Check::form('subscribe')) {
-            Issue::notice('There was an error with your request.');
+            Issue::error('There was an error with your form.', Check::userErrors());
             $this->view('subscribe');
             exit();
         }
@@ -139,12 +140,12 @@ class Home extends Controller
             exit();
         }
         if (!Input::exists()) {
-            $this->view('bug.report');
+            $this->view('bugreport');
             exit();
         }
         if (!Check::form('bugreport')) {
             Issue::error('There was an error with your report.', Check::userErrors());
-            $this->view('bug.report');
+            $this->view('bugreport');
             exit();
         }
         self::$bugreport->create(self::$activeUser->ID, Input::post('url'), Input::post('ourl'), Input::post('repeat'), Input::post('entry'));
@@ -167,7 +168,7 @@ class Home extends Controller
             exit();
         }
         self::$title = $user->username . '\'s Profile - {SITENAME}';
-        self::$pageDescription = 'User Profile for '.$user->username.' - {SITENAME}';
+        self::$pageDescription = 'User Profile for ' . $user->username . ' - {SITENAME}';
         $this->view('user', $user);
     }
 
@@ -177,7 +178,7 @@ class Home extends Controller
         self::$title = 'Portal - {SITENAME}';
         self::$pageDescription = 'Please log in to use {SITENAME} member features.';
         if (self::$isLoggedIn) {
-            Issue::notice('You are already logged in. Please <a href="'.Docroot::getAddress().'home/logout">click here</a> to log out.');
+            Issue::notice('You are already logged in. Please <a href="' . Docroot::getAddress() . 'home/logout">click here</a> to log out.');
             exit();
         }
         if (!Input::exists()) {
@@ -221,7 +222,7 @@ class Home extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Terms and Conditions - {SITENAME}';
         self::$pageDescription = '{SITENAME} Terms and Conditions of use. Please use {SITENAME} safely.';
-        $this->view('terms.page');
+        $this->view('termsPage');
         exit();
     }
 }

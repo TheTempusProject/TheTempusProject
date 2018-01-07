@@ -4,7 +4,7 @@
  *
  * Model for handling our logging.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -43,7 +43,7 @@ class Log extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('logs');
         self::$db->addfield('userID', 'int', '11');
@@ -52,12 +52,33 @@ class Log extends Controller
         self::$db->addfield('source', 'varchar', '64');
         self::$db->addfield('action', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+
+    public static function installConfigs()
+    {
         Config::addConfigCategory('logging');
         Config::addConfig('logging', 'admin', true);
         Config::addConfig('logging', 'errors', true);
         Config::addConfig('logging', 'logins', true);
-        Config::saveConfig();
-        return self::$db->getStatus();
+        return Config::saveConfig();
+    }
+
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     /**

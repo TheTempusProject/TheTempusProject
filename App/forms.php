@@ -28,7 +28,33 @@ class Forms
      *
      * @return boolean
      */
-    public static function install()
+    public static function installStart()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installAgreement()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installCheck()
     {
         if (!Check::php()) {
             Check::addUserError('PHP version is too old.');
@@ -46,6 +72,75 @@ class Forms
             Check::addUserError('Safe mode is enabled.');
             return false;
         }
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installConfigure()
+    {
+        if (!Check::db(Input::post('dbHost'), Input::post('dbName'), Input::post('dbUsername'), Input::post('dbPassword'))) {
+            Check::addUserError('DB connection error.');
+            return false;
+        }
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installhtaccess()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installModels()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installResources()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installAdminUser()
+    {
         if (!Check::username(Input::post('newUsername'))) {
             Check::addUserError('Invalid username.');
             return false;
@@ -60,10 +155,6 @@ class Forms
         }
         if (Input::post('email') !== Input::post('email2')) {
             Check::addUserError('Emails do not match.');
-            return false;
-        }
-        if (!Check::db(Input::post('dbHost'), Input::post('dbName'), Input::post('dbUsername'), Input::post('dbPassword'))) {
-            Check::addUserError('DB connection error.');
             return false;
         }
         if (!Check::token()) {

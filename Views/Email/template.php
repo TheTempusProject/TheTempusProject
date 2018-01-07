@@ -120,7 +120,7 @@
                     <table width="70" align="left" border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <td height="70" style="padding: 0 20px 20px 0;">
-                                <img src="{LOGO}" width="70" height="70" border="0" alt="" style="height: auto;">
+                                <img src="{BASE}{LOGO}" width="70" height="70" border="0" alt="" style="height: auto;">
                             </td>
                         </tr>
                     </table>

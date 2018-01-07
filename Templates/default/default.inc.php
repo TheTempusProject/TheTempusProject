@@ -43,12 +43,12 @@ class DefaultLoader extends Controller
         $this->components['FOOT'] = Template::standardView('foot');
         $this->components["COPY"] = Template::standardView('copy');
         if (self::$isLoggedIn) {
-            $this->components['STATUS'] = Template::standardView('status.logged.in');
+            $this->components['STATUS'] = Template::standardView('navigation.statusLoggedIn');
             $this->components['USERNAME'] = self::$activeUser->username;
         } else {
-            $this->components['STATUS'] = Template::standardView('status.logged.out');
+            $this->components['STATUS'] = Template::standardView('navigation.statusLoggedOut');
         }
-        $this->components['MAINNAV'] = Template::standardView('nav.main');
+        $this->components['MAINNAV'] = Template::standardView('navigation.main');
         $this->components['MAINNAV'] = Template::activePageSelect(null, null, $this->components['MAINNAV']);
     }
 

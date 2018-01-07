@@ -55,9 +55,9 @@ class Appload extends Controller
         // Populate some of the Template Data
         self::$template->set('SITENAME', Config::get('main/name'));
         self::$template->set('RURL', Docroot::getUrl());
-        self::$template->addFilter('member', '#{MEMBER}(.*?){/MEMBER}#is', self::$isMember);
-        self::$template->addFilter('mod', '#{MOD}(.*?){/MOD}#is', self::$isMod);
-        self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', self::$isAdmin);
+        self::$template->addFilter('member', '#{MEMBER}(.*?){/MEMBER}#is', (self::$isMember ? '$1' : ''), true);
+        self::$template->addFilter('mod', '#{MOD}(.*?){/MOD}#is', (self::$isMod ? '$1' : ''), true);
+        self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', (self::$isAdmin ? '$1' : ''), true);
         self::$message->loadInterface();
         
         // This also needs to be moved somewhere else

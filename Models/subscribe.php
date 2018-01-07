@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the subscribers database table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -34,7 +34,7 @@ class Subscribe extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('subscribers');
         self::$db->addfield('confirmed', 'int', '1');
@@ -43,6 +43,21 @@ class Subscribe extends Controller
         self::$db->addfield('email', 'varchar', '75');
         self::$db->createTable();
         return self::$db->getStatus();
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     /**

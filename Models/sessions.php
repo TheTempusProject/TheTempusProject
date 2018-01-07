@@ -46,7 +46,7 @@ class Sessions extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('sessions');
         self::$db->addfield('userID', 'int', '5');
@@ -58,11 +58,29 @@ class Sessions extends Controller
         self::$db->addfield('username', 'varchar', '20');
         self::$db->addfield('token', 'varchar', '120');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function installConfigs()
+    {
         Config::updateConfig('session', 'sessionPrefix', 'TTP_');
         Config::updateConfig('cookie', 'cookiePrefix', 'TTP_');
         Config::updateConfig('cookie', 'cookieExpiry', 604800);
-        Config::saveConfig();
-        return self::$db->getStatus();
+        return Config::saveConfig();
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     public function authenticate()
