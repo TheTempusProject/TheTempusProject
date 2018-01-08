@@ -73,7 +73,7 @@ class Blog extends Controller
     }
     public static function modelVersion()
     {
-        return '2.0.0';
+        return '2.7.0';
     }
 
     /**

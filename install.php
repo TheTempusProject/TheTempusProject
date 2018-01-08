@@ -327,5 +327,10 @@ class Install extends Controller
         Issue::success('The Tempus Project has been installed successfully.');
         Email::send(Input::post('email'), 'install', null, ['template' => true]);
         $this->view('install.complete');
+        self::$installer->nextStep('delete');
+    }
+    public function delete()
+    {
+        Issue::notice('Installation has been completed. Updates and installation can be managed in the admin panel under Installed. Please delete this file.');
     }
 }

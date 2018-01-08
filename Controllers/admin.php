@@ -64,6 +64,18 @@ class Admin extends Controller
         self::$template->set('commentDash', $comments);
         $this->view('admin.dash');
     }
+
+    public function dependencies()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Dependencies';
+        switch ($sub) {
+            case 'view':
+                # code...
+                break;
+        }
+    }
+
     public function installed($sub = null, $name = null)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
