@@ -15,16 +15,16 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Image as Image;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Hash as Hash;
-use TempusProjectCore\Classes\Code as Code;
-use TempusProjectCore\Classes\Check as Check;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Image;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Hash;
+use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Classes\Check;
 
 class Usercp extends Controller
 {

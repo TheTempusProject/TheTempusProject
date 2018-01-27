@@ -23,8 +23,8 @@
 										<td align="right">{DTC}{lastUpdate}{/DTC}</td>
 									</tr>
 									<tr>
-										<td>Current Version:</td>
-										<td align="right">{currentVersion}</td>
+										<td>File Version:</td>
+										<td align="right">{fileVersion}</td>
 									</tr>
 									<tr>
 										<td>Installed Version:</td>

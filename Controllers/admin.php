@@ -15,17 +15,17 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Core\Installer as Installer;
-use TempusProjectCore\Core\Template as Template;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Image as Image;
-use TempusProjectCore\Classes\Log as Log;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\Installer;
+use TempusProjectCore\Core\Template;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Image;
+use TempusProjectCore\Classes\Log;
 
 class Admin extends Controller
 {
@@ -71,7 +71,8 @@ class Admin extends Controller
         self::$title = 'Admin - Dependencies';
         switch ($sub) {
             case 'view':
-                # code...
+                $composerJson = $installer->getComposerJson($name);
+                $composerLock = $installer->getComposerLock($name);
                 break;
         }
     }
@@ -89,8 +90,8 @@ class Admin extends Controller
                         'name' => $model->name,
                         'installDate' => 'null',
                         'lastUpdate' => 'null',
-                        'currentVersion' => 'not installed',
-                        'installedVersion' => $installer->getModelVersion('models', $model->name),
+                        'installedVersion' => 'not installed',
+                        'fileVersion' => $installer->getModelVersion('models', $model->name),
                         'installDB' => 'not Installed',
                         'installPermissions' => 'not Installed',
                         'installConfigs' => 'not Installed',
@@ -102,8 +103,8 @@ class Admin extends Controller
                         'name' => $node['name'],
                         'installDate' => $node['installDate'],
                         'lastUpdate' => $node['lastUpdate'],
-                        'currentVersion' => $node['currentVersion'],
-                        'installedVersion' => $installer->getModelVersion('models', $node['name']),
+                        'installedVersion' => $node['currentVersion'],
+                        'fileVersion' => $installer->getModelVersion('models', $node['name']),
                         'installDB' => $node['installDB'],
                         'installPermissions' => $node['installPermissions'],
                         'installConfigs' => $node['installConfigs'],
@@ -122,16 +123,16 @@ class Admin extends Controller
                     'name' => $model->name,
                     'installDate' => 'null',
                     'lastUpdate' => 'null',
-                    'currentVersion' => 'not installed',
-                    'installedVersion' => $installer->getModelVersion('models', $model->name)
+                    'installedVersion' => 'not installed',
+                    'fileVersion' => $installer->getModelVersion('models', $model->name)
                 ];
             } else {
                 $out[] = (object) [
                     'name' => $node['name'],
                     'installDate' => $node['installDate'],
                     'lastUpdate' => $node['lastUpdate'],
-                    'currentVersion' => $node['currentVersion'],
-                    'installedVersion' => $installer->getModelVersion('models', $node['name'])
+                    'installedVersion' => $node['currentVersion'],
+                    'fileVersion' => $installer->getModelVersion('models', $node['name'])
                 ];
             }
         }

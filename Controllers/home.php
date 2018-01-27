@@ -15,19 +15,19 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Redirect as Redirect;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Cookie as Cookie;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Log as Log;
-use TempusProjectCore\Classes\DB as DB;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Redirect;
+use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\Cookie;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Log;
+use TempusProjectCore\Classes\DB;
 
 class Home extends Controller
 {
