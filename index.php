@@ -17,14 +17,16 @@
 
 namespace TheTempusProject;
 
-use TempusProjectCore\Classes\Pagination as Pagination;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Core\Template as Template;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\App as App;
+use TempusProjectCore\Classes\Pagination;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Core\Template;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Redirect;
+use TempusProjectCore\App;
 
 require_once "init.php";
 
@@ -86,7 +88,34 @@ class Appload extends Controller
  * access to outside of the typical .htaccess redirect method.
  */
 Debug::group('Initiating TTP Application');
-if (stripos($_SERVER['REQUEST_URI'], 'install.php')) {
+if (Input::exists('tracking')) {
+    switch (Input::get('tracking')) {
+        case 'pixel':
+            $appload = new Appload('Tracking/pixel');
+            redirect::to('Images/pixel.png');
+            break;
+        default:
+            $appload = new Appload('Tracking/index');
+            break;
+    }
+} elseif (Input::exists('error')) {
+    switch (Input::get('error')) {
+        case 'image404':
+            Debug::error('Image not found');
+            redirect::to('Images/imageNotFound.png');
+            break;
+        case 'upload404':
+            # code...
+            break;
+        case '404':
+            # code...
+            break;
+        
+        default:
+            $appload = new Appload('error/' . Input::exists('error'));
+            break;
+    }
+} elseif (stripos($_SERVER['REQUEST_URI'], 'install.php')) {
     $appload = new Appload('install/index');
 } else {
     $appload = new Appload();
