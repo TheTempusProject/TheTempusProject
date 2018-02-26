@@ -15,13 +15,13 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Sanitize as Sanitize;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Core\Updater as Updater;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Sanitize;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Core\Updater;
 
 class Blog extends Controller
 {

@@ -15,14 +15,14 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Permission as Permission;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\CustomException as CustomException;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Core\Updater as Updater;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Permission;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\CustomException;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Core\Updater;
 
 class Bugreport extends Controller
 {

@@ -15,15 +15,15 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Permission as Permission;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Sanitize as Sanitize;
-use TempusProjectCore\Core\Template as Template;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Permission;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Sanitize;
+use TempusProjectCore\Core\Template;
 
 class Message extends Controller
 {

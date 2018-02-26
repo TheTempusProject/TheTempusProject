@@ -51,7 +51,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = '{SITENAME} Blog';
         self::$pageDescription = '{SITENAME} blog';
-        $this->view('blog.blog', self::$blog->listPosts());
+        $this->view('blog.postList', self::$blog->listPosts());
         exit();
     }
 
