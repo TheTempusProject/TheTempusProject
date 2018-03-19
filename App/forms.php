@@ -145,15 +145,15 @@ class Forms
             Check::addUserError('Invalid username.');
             return false;
         }
-        if (!Check::password(Input::post('password'))) {
+        if (!Check::password(Input::post('userPassword'))) {
             Check::addUserError('Invalid password.');
             return false;
         }
-        if (Input::post('password') !== Input::post('password2')) {
+        if (Input::post('userPassword') !== Input::post('userPassword2')) {
             Check::addUserError('Passwords do not match.');
             return false;
         }
-        if (Input::post('email') !== Input::post('email2')) {
+        if (Input::post('userEmail') !== Input::post('userEmail2')) {
             Check::addUserError('Emails do not match.');
             return false;
         }
@@ -236,7 +236,7 @@ class Forms
             Check::addUserError('Invalid name.');
             return false;
         }
-        if (Input::exists('email') && !Check::email(Input::post('email'))) {
+        if (Input::exists('feedbackEmail') && !Check::email(Input::post('feedbackEmail'))) {
             Check::addUserError('Invalid Email.');
             return false;
         }

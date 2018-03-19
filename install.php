@@ -18,19 +18,19 @@ namespace TheTempusProject\Controllers;
 
 require_once 'index.php';
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Core\Installer as Installer;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Redirect as Redirect;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Cookie as Cookie;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Hash as Hash;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\Installer;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Redirect;
+use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\Cookie;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Hash;
 
 class Install extends Controller
 {
@@ -306,8 +306,8 @@ class Install extends Controller
         }
         if (!self::$user->create([
             'username' => Input::post('newUsername'),
-            'password' => Hash::make(Input::post('password')),
-            'email' => Input::post('email'),
+            'password' => Hash::make(Input::post('userPassword')),
+            'email' => Input::post('userEmail'),
             'lastLogin' => time(),
             'registered' => time(),
             'confirmed' => 1,

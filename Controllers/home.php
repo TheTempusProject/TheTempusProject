@@ -125,7 +125,7 @@ class Home extends Controller
             $this->view('feedback');
             exit();
         }
-        self::$feedback->create(Input::post('name'), Input::post('email'), Input::post('entry'));
+        self::$feedback->create(Input::post('name'), Input::post('feedbackEmail'), Input::post('entry'));
         Session::flash('success', 'Thank you! Your feedback has been received.');
         Redirect::to('home/index');
     }

@@ -10,9 +10,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="email" class="col-lg-1 control-label">E-mail: (optional)</label>
+        <label for="feedbackEmail" class="col-lg-1 control-label">E-mail: (optional)</label>
         <div class="col-lg-2">
-            <input class="form-control" type="text" name="email" id="email">
+            <input class="form-control" type="text" name="feedbackEmail" id="feedbackEmail">
         </div>
     </div>
     <div class="form-group">

@@ -32,9 +32,9 @@ require_once 'vendor/autoload.php';
 
 set_exception_handler('TempusProjectCore\\Functions\\ExceptionHandler::ExceptionHandler');
 
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Redirect as Redirect;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Redirect;
 
 /**
  * This will check for the htaccess file since it controls
