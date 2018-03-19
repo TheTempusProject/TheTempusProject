@@ -3,7 +3,7 @@
         <li><a href="{BASE}admin"><i class="fa fa-fw fa-home"></i> Home</a></li>
         <li><a href="{BASE}admin/settings"><i class="fa fa-fw fa-gear"></i> Settings</a></li>
         <li><a href="{BASE}admin/installed"><i class="fa fa-fw fa-database"></i> Models</a></li>
-        <li><a href="{BASE}admin/installed"><i class="fa fa-fw fa-database"></i> Dependencies</a></li>
+        <li><a href="{BASE}admin/dependencies"><i class="fa fa-fw fa-database"></i> Dependencies</a></li>
         <li><a href="{BASE}admin/blog"><i class="fa fa-fw fa-file-text"></i> Blog</a></li>
         <li><a href="{BASE}admin/comments"><i class="fa fa-fw fa-comment"></i> Comments</a></li>
         <li><a href="{BASE}admin/users"><i class="fa fa-fw fa-user"></i> Users</a></li>

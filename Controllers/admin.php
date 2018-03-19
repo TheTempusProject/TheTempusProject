@@ -65,16 +65,39 @@ class Admin extends Controller
         $this->view('admin.dash');
     }
 
-    public function dependencies()
+    public function dependencies($sub = null)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Admin - Dependencies';
+        $installer = new Installer;
         switch ($sub) {
-            case 'view':
-                $composerJson = $installer->getComposerJson($name);
-                $composerLock = $installer->getComposerLock($name);
+            default:
+                $composerJson = $installer->getComposerJson();
+                $requiredPackages = $composerJson['require'];
+                foreach ($requiredPackages as $name => $version) {
+                    $versionsRequired[strtolower($name)] = $version;
+                }
+
+                $composerLock = $installer->getComposerLock();
+                $installedPackages = $composerLock['packages'];
+                foreach ($installedPackages as $package) {
+                    $name = strtolower($package['name']);
+                    $versionsInstalled[$name] = $package;
+                }
+
+                foreach ($versionsInstalled as $package) {
+                    $name = strtolower($package['name']);
+                    if (!empty($versionsRequired[$name])) {
+                        $versionsInstalled[$name]['requiredVersion'] = $versionsRequired[$name];
+                    } else {
+                        $versionsInstalled[$name]['requiredVersion'] = 'sub-dependency';
+                    }
+                    $out[] = (object) $versionsInstalled[$name];
+                }
                 break;
         }
+        $this->view('admin.dependencies', $out);
+        exit();
     }
 
     public function installed($sub = null, $name = null)
