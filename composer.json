@@ -12,7 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "TheTempusProject/TempusProjectCore": "2.0",
+        "TheTempusProject/TempusProjectCore": "2.1.0",
         "twbs/bootstrap": "3.3.6",
         "FortAwesome/Font-Awesome": "4.7",
         "tinymce/tinymce": "4.7.1"
