@@ -24,6 +24,10 @@ session_start();
 
 define('APP_SPACE', __NAMESPACE__);
 
+if (!file_exists('vendor/autoload.php')) {
+    echo file_get_contents('Views/Errors/composer.php');
+    exit();
+}
 require_once 'vendor/autoload.php';
 
 set_exception_handler('TempusProjectCore\\Functions\\ExceptionHandler::ExceptionHandler');
