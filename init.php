@@ -24,6 +24,11 @@ session_start();
 
 define('APP_SPACE', __NAMESPACE__);
 
+$mods = apache_get_modules();
+if (!in_array('mod_rewrite', $mods)) {
+    echo file_get_contents('Views/Errors/rewrite.php');
+    exit();
+}
 if (!file_exists('vendor/autoload.php')) {
     echo file_get_contents('Views/Errors/composer.php');
     exit();
@@ -47,6 +52,6 @@ $htaccessPath = Docroot::getFull().'.htaccess';
 $installPath = Docroot::getFull().'install.php';
 
 if (!file_exists($htaccessPath) && !file_exists($installPath)) {
-    Debug::error('.htaccess and installer.php could not be found.');
-    Redirect::to(533);
+    echo file_get_contents('Views/Errors/533.php');
+    exit();
 }
