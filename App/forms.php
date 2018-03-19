@@ -56,6 +56,10 @@ class Forms
      */
     public static function installCheck()
     {
+        if (!Check::uploads()) {
+            Check::addUserError('Uploads are disabled.');
+            return false;
+        }
         if (!Check::php()) {
             Check::addUserError('PHP version is too old.');
             return false;

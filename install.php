@@ -30,6 +30,7 @@ use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Image;
 use TempusProjectCore\Classes\Hash;
 
 class Install extends Controller
@@ -124,6 +125,7 @@ class Install extends Controller
     {
         self::$template->set('menu-Configure', 'active');
         self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
+        self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
         Issue::info('Configure your new installation.');
         if (!Input::exists()) {
             $this->view('install.configure');
@@ -133,6 +135,11 @@ class Install extends Controller
             Issue::error('There was an error with your form.', Check::userErrors());
             $this->view('install.configure');
             return;
+        }
+        if (Input::exists('logo') && Image::upload('logo', 'System')) {
+            $logo = 'Uploads/Images/System/' . Image::last();
+        } else {
+            $logo = 'Images/logo.png';
         }
         $mods = [
             [
@@ -144,6 +151,16 @@ class Install extends Controller
                 'category' => 'main',
                 'name' => 'loginLimit',
                 'value' => 5
+            ],
+            [
+                'category' => 'main',
+                'name' => 'logo',
+                'value' => $logo
+            ],
+            [
+                'category' => 'main',
+                'name' => 'timezone',
+                'value' => Input::postNull('timezone')
             ],
             [
                 'category' => 'main',
@@ -179,6 +196,11 @@ class Install extends Controller
                 'category' => 'database',
                 'name' => 'dbUsername',
                 'value' => Input::postNull('dbUsername')
+            ],
+            [
+                'category' => 'database',
+                'name' => 'dbPrefix',
+                'value' => Input::postNull('dbPrefix')
             ],
             [
                 'category' => 'database',
