@@ -49,6 +49,13 @@ class Group extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
     public static function installConfigs()
     {
         Config::addConfigCategory('group');
@@ -128,7 +135,7 @@ class Group extends Controller
             if (!Check::id($instance)) {
                 $error = true;
             }
-            if (self::$group->countMembers($instance) !== 0) {
+            if (self::countMembers($instance) !== 0) {
                 Debug::info('Group is not empty.');
                 return false;
             }

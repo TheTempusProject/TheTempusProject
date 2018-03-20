@@ -48,6 +48,15 @@ class Blog extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'log',
+            'user',
+            'comment'
+        ];
+        return $required;
+    }
     public static function installResources()
     {
         $fields = [

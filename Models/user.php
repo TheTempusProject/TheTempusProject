@@ -76,6 +76,15 @@ class User extends Controller
         Preference::addPref('avatar', "Images/defaultAvatar.png");
         return Preference::savePrefs(true);
     }
+    public function requiredModels()
+    {
+        $required = [
+            'log',
+            'session',
+            'group'
+        ];
+        return $required;
+    }
     public static function installFlags()
     {
         $flags = [

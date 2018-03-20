@@ -57,6 +57,13 @@ class Tracking extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
     public static function installFlags()
     {
         $flags = [

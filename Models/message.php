@@ -73,6 +73,13 @@ class Message extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'user'
+        ];
+        return $required;
+    }
     public static function installPermissions()
     {
         Permission::addPerm('sendMessage', false);

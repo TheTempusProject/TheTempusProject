@@ -55,6 +55,15 @@ class Comment extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'log',
+            'blog',
+            'user'
+        ];
+        return $required;
+    }
     public static function installFlags()
     {
         $flags = [

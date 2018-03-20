@@ -60,6 +60,14 @@ class Sessions extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public function requiredModels()
+    {
+        $required = [
+            'user',
+            'group'
+        ];
+        return $required;
+    }
     public static function installConfigs()
     {
         Config::updateConfig('session', 'sessionPrefix', 'TTP_');

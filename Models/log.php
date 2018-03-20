@@ -55,6 +55,13 @@ class Log extends Controller
         return self::$db->getStatus();
     }
 
+    public function requiredModels()
+    {
+        $required = [
+            'user'
+        ];
+        return $required;
+    }
     public static function installConfigs()
     {
         Config::addConfigCategory('logging');
