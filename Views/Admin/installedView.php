@@ -55,6 +55,10 @@
 						</div>
 					</div>
 				</div>
+				<div class="panel-footer">
+                    <a href="{BASE}admin/installed/install/{name}" class="btn btn-sm btn-warning" role="button">Install</a>
+                    <a href="{BASE}admin/installed/uninstall/{name}" class="btn btn-sm btn-danger" role="button">Uninstall</a>
+                </div>
 			</div>
 		</div>
 	</div>

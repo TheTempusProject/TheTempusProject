@@ -110,11 +110,11 @@ class Admin extends Controller
                 $node = $installer->getNode($name);
                 if ($node === false) {
                     $out[] = (object) [
-                        'name' => $model->name,
+                        'name' => $name,
                         'installDate' => 'null',
                         'lastUpdate' => 'null',
                         'installedVersion' => 'not installed',
-                        'fileVersion' => $installer->getModelVersion('models', $model->name),
+                        'fileVersion' => $installer->getModelVersion('models', $name),
                         'installDB' => 'not Installed',
                         'installPermissions' => 'not Installed',
                         'installConfigs' => 'not Installed',
@@ -136,6 +136,26 @@ class Admin extends Controller
                     ];
                 }
                 $this->view('admin.installedView', $out);
+                exit();
+            case 'install':
+                self::$template->set('MODEL', $name);
+                if (!Input::exists('installHash')) {
+                    $this->view('admin.install');
+                    exit();
+                }
+                if (!$installer->installModel('Models', $name)) {
+                    Issue::error('There was an error with the Installation.', $installer->getErrors());
+                }
+                exit();
+            case 'uninstall':
+                self::$template->set('MODEL', $name);
+                if (!Input::exists('uninstallHash')) {
+                    $this->view('admin.uninstall');
+                    exit();
+                }
+                if (!$installer->uninstallModel('Models', $name)) {
+                    Issue::error('There was an error with the Installation.', $installer->getErrors());
+                }
                 exit();
         }
         $models = $installer->getModelVersionList('Models');
