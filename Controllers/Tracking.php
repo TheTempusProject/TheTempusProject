@@ -41,10 +41,27 @@ class Tracking extends Controller
     public function index()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$tracking->track(
+        );
     }
     public function pixel()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        Debug::error('pixel tracked');
+        if(Input::exists('hash')) {
+            $hash = Input::get('hash');
+        } else {
+            $hash = 'Unknown';
+        }
+        if(isset($_SERVER['HTTP_REFERER'])) {
+            $referer = $_SERVER['HTTP_REFERER'];
+        } else {
+            $referer = 'Unknown';
+        }
+        
+        self::$tracking->track(
+            'referer' => $referer,
+            'hash' => $hash,
+            'data' => $data,
+        );
     }
 }
