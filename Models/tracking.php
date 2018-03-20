@@ -62,8 +62,8 @@ class Tracking extends Controller
         $flags = [
             'installDB' => true,
             'installPermissions' => false,
-            'installConfigs' => true,
-            'installResources' => true,
+            'installConfigs' => false,
+            'installResources' => false,
             'installPreferences' => false
         ];
         return $flags;
