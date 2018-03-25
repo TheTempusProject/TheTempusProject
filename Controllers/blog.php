@@ -61,7 +61,8 @@ class Blog extends Controller
         self::$title = '{SITENAME} Feed';
         self::$pageDescription = '{SITENAME} blog RSS feed.';
         self::$template->setTemplate('rss');
-        $this->view('blog.rss', self::$blog->listPosts());
+        header('Content-Type: text/xml');
+        $this->view('blog.rss', self::$blog->listPosts(['stripHtml' => true]));
         exit();
     }
 

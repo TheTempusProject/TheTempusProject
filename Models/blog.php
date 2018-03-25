@@ -193,7 +193,7 @@ class Blog extends Controller
         return (object) $fields;
     }
 
-    public static function filterPost($postArray)
+    public static function filterPost($postArray, $params = [])
     {
         foreach ($postArray as $instance) {
             if (!is_object($instance)) {
@@ -224,6 +224,9 @@ class Blog extends Controller
             $instance->isDraft = $draft;
             $instance->authorName = $authorName;
             $instance->contentSummary = $contentSummary;
+            if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
+                $instance->contentSummary = strip_tags($instance->content);
+            }
             $instance->commentCount = self::$comment->count('blog', $instance->ID);
             $out[] = $instance;
             if (!empty($end)) {
@@ -298,9 +301,9 @@ class Blog extends Controller
         }
         return self::filterPost($postData->results());
     }
-    public static function listPosts($includeDrafts = false)
+    public static function listPosts($params = [])
     {
-        if ($includeDrafts === true) {
+        if (isset($params['includeDrafts']) && $params['includeDrafts'] === true) {
             $whereClause = '*';
         } else {
             $whereClause = ['draft', '=', '0'];
@@ -310,6 +313,9 @@ class Blog extends Controller
             Debug::info("No Blog posts found.");
 
             return false;
+        }
+        if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
+            return self::filterPost($postData->results(), ['stripHtml' => true]);
         }
         return self::filterPost($postData->results());
     }

@@ -328,7 +328,7 @@ class Admin extends Controller
             default:
                 break;
         }
-        $this->view('admin.blogList', self::$blog->listPosts(true));
+        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
         exit();
     }
 
