@@ -11,7 +11,7 @@
     <tbody>
         {LOOP}
         <tr>
-            <td><a href="{BASE}admin/installed/view/{name}">{name}</a></td>
+            <td><a href="{BASE}admin/dependencies/view/{name}">{name}</a></td>
             <td>{requiredVersion}</td>
             <td>{version}</td>
         </tr>
