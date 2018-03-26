@@ -33,11 +33,15 @@ use TempusProjectCore\Classes\Email;
 
 class Sessions extends Controller
 {
+    private static $group;
+    private static $user;
     private static $activeSession = false;
 
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$group = $this->model('group');
+        self::$user = $this->model('user');
     }
 
     /**

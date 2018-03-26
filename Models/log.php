@@ -30,11 +30,14 @@ use TempusProjectCore\Core\Installer;
 class Log extends Controller
 {
     private static $enabled;
+    private static $user;
     private $usernames;
+
 
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$user = $this->model('user');
     }
 
     /**

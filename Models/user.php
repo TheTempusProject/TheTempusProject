@@ -33,6 +33,9 @@ use TempusProjectCore\Core\Installer;
 
 class User extends Controller
 {
+    private static $session;
+    private static $group;
+    private static $log;
     private $usernames;
     private $avatars;
     private $data = [];
@@ -43,6 +46,9 @@ class User extends Controller
         if (!isset(self::$db)) {
             self::$db = DB::getInstance();
         }
+        self::$session = $this->model('session');
+        self::$group = $this->model('group');
+        self::$log = $this->model('log');
     }
 
     /**

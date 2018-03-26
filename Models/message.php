@@ -27,12 +27,14 @@ use TempusProjectCore\Core\Template;
 
 class Message extends Controller
 {
+    private static $user;
     private $messages;
     private $usernames;
 
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$user = $this->model('user');
     }
 
     public function loadInterface()

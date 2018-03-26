@@ -31,9 +31,15 @@ use TempusProjectCore\Core\Installer;
 
 class Comment extends Controller
 {
+    public static $log;
+    public static $blog;
+    public static $user;
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$log = $this->model('log');
+        self::$blog = $this->model('blog');
+        self::$user = $this->model('user');
     }
 
     /**

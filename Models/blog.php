@@ -25,9 +25,16 @@ use TempusProjectCore\Core\Updater;
 
 class Blog extends Controller
 {
+    private static $comment;
+    private static $user;
+    private static $log;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$comment = $this->model('comment');
+        self::$user = $this->model('user');
+        self::$log = $this->model('log');
     }
 
     /**

@@ -26,10 +26,14 @@ use TempusProjectCore\Core\Updater;
 
 class Bugreport extends Controller
 {
+    private static $log;
+    private static $user;
     private static $enabled = null;
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$log = $this->model('log');
+        self::$user = $this->model('user');
     }
     
     /**

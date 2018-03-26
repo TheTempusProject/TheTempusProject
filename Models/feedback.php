@@ -27,10 +27,12 @@ use TempusProjectCore\Core\Installer;
 
 class Feedback extends Controller
 {
+    private static $log;
     private static $enabled = null;
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$log = $this->model('log');
     }
 
     /**

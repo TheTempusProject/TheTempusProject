@@ -23,9 +23,11 @@ use TempusProjectCore\Core\Installer;
 
 class Subscribe extends Controller
 {
+    private static $log;
     public function __construct()
     {
         Debug::log('Model Constructed: ' . get_class($this));
+        self::$log = $this->model('log');
     }
 
     /**

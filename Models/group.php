@@ -31,9 +31,11 @@ use TempusProjectCore\Core\Installer;
 
 class Group extends Controller
 {
+    private static $log;
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        self::$log = $this->model('log');
     }
     /**
      * This function is used to install database structures and configuration
