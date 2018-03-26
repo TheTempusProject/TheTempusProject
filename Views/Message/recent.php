@@ -34,7 +34,7 @@
             </div>
         </li>
         {/ALT}
-        <li class="message-footer">
+        <li class="message-footer text-center">
             <a href="{BASE}usercp/messages">Read All New Messages</a>
         </li>
     </ul>

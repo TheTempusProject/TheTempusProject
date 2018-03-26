@@ -8,7 +8,7 @@
         </div>
         <div id="footer" class="navbar-collapse collapse">
             <div class="row">
-                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12 text-center">
+                <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 text-center">
                     <h3>Contact</h3>
                     <ul>
                         <li><a href="{BASE}home/feedback">Feedback</a></li>
@@ -16,7 +16,7 @@
                         <li><a href="{BASE}home/terms">Terms of Service</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-5 col-md-3 col-sm-4 col-xs-12 text-center">
+                <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12 text-center">
                     <div class="social">
                         <i><a href="{BASE}fb"><span class="fa fa-facebook"></span></a></i>
                         <i><a href="{BASE}twitter"><span class="fa fa-twitter"></span></a></i>
