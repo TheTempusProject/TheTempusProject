@@ -45,6 +45,7 @@ class Admin extends Controller
     {
         self::$template->noFollow();
         self::$template->noIndex();
+        self::$session = $this->model('session');
         if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to view this page.');
             exit();
@@ -61,7 +62,6 @@ class Admin extends Controller
         self::$group = $this->model('group');
         self::$log = $this->model('log');
         self::$message = $this->model('message');
-        self::$session = $this->model('session');
         self::$subscribe = $this->model('subscribe');
         self::$tracking = $this->model('track');
         self::$user = $this->model('user');

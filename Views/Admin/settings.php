@@ -1,5 +1,5 @@
 <legend>Settings</legend>
-<form action="" method="post" class="form-horizontal">
+<form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
     <div class="form-group">
         <label for="loginLimit" class="col-lg-3 control-label">Install Hash</label>
         <div class="col-lg-3">

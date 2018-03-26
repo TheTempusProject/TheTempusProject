@@ -16,13 +16,13 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="mailSubject" class="col-lg-1 control-label">Subject:</label>
+        <label for="mailSubject" class="col-lg-3 control-label">Subject:</label>
         <div class="col-lg-2">
             <input class="form-control" type="text" name="mailSubject" id="mailSubject">
         </div>
     </div>
     <div class="form-group">
-        <label for="mailTitle" class="col-lg-1 control-label">Title:</label>
+        <label for="mailTitle" class="col-lg-3 control-label">Title:</label>
         <div class="col-lg-2">
             <input class="form-control" type="text" name="mailTitle" id="mailTitle">
         </div>
