@@ -62,13 +62,6 @@ class Home extends Controller
         $this->view('index');
         exit();
     }
-    public function debug()
-    {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$template->set('DUMP', var_dump(apache_get_modules(), true));
-        $this->view('dump');
-        exit();
-    }
 
     public function subscribe()
     {
