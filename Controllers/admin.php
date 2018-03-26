@@ -88,6 +88,27 @@ class Admin extends Controller
         $this->view('admin.dash');
     }
 
+    public function redirects()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Redirects';
+        $this->view('admin.dash');
+    }
+
+    public function tracking()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Tracking';
+        $this->view('admin.dash');
+    }
+
+    public function api()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - API';
+        $this->view('admin.dash');
+    }
+
     public function dependencies($sub = null)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
