@@ -31,9 +31,20 @@ use TempusProjectCore\Classes\DB;
 
 class Home extends Controller
 {
+    private static $session;
+    private static $subscribe;
+    private static $feedback;
+    private static $bugreport;
+    private static $user;
+
     public function __construct()
     {
         Debug::log('Controller Constructing: ' . get_class($this));
+        self::$session = $this->model('session');
+        self::$subscribe = $this->model('subscribe');
+        self::$feedback = $this->model('feedback');
+        self::$bugreport = $this->model('bugreport');
+        self::$user = $this->model('user');
     }
     public function __destruct()
     {

@@ -24,10 +24,15 @@ use TempusProjectCore\Classes\Code;
 
 class Tracking extends Controller
 {
+    private static $tracking;
+    private static $session;
+
     public function __construct()
     {
         self::$template->noIndex();
         self::$template->noFollow();
+        self::$tracking = $this->model('tracking');
+        self::$session = $this->model('session');
     }
     
     public function __destruct()
@@ -41,27 +46,26 @@ class Tracking extends Controller
     public function index()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$tracking->track(
-        );
+        self::$tracking->track();
     }
     public function pixel()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        if(Input::exists('hash')) {
+        if (Input::exists('hash')) {
             $hash = Input::get('hash');
         } else {
             $hash = 'Unknown';
         }
-        if(isset($_SERVER['HTTP_REFERER'])) {
+        if (isset($_SERVER['HTTP_REFERER'])) {
             $referer = $_SERVER['HTTP_REFERER'];
         } else {
             $referer = 'Unknown';
         }
         
-        self::$tracking->track(
+        self::$tracking->track([
             'referer' => $referer,
             'hash' => $hash,
             'data' => $data,
-        );
+        ]);
     }
 }

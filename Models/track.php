@@ -4,7 +4,7 @@
  *
  * This class is used to provide a link and click treacking interface.
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -28,13 +28,13 @@ use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Core\Installer;
 
-class Tracking extends Controller
+class Track extends Controller
 {
     private static $log;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$log = $this->model('log');
     }
 
     /**
@@ -59,13 +59,15 @@ class Tracking extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+
+    public static function requiredModels()
     {
         $required = [
             'log'
         ];
         return $required;
     }
+
     public static function installFlags()
     {
         $flags = [
@@ -77,10 +79,12 @@ class Tracking extends Controller
         ];
         return $flags;
     }
+
     public static function modelVersion()
     {
         return '2.0.0';
     }
+
     /**
      * Retrieves a comment by its ID and parses it.
      *
@@ -89,7 +93,7 @@ class Tracking extends Controller
      *
      * @return object - The parsed comment db entry.
      */
-    public static function findById($id)
+    public function findById($id)
     {
         if (!Check::id($id)) {
             Debug::info("tracking: illegal ID.");
@@ -104,6 +108,7 @@ class Tracking extends Controller
         }
         return $trackingData->results();
     }
+
     /**
      * Function to delete the specified post.
      *
@@ -113,6 +118,9 @@ class Tracking extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -134,7 +142,8 @@ class Tracking extends Controller
         }
         return true;
     }
-    public static function count($contentType, $hash)
+
+    public function count($contentType, $hash)
     {
         if (!Check::id($contentID)) {
             Debug::info("tracked: illegal ID.");
@@ -155,7 +164,8 @@ class Tracking extends Controller
         }
         return $data->count();
     }
-    public static function display($displayCount, $contentType, $contentID)
+
+    public function display($displayCount, $contentType, $contentID)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -176,7 +186,8 @@ class Tracking extends Controller
         }
         return self::filterComments($commentData->results());
     }
-    public static function track($contentType, $contentID, $comment)
+
+    public function track($contentType, $contentID, $comment)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -205,7 +216,8 @@ class Tracking extends Controller
         }
         return true;
     }
-    public static function create($contentType, $contentID, $comment)
+    
+    public function create($contentType, $contentID, $comment)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");

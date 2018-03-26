@@ -29,6 +29,18 @@ use TempusProjectCore\Classes\Log;
 
 class Admin extends Controller
 {
+    private static $blog;
+    private static $bugreport;
+    private static $comment;
+    private static $feedback;
+    private static $group;
+    private static $log;
+    private static $message;
+    private static $session;
+    private static $subscribe;
+    private static $tracking;
+    private static $user;
+
     public function __construct()
     {
         self::$template->noFollow();
@@ -42,6 +54,17 @@ class Admin extends Controller
             exit();
         }
         self::$template->setTemplate('admin');
+        self::$blog = $this->model('blog');
+        self::$bugreport = $this->model('bugreport');
+        self::$comment = $this->model('comment');
+        self::$feedback = $this->model('feedback');
+        self::$group = $this->model('group');
+        self::$log = $this->model('log');
+        self::$message = $this->model('message');
+        self::$session = $this->model('session');
+        self::$subscribe = $this->model('subscribe');
+        self::$tracking = $this->model('track');
+        self::$user = $this->model('user');
     }
 
     public function __destruct()

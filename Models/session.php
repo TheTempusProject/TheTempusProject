@@ -7,7 +7,7 @@
  *
  * Notes: After refactor, the sessions will use ID's for short term, and Cookies will use the token for long term storage
  *
- * @version 1.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -26,12 +26,12 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Functions\Docroot;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Session as SessionClass;
 use TempusProjectCore\Classes\Cookie;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Email;
 
-class Sessions extends Controller
+class Session extends Controller
 {
     private static $group;
     private static $user;
@@ -40,8 +40,6 @@ class Sessions extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$group = $this->model('group');
-        self::$user = $this->model('user');
     }
 
     /**
@@ -64,7 +62,7 @@ class Sessions extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'user',
@@ -97,7 +95,13 @@ class Sessions extends Controller
 
     public function authenticate()
     {
-        if (!$this->checkSession(Session::get('SessionID')) &&
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
+        if (!isset(self::$group)) {
+            self::$group = $this->model('group');
+        }
+        if (!$this->checkSession(SessionClass::get('SessionID')) &&
             !$this->checkCookie(Cookie::get('RememberToken'), true)) {
             Debug::info('Sessions->authenticate - Could not authenticate cookie or session');
             return false;
@@ -121,6 +125,9 @@ class Sessions extends Controller
      */
     public function checkSession($sessionID)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         // @todo lets put this on some sort of realistic checking regime other than check everything every time
         if ($sessionID == false) {
             return false;
@@ -182,6 +189,9 @@ class Sessions extends Controller
      */
     public function checkCookie($cookieToken, $create = false)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         if ($cookieToken == false) {
             return false;
         }
@@ -224,6 +234,9 @@ class Sessions extends Controller
      */
     public function newSession($expire = null, $override = false, $remember = false, $userID = null)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         if (!isset($expire)) {
             // default Session Expiration is 24 hours
             $expire = (time() + (3600 * 24));
@@ -268,7 +281,7 @@ class Sessions extends Controller
                             ]);
         $data = self::$db->get('sessions', ['userID', '=', $userObject->ID]);
         $sessionData = self::$db->first();
-        Session::put('SessionID', $sessionData->ID);
+        SessionClass::put('SessionID', $sessionData->ID);
         if ($remember) {
             Cookie::put('RememberToken', $sessionData->token, $expire * 30);
         }
@@ -318,7 +331,7 @@ class Sessions extends Controller
      */
     public function destroy($ID)
     {
-        Session::delete('SessionID');
+        SessionClass::delete('SessionID');
         Cookie::delete('RememberToken');
         if (!Check::id($ID)) {
             Debug::info('Session::destroy - Invalid ID');

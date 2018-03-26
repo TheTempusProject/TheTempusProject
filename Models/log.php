@@ -33,11 +33,9 @@ class Log extends Controller
     private static $user;
     private $usernames;
 
-
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$user = $this->model('user');
     }
 
     /**
@@ -58,7 +56,7 @@ class Log extends Controller
         return self::$db->getStatus();
     }
 
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'user'
@@ -170,6 +168,9 @@ class Log extends Controller
     }
     private function parseLog($data)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -304,7 +305,7 @@ class Log extends Controller
      * @param  string  $error    - What was the error
      * @param  string  $data     - Any additional info
      */
-    public static function error($errorID = 500, $class = null, $function = null, $error = null, $data = null)
+    public function error($errorID = 500, $class = null, $function = null, $error = null, $data = null)
     {
         if (!self::enabled('errors')) {
             Debug::info('Error logging is disabled in the config.');
@@ -330,7 +331,7 @@ class Log extends Controller
      *
      * @return null
      */
-    public static function login($userID, $action = 'fail')
+    public function login($userID, $action = 'fail')
     {
         if (!self::enabled('logins')) {
             Debug::info('Login logging is disabled in the config.');
@@ -352,7 +353,7 @@ class Log extends Controller
      *
      * @param string $action - Must be 'pass' or 'fail'
      */
-    public static function admin($action)
+    public function admin($action)
     {
         if (!self::enabled('admin')) {
             Debug::info('Admin logging is disabled in the config.');

@@ -24,9 +24,11 @@ use TempusProjectCore\Classes\Code;
 
 class Error extends Controller
 {
+    private static $session;
+    
     public function __construct()
     {
-        // hi
+        self::$session = $this->model('session');
     }
     
     public function __destruct()

@@ -27,7 +27,6 @@ class Subscribe extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: ' . get_class($this));
-        self::$log = $this->model('log');
     }
 
     /**
@@ -46,7 +45,7 @@ class Subscribe extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'log'
@@ -76,7 +75,7 @@ class Subscribe extends Controller
      *
      * @return bool
      */
-    public static function add($email)
+    public function add($email)
     {
         if (!Check::email($email)) {
             return false;
@@ -105,7 +104,7 @@ class Subscribe extends Controller
      *
      * @return boolean
      */
-    public static function unsubscribe($email, $code)
+    public function unsubscribe($email, $code)
     {
         if (!Check::email($email)) {
             return false;
@@ -126,8 +125,11 @@ class Subscribe extends Controller
      *
      * @return bool
      */
-    public static function remove($data)
+    public function remove($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;

@@ -39,11 +39,12 @@ class BlogLoader extends Controller
      */
     public function __construct()
     {
+        $blog = $this->model('blog');
         $this->components['LOGO'] = Config::get('main/logo');
         $this->components['FOOT'] = Template::standardView('foot');
         $this->components["COPY"] = Template::standardView('copy');
-        $this->components["SIDEBAR"] = Template::standardView('blog.sidebar', self::$blog->recent(5));
-        $this->components["SIDEBAR2"] = Template::standardView('blog.sidebar2', self::$blog->archive());
+        $this->components["SIDEBAR"] = Template::standardView('blog.sidebar', $blog->recent(5));
+        $this->components["SIDEBAR2"] = Template::standardView('blog.sidebar2', $blog->archive());
         if (self::$isLoggedIn) {
             $this->components['STATUS'] = Template::standardView('navigation.statusLoggedIn');
             $this->components['USERNAME'] = self::$activeUser->username;

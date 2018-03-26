@@ -33,9 +33,16 @@ use TempusProjectCore\Classes\Redirect;
 
 class Blog extends Controller
 {
+    private static $session;
+    private static $blog;
+    private static $comment;
+
     public function __construct()
     {
         self::$template->setTemplate('blog');
+        self::$session = $this->model('session');
+        self::$blog = $this->model('blog');
+        self::$comment = $this->model('comment');
     }
 
     public function __destruct()

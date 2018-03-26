@@ -34,23 +34,6 @@ class Message extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$user = $this->model('user');
-    }
-
-    public function loadInterface()
-    {
-        self::$template->set('MESSAGE_COUNT', $this->unreadCount());
-        if ($this->unreadCount() > 0) {
-            $messageBadge = Template::standardView('message.badge');
-        } else {
-            $messageBadge = '';
-        }
-        self::$template->set('MBADGE', $messageBadge);
-        if (self::$isLoggedIn) {
-            self::$template->set('RECENT_MESSAGES', Template::standardView('message.recent', $this->getInbox(5)));
-        } else {
-            self::$template->set('RECENT_MESSAGES', '');
-        }
     }
 
     /**
@@ -75,7 +58,7 @@ class Message extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'user'
@@ -101,6 +84,22 @@ class Message extends Controller
     public static function modelVersion()
     {
         return '2.0.0';
+    }
+    
+    public function loadInterface()
+    {
+        self::$template->set('MESSAGE_COUNT', $this->unreadCount());
+        if ($this->unreadCount() > 0) {
+            $messageBadge = Template::standardView('message.badge');
+        } else {
+            $messageBadge = '';
+        }
+        self::$template->set('MBADGE', $messageBadge);
+        if (self::$isLoggedIn) {
+            self::$template->set('RECENT_MESSAGES', Template::standardView('message.recent', $this->getInbox(5)));
+        } else {
+            self::$template->set('RECENT_MESSAGES', '');
+        }
     }
 
     /**
@@ -202,6 +201,9 @@ class Message extends Controller
      */
     private function processMessage($messageArray)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         foreach ($messageArray as &$message) {
             $short = explode(" ", Sanitize::contentShort($message->message));
             $summary = implode(" ", array_splice($short, 0, 25));
@@ -231,7 +233,9 @@ class Message extends Controller
      */
     public function newThread($to, $subject, $message)
     {
-        Debug::error('check');
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         if (!Check::usernameExists($to)) {
             Debug::info('Message->sendMessage: User not found.');
             return false;

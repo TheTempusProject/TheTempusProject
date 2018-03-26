@@ -28,6 +28,10 @@ use TempusProjectCore\Classes\Check;
 
 class Usercp extends Controller
 {
+    private static $session;
+    private static $user;
+    private static $message;
+
     public function __construct()
     {
         self::$template->activePageSelect('navigation.usercp');
@@ -36,6 +40,9 @@ class Usercp extends Controller
             Issue::notice('You must be logged in to view this page!');
             exit();
         }
+        self::$session = $this->model('session');
+        self::$user = $this->model('user');
+        self::$message = $this->model('message');
     }
 
     public function __destruct()

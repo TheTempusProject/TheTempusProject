@@ -34,7 +34,8 @@ class Appload extends Controller
 {
     // Prevents the application from initiating twice.
     private static $initiated = false;
-    
+    private static $session;
+    private static $message;
     /**
      * The constructor takes care of everything that we will need before
      * finally calling appload to instantiate the appropriate controller/method.
@@ -50,7 +51,8 @@ class Appload extends Controller
             self::$initiated = true;
         }
         parent::__construct();
-
+        self::$session = $this->model('session');
+        self::$message = $this->model('message');
         // Authenticate our session
         self::$session->authenticate();
 

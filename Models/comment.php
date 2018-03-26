@@ -5,7 +5,7 @@
  * This class is used for the creation, retrieval, and manipulation
  * of the comments table.
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -37,9 +37,6 @@ class Comment extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$log = $this->model('log');
-        self::$blog = $this->model('blog');
-        self::$user = $this->model('user');
     }
 
     /**
@@ -61,7 +58,7 @@ class Comment extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'log',
@@ -93,7 +90,7 @@ class Comment extends Controller
      *
      * @return object - The parsed comment db entry.
      */
-    public static function findById($id)
+    public function findById($id)
     {
         if (!Check::id($id)) {
             Debug::info("comments: illegal ID.");
@@ -106,7 +103,7 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
     /**
      * Function to delete the specified post.
@@ -117,6 +114,9 @@ class Comment extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -138,7 +138,7 @@ class Comment extends Controller
         }
         return true;
     }
-    public static function count($contentType, $contentID)
+    public function count($contentType, $contentID)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -159,7 +159,7 @@ class Comment extends Controller
         }
         return $data->count();
     }
-    public static function display($displayCount, $contentType, $contentID)
+    public function display($displayCount, $contentType, $contentID)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -178,10 +178,13 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
-    public static function update($data, $comment)
+    public function update($data, $comment)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::id($data)) {
             Debug::info("Comments: illegal ID.");
             
@@ -201,7 +204,7 @@ class Comment extends Controller
         self::$log->admin("Updated Comment: $data");
         return true;
     }
-    public static function create($contentType, $contentID, $comment)
+    public function create($contentType, $contentID, $comment)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -230,8 +233,14 @@ class Comment extends Controller
         }
         return true;
     }
-    public static function filterComments($data)
+    public function filterComments($data)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
+        if (!isset(self::$blog)) {
+            self::$blog = $this->model('blog');
+        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -261,7 +270,7 @@ class Comment extends Controller
         }
         return $out;
     }
-    public static function recent($contentType = 'all', $limit = null)
+    public function recent($contentType = 'all', $limit = null)
     {
         switch ($contentType) {
             case 'blog':
@@ -285,6 +294,6 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
 }

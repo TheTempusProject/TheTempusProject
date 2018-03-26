@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the groups database table.
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -32,11 +32,12 @@ use TempusProjectCore\Core\Installer;
 class Group extends Controller
 {
     private static $log;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$log = $this->model('log');
     }
+
     /**
      * This function is used to install database structures and configuration
      * options needed for this model.
@@ -51,19 +52,22 @@ class Group extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+
+    public static function requiredModels()
     {
         $required = [
             'log'
         ];
         return $required;
     }
+
     public static function installConfigs()
     {
         Config::addConfigCategory('group');
         Config::addConfig('group', 'defaultGroup', 5);
         return Config::saveConfig();
     }
+
     public static function installResources()
     {
         $fields = [
@@ -93,6 +97,7 @@ class Group extends Controller
         self::$db->insert('groups', $fields);
         return true;
     }
+
     public static function installFlags()
     {
         $flags = [
@@ -104,12 +109,13 @@ class Group extends Controller
         ];
         return $flags;
     }
+
     public static function modelVersion()
     {
         return '2.0.0';
     }
 
-    public static function isEmpty($data)
+    public function isEmpty($data)
     {
         if (!Check::ID($data)) {
             return false;
@@ -120,6 +126,7 @@ class Group extends Controller
         }
         return false;
     }
+
     /**
      * Function to delete the specified group.
      *
@@ -137,7 +144,7 @@ class Group extends Controller
             if (!Check::id($instance)) {
                 $error = true;
             }
-            if (self::countMembers($instance) !== 0) {
+            if ($this->countMembers($instance) !== 0) {
                 Debug::info('Group is not empty.');
                 return false;
             }
@@ -159,7 +166,7 @@ class Group extends Controller
         return true;
     }
 
-    public static function formToJson($pageLimit)
+    public function formToJson($pageLimit)
     {
         if (!Check::id($pageLimit)) {
             Debug::warn('Invalid number supplied for page limit.');
@@ -186,8 +193,11 @@ class Group extends Controller
         return $out;
     }
 
-    public static function create($name, $permissions)
+    public function create($name, $permissions)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::dataTitle($name)) {
             Debug::info("modelGroup: illegal group name.");
             
@@ -204,8 +214,11 @@ class Group extends Controller
         return false;
     }
 
-    public static function update($id, $name, $permissions)
+    public function update($id, $name, $permissions)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::id($id)) {
             return false;
         }
@@ -225,7 +238,7 @@ class Group extends Controller
         return false;
     }
 
-    public static function getPermissions($data)
+    public function getPermissions($data)
     {
         if (!is_object($data)) {
             $docLocation = Docroot::getLocation('appPermissions');
@@ -250,12 +263,13 @@ class Group extends Controller
                 $json[$name2] = 'false';
             }
         }
-        $json['userCount'] = self::countMembers($data->ID);
+        $json['userCount'] = $this->countMembers($data->ID);
         $groupData = (object) array_merge($json, (array) $data);
         return $groupData;
     }
+
     // @todo this should return the whole object, not just permissions
-    public static function findByName($name)
+    public function findByName($name)
     {
         if (!Check::dataString($name)) {
             return false;
@@ -265,10 +279,10 @@ class Group extends Controller
             Debug::warn('Could not find a group named: ' . $name);
             return false;
         }
-        return self::getPermissions($groupData->first());
+        return $this->getPermissions($groupData->first());
     }
 
-    public static function findById($id)
+    public function findById($id)
     {
         if (!Check::id($id)) {
             return false;
@@ -278,10 +292,10 @@ class Group extends Controller
             Debug::warn('Could not find a group with ID: ' . $id);
             return false;
         }
-        return self::getPermissions($groupData->first());
+        return $this->getPermissions($groupData->first());
     }
 
-    public static function listGroups()
+    public function listGroups()
     {
         $db = self::$db->getPaginated('groups', ['ID', '>=', '0']);
         if (!$db->count()) {
@@ -291,17 +305,17 @@ class Group extends Controller
         $x = 0;
         $groups = $db->results();
         foreach ($groups as &$group) {
-            $group->userCount = self::countMembers($group->ID);
+            $group->userCount = $this->countMembers($group->ID);
         }
         return $groups;
     }
 
-    public static function listMembers($id)
+    public function listMembers($id)
     {
         if (!Check::id($id)) {
             return false;
         }
-        $group = self::findById($id);
+        $group = $this->findById($id);
         if ($group === false) {
             return false;
         }
@@ -321,7 +335,7 @@ class Group extends Controller
      *
      * @return boolean|integer
      */
-    public static function countMembers($id)
+    public function countMembers($id)
     {
         if (!Check::id($id)) {
             return false;

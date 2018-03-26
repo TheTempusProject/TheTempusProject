@@ -32,9 +32,13 @@ use TempusProjectCore\Classes\Redirect;
 
 class Register extends Controller
 {
+    private static $session;
+    private static $user;
     public function __construct()
     {
         self::$template->noIndex();
+        self::$session = $this->model('session');
+        self::$user = $this->model('user');
     }
 
     public function __destruct()

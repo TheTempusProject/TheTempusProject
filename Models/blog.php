@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the blog database table.
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -32,9 +32,6 @@ class Blog extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$comment = $this->model('comment');
-        self::$user = $this->model('user');
-        self::$log = $this->model('log');
     }
 
     /**
@@ -55,7 +52,8 @@ class Blog extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+
+    public static function requiredModels()
     {
         $required = [
             'log',
@@ -64,6 +62,7 @@ class Blog extends Controller
         ];
         return $required;
     }
+
     public static function installResources()
     {
         $fields = [
@@ -76,6 +75,7 @@ class Blog extends Controller
             ];
         return self::$db->insert('posts', $fields);
     }
+
     public static function installFlags()
     {
         $flags = [
@@ -87,6 +87,7 @@ class Blog extends Controller
         ];
         return $flags;
     }
+    
     public static function modelVersion()
     {
         return '2.7.0';
@@ -101,6 +102,9 @@ class Blog extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -123,7 +127,7 @@ class Blog extends Controller
         return true;
     }
     
-    public static function newPost($title, $post, $draft)
+    public function newPost($title, $post, $draft)
     {
         if (!Check::dataTitle($title)) {
             Debug::info("modelBlog: illegal title.");
@@ -151,8 +155,12 @@ class Blog extends Controller
         }
         return true;
     }
-    public static function updatePost($id, $title, $content, $draft)
+
+    public function updatePost($id, $title, $content, $draft)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::id($id)) {
             Debug::info("modelBlog: illegal ID.");
             
@@ -184,7 +192,7 @@ class Blog extends Controller
         return true;
     }
 
-    public static function preview($title, $content)
+    public function preview($title, $content)
     {
         if (!Check::dataTitle($title)) {
             Debug::info("modelBlog: illegal characters.");
@@ -200,8 +208,14 @@ class Blog extends Controller
         return (object) $fields;
     }
 
-    public static function filterPost($postArray, $params = [])
+    public function filterPost($postArray, $params = [])
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
+        if (!isset(self::$comment)) {
+            self::$comment = $this->model('comment');
+        }
         foreach ($postArray as $instance) {
             if (!is_object($instance)) {
                 $instance = $postArray;
@@ -244,7 +258,7 @@ class Blog extends Controller
         return $out;
     }
 
-    public static function find($id)
+    public function find($id)
     {
         if (!Check::id($id)) {
             Debug::info("blog find: Invalid ID.");
@@ -257,9 +271,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->first());
+        return $this->filterPost($postData->first());
     }
-    public static function archive()
+
+    public function archive()
     {
         $currentTimeUnix = time();
         $x = 0;
@@ -294,7 +309,8 @@ class Blog extends Controller
         }
         return (object) $dataOut;
     }
-    public static function recent($limit = null)
+
+    public function recent($limit = null)
     {
         if (empty($limit)) {
             $postData = self::$db->getPaginated('posts', '*');
@@ -306,9 +322,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function listPosts($params = [])
+
+    public function listPosts($params = [])
     {
         if (isset($params['includeDrafts']) && $params['includeDrafts'] === true) {
             $whereClause = '*';
@@ -322,11 +339,12 @@ class Blog extends Controller
             return false;
         }
         if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
-            return self::filterPost($postData->results(), ['stripHtml' => true]);
+            return $this->filterPost($postData->results(), ['stripHtml' => true]);
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function byYear($year)
+
+    public function byYear($year)
     {
         if (!Check::id($year)) {
             Debug::info("Invalid Year");
@@ -340,9 +358,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function byAuthor($ID)
+
+    public function byAuthor($ID)
     {
         if (!Check::id($ID)) {
             Debug::info("Invalid Author");
@@ -354,9 +373,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function byMonth($month, $year = 2017)
+
+    public function byMonth($month, $year = 2017)
     {
         if (!Check::id($month)) {
             Debug::info("Invalid Month");
@@ -375,6 +395,6 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
 }

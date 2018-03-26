@@ -43,12 +43,6 @@ class User extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        if (!isset(self::$db)) {
-            self::$db = DB::getInstance();
-        }
-        self::$session = $this->model('session');
-        self::$group = $this->model('group');
-        self::$log = $this->model('log');
     }
 
     /**
@@ -82,7 +76,7 @@ class User extends Controller
         Preference::addPref('avatar', "Images/defaultAvatar.png");
         return Preference::savePrefs(true);
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'log',
@@ -184,6 +178,9 @@ class User extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -220,6 +217,12 @@ class User extends Controller
      */
     public function logIn($username, $password, $remember = false)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
+        if (!isset(self::$session)) {
+            self::$session = $this->model('session');
+        }
         Debug::group('login', 1);
         if (!Check::username($username)) {
             Debug::warn('Invalid Username.');
@@ -268,6 +271,9 @@ class User extends Controller
      */
     public function logOut()
     {
+        if (!isset(self::$session)) {
+            self::$session = $this->model('session');
+        }
         Debug::group("Logout", 1);
         self::$session->destroy(Session::get(Session::get(self::$sessionPrefix . 'SessionToken')));
         self::$isLoggedIn = false;
@@ -464,6 +470,9 @@ class User extends Controller
         }
         if ((empty($json['avatar'])) || ($json['avatar'] == 'defaultAvatar.png')) {
             $json['avatar'] = 'Images/defaultAvatar.png';
+        }
+        if (!isset(self::$group)) {
+            self::$group = $this->model('group');
         }
         $group = self::$group->findById($this->data->userGroup);
         $json['groupName'] = $group->name;

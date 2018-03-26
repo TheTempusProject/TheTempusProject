@@ -6,7 +6,7 @@
  *
  * @todo  make this send a confirmation email
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -29,10 +29,10 @@ class Feedback extends Controller
 {
     private static $log;
     private static $enabled = null;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$log = $this->model('log');
     }
 
     /**
@@ -52,7 +52,7 @@ class Feedback extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public function requiredModels()
+    public static function requiredModels()
     {
         $required = [
             'log'
@@ -143,7 +143,7 @@ class Feedback extends Controller
      *
      * @return bool
      */
-    public static function create($name, $email, $feedback)
+    public function create($name, $email, $feedback)
     {
         if (!self::enabled()) {
             Debug::warn('Feedback is disabled in the config.');
@@ -173,6 +173,9 @@ class Feedback extends Controller
      */
     public function clear()
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         self::$db->delete('feedback', ['ID', '>=', '0']);
         self::$log->admin('Cleared Feedback');
         Debug::info("Feedback Cleared");
@@ -188,6 +191,9 @@ class Feedback extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;

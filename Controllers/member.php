@@ -24,6 +24,8 @@ use TempusProjectCore\Classes\Code;
 
 class Member extends Controller
 {
+    private static $session;
+
     public function __construct()
     {
         self::$template->noIndex();
@@ -31,6 +33,7 @@ class Member extends Controller
             Issue::error('You do not have permission to view this page.');
             exit();
         }
+        self::$session = $this->model('session');
     }
     
     public function __destruct()

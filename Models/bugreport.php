@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the bugreports database table.
  *
- * @version 2.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -32,8 +32,6 @@ class Bugreport extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
-        self::$log = $this->model('log');
-        self::$user = $this->model('user');
     }
     
     /**
@@ -133,6 +131,9 @@ class Bugreport extends Controller
      */
     private function parse($data)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -213,6 +214,9 @@ class Bugreport extends Controller
      */
     public function clear()
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         self::$db->delete('bugreports', ['ID', '>=', '0']);
         self::$log->admin("Cleared Bug Reports");
         Debug::info("Bug Reports Cleared");
@@ -228,6 +232,9 @@ class Bugreport extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
