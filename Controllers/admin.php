@@ -132,32 +132,23 @@ class Admin extends Controller
             case 'view':
                 $node = $installer->getNode($name);
                 if ($node === false) {
-                    $out[] = (object) [
+                    $out = [
                         'name' => $name,
-                        'installDate' => 'null',
-                        'lastUpdate' => 'null',
-                        'installedVersion' => 'not installed',
-                        'fileVersion' => $installer->getModelVersion('models', $name),
-                        'installDB' => 'not Installed',
-                        'installPermissions' => 'not Installed',
-                        'installConfigs' => 'not Installed',
-                        'installResources' => 'not Installed',
-                        'installPreferences' => 'not Installed'
+                        'installDate' => '',
+                        'lastUpdate' => '',
+                        'installStatus' => 'not installed',
+                        'installedVersion' => '',
+                        'installDB' => '',
+                        'installPermissions' => '',
+                        'installConfigs' => '',
+                        'installResources' => '',
+                        'installPreferences' => '',
+                        'version' => ''
                     ];
                 } else {
-                    $out[] = (object) [
-                        'name' => $node['name'],
-                        'installDate' => $node['installDate'],
-                        'lastUpdate' => $node['lastUpdate'],
-                        'installedVersion' => $node['currentVersion'],
-                        'fileVersion' => $installer->getModelVersion('models', $node['name']),
-                        'installDB' => $node['installDB'],
-                        'installPermissions' => $node['installPermissions'],
-                        'installConfigs' => $node['installConfigs'],
-                        'installResources' => $node['installResources'],
-                        'installPreferences' => $node['installPreferences']
-                    ];
+                    $out = array_merge(['version' => $installer->getModelVersion('Models', $name)], (array) $node);
                 }
+                
                 $this->view('admin.installedView', $out);
                 exit();
             case 'install':
@@ -169,7 +160,7 @@ class Admin extends Controller
                 if (!$installer->installModel('Models', $name)) {
                     Issue::error('There was an error with the Installation.', $installer->getErrors());
                 }
-                exit();
+                break;
             case 'uninstall':
                 self::$template->set('MODEL', $name);
                 if (!Input::exists('uninstallHash')) {
@@ -179,29 +170,30 @@ class Admin extends Controller
                 if (!$installer->uninstallModel('Models', $name)) {
                     Issue::error('There was an error with the Installation.', $installer->getErrors());
                 }
-                exit();
+                break;
         }
         $models = $installer->getModelVersionList('Models');
         foreach ($models as $model) {
+            $modelArray = (array) $model;
             $node = $installer->getNode($model->name);
             if ($node === false) {
-                $out[] = (object) [
-                    'name' => $model->name,
-                    'installDate' => 'null',
-                    'lastUpdate' => 'null',
-                    'installedVersion' => 'not installed',
-                    'fileVersion' => $installer->getModelVersion('models', $model->name)
-                ];
-            } else {
-                $out[] = (object) [
-                    'name' => $node['name'],
-                    'installDate' => $node['installDate'],
-                    'lastUpdate' => $node['lastUpdate'],
-                    'installedVersion' => $node['currentVersion'],
-                    'fileVersion' => $installer->getModelVersion('models', $node['name'])
+                $out = [
+                    'name' => $name,
+                    'installDate' => '',
+                    'lastUpdate' => '',
+                    'installStatus' => 'not installed',
+                    'installedVersion' => '',
+                    'installDB' => '',
+                    'installPermissions' => '',
+                    'installConfigs' => '',
+                    'installResources' => '',
+                    'installPreferences' => '',
+                    'version' => ''
                 ];
             }
+            $out[] = (object) array_merge($modelArray, $node);
         }
+        
         $this->view('admin.installed', $out);
         exit();
     }

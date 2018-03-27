@@ -15,6 +15,10 @@
 										<td align="right">{name}</td>
 									</tr>
 									<tr>
+										<td>Status:</td>
+										<td align="right">{installStatus}</td>
+									</tr>
+									<tr>
 										<td>Installed:</td>
 										<td align="right">{DTC}{installDate}{/DTC}</td>
 									</tr>
@@ -24,11 +28,11 @@
 									</tr>
 									<tr>
 										<td>File Version:</td>
-										<td align="right">{fileVersion}</td>
+										<td align="right">{version}</td>
 									</tr>
 									<tr>
 										<td>Installed Version:</td>
-										<td align="right">{installedVersion}</td>
+										<td align="right">{currentVersion}</td>
 									</tr>
 									<tr>
 										<td>installDB:</td>
