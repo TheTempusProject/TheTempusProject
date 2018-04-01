@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the blog database table.
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -18,27 +18,68 @@ namespace TheTempusProject\Models;
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Check;
-use TempusProjectCore\Functions\Docroot;
 use TempusProjectCore\Classes\Sanitize;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Core\Updater;
 
 class Blog extends Controller
 {
     private static $comment;
     private static $user;
     private static $log;
-
+    
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log',
+            'user',
+            'comment'
+        ];
+        return $required;
+    }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => true,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return bool - The status of the completed install
      */
     public static function installDB()
     {
@@ -53,16 +94,12 @@ class Blog extends Controller
         return self::$db->getStatus();
     }
 
-    public static function requiredModels()
-    {
-        $required = [
-            'log',
-            'user',
-            'comment'
-        ];
-        return $required;
-    }
-
+    /**
+     * Installs any resources needed for the model. Resources are generally
+     * database entires or other structure data needed for the mdoel.
+     *
+     * @return bool - The status of the completed install
+     */
     public static function installResources()
     {
         $fields = [
@@ -76,27 +113,21 @@ class Blog extends Controller
         return self::$db->insert('posts', $fields);
     }
 
-    public static function installFlags()
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => true,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-    
-    public static function modelVersion()
-    {
-        return '2.7.0';
+        self::$db->removeTable('posts');
+        return true;
     }
 
     /**
      * Function to delete the specified post.
      *
-     * @param  int|array $ID the log ID or array of ID's to be deleted
+     * @param  int|array $data - the log ID or array of ID's to be deleted
      *
      * @return bool
      */

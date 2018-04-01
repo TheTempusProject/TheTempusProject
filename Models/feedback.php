@@ -6,7 +6,7 @@
  *
  * @todo  make this send a confirmation email
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -23,23 +23,64 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Permission;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Core\Installer;
 
 class Feedback extends Controller
 {
     private static $log;
     private static $enabled = null;
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
+
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -52,13 +93,12 @@ class Feedback extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public static function requiredModels()
-    {
-        $required = [
-            'log'
-        ];
-        return $required;
-    }
+
+    /**
+     * Install configuration options needed for the model.
+     *
+     * @return bool - If the configurations were added without error
+     */
     public static function installConfigs()
     {
         Config::addConfigCategory('feedback');
@@ -68,26 +108,31 @@ class Feedback extends Controller
         Config::addConfig('feedback', 'emailVersion', 'feedbackResponse');
         return Config::saveConfig();
     }
+
+    /**
+     * Install permissions needed for the model.
+     *
+     * @return bool - If the permissions were added without error
+     */
     public static function installPermissions()
     {
         Permission::addPerm('feedback', false);
         return Permission::savePerms(true);
     }
-    public static function installFlags()
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => true,
-            'installConfigs' => true,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
+        Config::removeConfigCategory('feedback', true);
+        Permission::removePerm('feedback', true);
+        self::$db->removeTable('feedback');
+        return true;
     }
-    public static function modelVersion()
-    {
-        return '2.0.0';
-    }
+    
     private static function enabled()
     {
         if (empty(self::$enabled)) {

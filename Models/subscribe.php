@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the subscribers database table.
  *
- * @version 2.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -19,32 +19,34 @@ use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Core\Installer;
 
 class Subscribe extends Controller
 {
     private static $log;
+
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: ' . get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
      */
-    public static function installDB()
+    public static function modelVersion()
     {
-        self::$db->newTable('subscribers');
-        self::$db->addfield('confirmed', 'int', '1');
-        self::$db->addfield('subscribed', 'int', '10');
-        self::$db->addfield('confirmationCode', 'varchar', '80');
-        self::$db->addfield('email', 'varchar', '75');
-        self::$db->createTable();
-        return self::$db->getStatus();
+        return '3.0.0';
     }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
     public static function requiredModels()
     {
         $required = [
@@ -52,6 +54,12 @@ class Subscribe extends Controller
         ];
         return $required;
     }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
     public static function installFlags()
     {
         $flags = [
@@ -63,9 +71,32 @@ class Subscribe extends Controller
         ];
         return $flags;
     }
-    public static function modelVersion()
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
+     */
+    public static function installDB()
     {
-        return '2.0.0';
+        self::$db->newTable('subscribers');
+        self::$db->addfield('confirmed', 'int', '1');
+        self::$db->addfield('subscribed', 'int', '10');
+        self::$db->addfield('confirmationCode', 'varchar', '80');
+        self::$db->addfield('email', 'varchar', '75');
+        self::$db->createTable();
+        return self::$db->getStatus();
+    }
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
+    {
+        self::$db->removeTable('subscribers');
+        return true;
     }
 
     /**

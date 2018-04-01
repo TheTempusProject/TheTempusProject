@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the user database table.
  *
- * @version 2.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -21,15 +21,10 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Cookie;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Classes\Preference;
 use TempusProjectCore\Functions\Docroot;
 use TempusProjectCore\Classes\CustomException;
-use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Core\Installer;
 
 class User extends Controller
 {
@@ -40,16 +35,60 @@ class User extends Controller
     private $avatars;
     private $data = [];
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log',
+            'session',
+            'group'
+        ];
+        return $required;
+    }
+
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => true
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -68,6 +107,12 @@ class User extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+
+    /**
+     * Install preferences needed for the model.
+     *
+     * @return bool - If the preferences were added without error
+     */
     public static function installPreferences()
     {
         Preference::addPref('gender', "unspecified");
@@ -76,29 +121,21 @@ class User extends Controller
         Preference::addPref('avatar', "Images/defaultAvatar.png");
         return Preference::savePrefs(true);
     }
-    public static function requiredModels()
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $required = [
-            'log',
-            'session',
-            'group'
-        ];
-        return $required;
-    }
-    public static function installFlags()
-    {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => false,
-            'installPreferences' => true
-        ];
-        return $flags;
-    }
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        self::$db->removeTable('users');
+        Preference::removePref('gender');
+        Preference::removePref('email');
+        Preference::removePref('newsletter');
+        Preference::removePref('avatar');
+        Preference::savePrefs(true);
+        return true;
     }
 
     /**
@@ -124,6 +161,7 @@ class User extends Controller
         }
         return $this->usernames[$ID];
     }
+
     /**
      * Since we need a cache of the usernames, we use this function
      * to find/return all usernames based on ID.
@@ -144,6 +182,7 @@ class User extends Controller
             return 0;
         }
     }
+
     /**
      * Since we need a cache of the usernames, we use this function
      * to find/return all usernames based on ID.
@@ -206,6 +245,7 @@ class User extends Controller
         }
         return true;
     }
+
     /**
      * This function is responsible for all the business logic of logging in.
      *

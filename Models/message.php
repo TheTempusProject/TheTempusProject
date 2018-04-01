@@ -4,7 +4,7 @@
  *
  * Houses all of the functions for the core messaging system.
  *
- * @version 2.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -31,16 +31,58 @@ class Message extends Controller
     private $messages;
     private $usernames;
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+    
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'user'
+        ];
+        return $required;
+    }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -58,32 +100,28 @@ class Message extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public static function requiredModels()
-    {
-        $required = [
-            'user'
-        ];
-        return $required;
-    }
+
+    /**
+     * Install permissions needed for the model.
+     *
+     * @return bool - If the permissions were added without error
+     */
     public static function installPermissions()
     {
         Permission::addPerm('sendMessage', false);
         return Permission::savePerms(true);
     }
-    public static function installFlags()
+    
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => true,
-            'installConfigs' => false,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        Permission::removePerm('sendMessage', true);
+        self::$db->removeTable('messages');
+        return true;
     }
     
     public function loadInterface()

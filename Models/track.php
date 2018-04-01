@@ -1,10 +1,10 @@
 <?php
 /**
- * Models/tracking.php
+ * Models/track.php
  *
  * This class is used to provide a link and click treacking interface.
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -15,33 +15,67 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check;
-use TempusProjectCore\Classes\Code;
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Cookie;
-use TempusProjectCore\Classes\Log;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
-use TempusProjectCore\Core\Installer;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Core\Controller;
 
 class Track extends Controller
 {
     private static $log;
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -60,29 +94,16 @@ class Track extends Controller
         return self::$db->getStatus();
     }
 
-    public static function requiredModels()
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $required = [
-            'log'
-        ];
-        return $required;
-    }
-
-    public static function installFlags()
-    {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        self::$db->removeTable('tracked');
+        self::$db->removeTable('trackingReference');
+        return true;
     }
 
     /**
@@ -138,110 +159,6 @@ class Track extends Controller
         }
         if (!empty($error)) {
             Debug::info('One or more invalid ID\'s.');
-            return false;
-        }
-        return true;
-    }
-
-    public function count($contentType, $hash)
-    {
-        if (!Check::id($contentID)) {
-            Debug::info("tracked: illegal ID.");
-            
-            return false;
-        }
-        if (!Check::dataTitle($contentType)) {
-            Debug::info("tracked: illegal Type.");
-            
-            return false;
-        }
-        $where = ['contentType', '=', $contentType, 'AND', 'contentID', '=', $contentID];
-        $data = self::$db->get('tracked', $where);
-        if (!$data->count()) {
-            Debug::info("No tracked data found.");
-
-            return 0;
-        }
-        return $data->count();
-    }
-
-    public function display($displayCount, $contentType, $contentID)
-    {
-        if (!Check::id($contentID)) {
-            Debug::info("Comments: illegal ID.");
-            
-            return false;
-        }
-        if (!Check::dataTitle($contentType)) {
-            Debug::info("Comments: illegal Type.");
-            
-            return false;
-        }
-        $where = ['contentType', '=', $contentType, 'AND', 'contentID', '=', $contentID];
-        $commentData = self::$db->get('comments', $where, 'created', 'DESC', [0, $displayCount]);
-        if (!$commentData->count()) {
-            Debug::info("No comments found.");
-
-            return false;
-        }
-        return self::filterComments($commentData->results());
-    }
-
-    public function track($contentType, $contentID, $comment)
-    {
-        if (!Check::id($contentID)) {
-            Debug::info("Comments: illegal ID.");
-            
-            return false;
-        }
-        if (!Check::dataTitle($contentType)) {
-            Debug::info("Comments: illegal Type.");
-            
-            return false;
-        }
-        $fields = [
-            'author' => self::$activeUser->ID,
-            'edited' => time(),
-            'created' => time(),
-            'content' => $comment,
-            'contentType' => $contentType,
-            'contentID' => $contentID,
-            'approved' => 0,
-            ];
-        if (!self::$db->insert('comments', $fields)) {
-            new CustomException('newComment');
-            Debug::error("Comments: $data not created: $fields");
-
-            return false;
-        }
-        return true;
-    }
-    
-    public function create($contentType, $contentID, $comment)
-    {
-        if (!Check::id($contentID)) {
-            Debug::info("Comments: illegal ID.");
-            
-            return false;
-        }
-        if (!Check::dataTitle($contentType)) {
-            Debug::info("Comments: illegal Type.");
-            
-            return false;
-        }
-        $fields = [
-            'author' => self::$activeUser->ID,
-            'edited' => time(),
-            'created' => time(),
-            'content' => $comment,
-            'contentType' => $contentType,
-            'contentID' => $contentID,
-            'approved' => 0,
-            ];
-        if (!self::$db->insert('comments', $fields)) {
-            new CustomException('newComment');
-            Debug::error("Comments: $data not created: $fields");
-
             return false;
         }
         return true;

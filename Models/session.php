@@ -5,9 +5,10 @@
  * This model is used for the modification and management of the session data.
  * It also acts as an interpreter for the DB.
  *
- * Notes: After refactor, the sessions will use ID's for short term, and Cookies will use the token for long term storage
+ * Notes: After refactor, the sessions will use ID's for short term, and Cookies
+ * will use the token for long term storage
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -19,7 +20,6 @@
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Core\Installer;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Classes\Debug;
@@ -28,8 +28,6 @@ use TempusProjectCore\Functions\Docroot;
 use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Session as SessionClass;
 use TempusProjectCore\Classes\Cookie;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
 
 class Session extends Controller
 {
@@ -37,16 +35,59 @@ class Session extends Controller
     private static $user;
     private static $activeSession = false;
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+    
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'user',
+            'group'
+        ];
+        return $required;
+    }
+
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -62,14 +103,12 @@ class Session extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public static function requiredModels()
-    {
-        $required = [
-            'user',
-            'group'
-        ];
-        return $required;
-    }
+    
+    /**
+     * Install configuration options needed for the model.
+     *
+     * @return bool - If the configurations were added without error
+     */
     public static function installConfigs()
     {
         Config::updateConfig('session', 'sessionPrefix', 'TTP_');
@@ -77,20 +116,16 @@ class Session extends Controller
         Config::updateConfig('cookie', 'cookieExpiry', 604800);
         return Config::saveConfig();
     }
-    public static function installFlags()
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => true,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        self::$db->removeTable('sessions');
+        return true;
     }
 
     public function authenticate()

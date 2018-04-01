@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the groups database table.
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -16,33 +16,70 @@
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
-use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Functions\Docroot;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Cookie;
 use TempusProjectCore\Classes\Log;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
-use TempusProjectCore\Core\Installer;
 
 class Group extends Controller
 {
     private static $log;
 
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => true,
+            'installResources' => true,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -53,14 +90,11 @@ class Group extends Controller
         return self::$db->getStatus();
     }
 
-    public static function requiredModels()
-    {
-        $required = [
-            'log'
-        ];
-        return $required;
-    }
-
+    /**
+     * Install configuration options needed for the model.
+     *
+     * @return bool - If the configurations were added without error
+     */
     public static function installConfigs()
     {
         Config::addConfigCategory('group');
@@ -68,6 +102,12 @@ class Group extends Controller
         return Config::saveConfig();
     }
 
+    /**
+     * Installs any resources needed for the model. Resources are generally
+     * database entires or other structure data needed for the mdoel.
+     *
+     * @return bool - The status of the completed install
+     */
     public static function installResources()
     {
         $fields = [
@@ -97,22 +137,17 @@ class Group extends Controller
         self::$db->insert('groups', $fields);
         return true;
     }
-
-    public static function installFlags()
+    
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => true,
-            'installResources' => true,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        Config::removeConfigCategory('group');
+        self::$db->removeTable('groups');
+        return true;
     }
 
     public function isEmpty($data)

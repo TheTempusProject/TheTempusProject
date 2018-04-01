@@ -5,7 +5,7 @@
  * This class is used for the creation, retrieval, and manipulation
  * of the comments table.
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -22,28 +22,68 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Cookie;
 use TempusProjectCore\Classes\Log;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
-use TempusProjectCore\Core\Installer;
 
 class Comment extends Controller
 {
     public static $log;
     public static $blog;
     public static $user;
+
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
 
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Returns the current model version.
      *
-     * @return boolean - The status of the completed install.
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public static function requiredModels()
+    {
+        $required = [
+            'log',
+            'blog',
+            'user'
+        ];
+        return $required;
+    }
+    
+    /**
+     * Tells the installer which types of integrations your model needs to install.
+     *
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -58,30 +98,18 @@ class Comment extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-    public static function requiredModels()
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - if the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $required = [
-            'log',
-            'blog',
-            'user'
-        ];
-        return $required;
+        self::$db->removeTable('comments');
+        return true;
     }
-    public static function installFlags()
-    {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-    public static function modelVersion()
-    {
-        return '2.0.0';
-    }
+    
     /**
      * Retrieves a comment by its ID and parses it.
      *

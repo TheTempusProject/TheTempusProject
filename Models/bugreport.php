@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the bugreports database table.
  *
- * @version 2.1
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -22,23 +22,66 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\CustomException;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Core\Updater;
 
 class Bugreport extends Controller
 {
     private static $log;
     private static $user;
     private static $enabled = null;
+    
+    /**
+     * The model constructor.
+     */
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
     }
+
+    /**
+     * Returns the current model version.
+     *
+     * @return string - the correct model version
+     */
+    public static function modelVersion()
+    {
+        return '3.0.0';
+    }
+
+    /**
+     * Returns an array of models required to run this model without error.
+     *
+     * @return array - An array of models
+     */
+    public function requiredModels()
+    {
+        $required = [
+            'log',
+            'user'
+        ];
+        return $required;
+    }
     
     /**
-     * This function is used to install database structures and configuration
-     * options needed for this model.
+     * Tells the installer which types of integrations your model needs to install.
      *
-     * @return boolean - The status of the completed install.
+     * @return array - Install flags
+     */
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+
+    /**
+     * This function is used to install database structures needed for this model.
+     *
+     * @return boolean - The status of the completed install
      */
     public static function installDB()
     {
@@ -53,21 +96,23 @@ class Bugreport extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
-
-    public function requiredModels()
-    {
-        $required = [
-            'log',
-            'user'
-        ];
-        return $required;
-    }
     
+    /**
+     * Install permissions needed for the model.
+     *
+     * @return bool - If the permissions were added without error
+     */
     public static function installPermissions()
     {
         Permission::addPerm('bugreport', false);
         return Permission::savePerms(true);
     }
+
+    /**
+     * Install configuration options needed for the model.
+     *
+     * @return bool - If the configurations were added without error
+     */
     public static function installConfigs()
     {
         Config::addConfigCategory('bugreports');
@@ -77,22 +122,25 @@ class Bugreport extends Controller
         Config::addConfig('bugreports', 'emailTemplate', true);
         return Config::saveConfig();
     }
-    public static function installFlags()
+
+    /**
+     * This method will remove all the installed model components.
+     *
+     * @return bool - If the uninstall was completed without error
+     */
+    public static function uninstall()
     {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => true,
-            'installConfigs' => true,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
-    public static function modelVersion()
-    {
-        return '2.0.0';
+        Config::removeConfigCategory('bugreports', true);
+        Permission::removePerm('bugreport', true);
+        self::$db->removeTable('bugreports');
+        return true;
     }
 
+    /**
+     * Checks if the model and database are both enabled.
+     *
+     * @return bool - if the model is enabled or not
+     */
     private static function enabled()
     {
         if (empty(self::$enabled)) {
@@ -203,6 +251,7 @@ class Bugreport extends Controller
         }
         return true;
     }
+
     /**
      * Function to clear logs of a defined type.
      *
