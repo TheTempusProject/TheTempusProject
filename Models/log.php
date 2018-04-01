@@ -155,9 +155,9 @@ class Log extends Controller
         return $this->parseLog($logData->first());
     }
     /**
-     * Select feedback from the logs table.
+     * Select entry from the logs table.
      *
-     * @param  int $id - The feedback id.
+     * @param  int $id - The log id.
      *
      * @return array
      */
@@ -177,7 +177,7 @@ class Log extends Controller
      * This function parses the error description and
      * separates it into separate keys in the array.
      *
-     * @param  array $data - An array of feedback we need to convert.
+     * @param  array $data - An array of errors we need to convert.
      *
      * @return array
      */

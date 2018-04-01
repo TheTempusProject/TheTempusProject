@@ -106,6 +106,8 @@ class Group extends Controller
      * Installs any resources needed for the model. Resources are generally
      * database entires or other structure data needed for the mdoel.
      *
+     * @todo make this use the default permissions
+     *
      * @return bool - The status of the completed install
      */
     public static function installResources()
