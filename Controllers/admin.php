@@ -137,6 +137,7 @@ class Admin extends Controller
                         'installDate' => '',
                         'lastUpdate' => '',
                         'installStatus' => 'not installed',
+                        'currentVersion' => '',
                         'installedVersion' => '',
                         'installDB' => '',
                         'installPermissions' => '',
@@ -177,8 +178,8 @@ class Admin extends Controller
             $modelArray = (array) $model;
             $node = $installer->getNode($model->name);
             if ($node === false) {
-                $out = [
-                    'name' => $name,
+                $node = [
+                    'name' => $model->name,
                     'installDate' => '',
                     'lastUpdate' => '',
                     'installStatus' => 'not installed',
@@ -188,7 +189,8 @@ class Admin extends Controller
                     'installConfigs' => '',
                     'installResources' => '',
                     'installPreferences' => '',
-                    'version' => ''
+                    'currentVersion' => '',
+                    'version' => $installer->getModelVersion('Models', $model->name)
                 ];
             }
             $out[] = (object) array_merge($modelArray, $node);
