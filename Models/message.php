@@ -195,9 +195,10 @@ class Message extends Controller
 
     public function getInbox($limit = null)
     {
-        if (!empty($limit)) {
-            $limit = [0, $limit];
+        if (empty($limit)) {
+            $limit = 10;
         }
+        $limit = [0, $limit];
         $messageData = self::$db->getPaginated('messages', ['userTo', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'recieverDeleted', '=', 0], 'ID', 'DESC', $limit);
         if ($messageData->count() == 0) {
             Debug::info('No messages found');
@@ -213,11 +214,11 @@ class Message extends Controller
      */
     public function getOutbox($limit = null)
     {
-        if (!empty($limit)) {
-            $messageData = self::$db->get('messages', ['userFrom', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'senderDeleted', '=', 0], 'ID', 'DESC', [0, $limit]);
-        } else {
-            $messageData = self::$db->getPaginated('messages', ['userFrom', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'senderDeleted', '=', 0], 'ID', 'DESC');
+        if (empty($limit)) {
+            $limit = 10;
         }
+        $limit = [0, $limit];
+        $messageData = self::$db->get('messages', ['userFrom', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'senderDeleted', '=', 0], 'ID', 'DESC', $limit);
         if ($messageData->count() == 0) {
             Debug::info('No messages found');
             return false;
@@ -368,13 +369,18 @@ class Message extends Controller
             new CustomException('messagesReplyUpdate');
             return false;
         }
-        $fields = ['userTo' => $recipient,
-                   'userFrom' => self::$activeUser->ID,
-                   'message' => $message,
-                   'subject' => 're: ' . $messageData->subject,
-                   'sent' => time(),
-                   'parent' => $messageData->ID,
-                   'lastReply' => time()];
+        $fields = [
+            'senderDeleted' => 0,
+            'recieverDeleted' => 0,
+            'isRead' => 0,
+            'userTo' => $recipient,
+            'userFrom' => self::$activeUser->ID,
+            'message' => $message,
+            'subject' => 're: ' . $messageData->subject,
+            'sent' => time(),
+            'parent' => $messageData->ID,
+            'lastReply' => time()
+        ];
         if (!self::$db->insert('messages', $fields)) {
             new CustomException('messagesReplySend');
             return false;
