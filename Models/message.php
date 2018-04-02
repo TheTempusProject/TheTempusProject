@@ -183,8 +183,7 @@ class Message extends Controller
             $find = $message->ID;
         }
         $messageData = self::$db->getPaginated('messages', ['ID', '=', $find, 'OR', 'Parent', '=', $find], 'ID', 'ASC')->results();
-        self::$template->set('PID', $id);
-        // need to move mark read to somewhere more logical
+        self::$template->set('PID', $find);
         
         if ($markRead == true) {
             foreach ($messageData as $instance) {
