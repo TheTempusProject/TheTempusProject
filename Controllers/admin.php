@@ -481,11 +481,16 @@ class Admin extends Controller
         $installer = new Installer;
         $a = Input::exists('submit');
         self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
+        if (Input::exists('logo') && Image::upload('logo', 'System')) {
+            $logo = 'Uploads/Images/System/' . Image::last();
+        } else {
+            $logo = Config::get('main/logo');
+        }
         if ($a) {
             Config::updateConfig('main', 'name', Input::post('name'));
             Config::updateConfig('main', 'template', Input::post('template'));
             Config::updateConfig('main', 'loginLimit', (int) Input::post('loginLimit'));
-            Config::updateConfig('main', 'logo', Input::post('logo'));
+            Config::updateConfig('main', 'logo', $logo);
             Config::updateConfig('main', 'timezone', Input::post('timezone'));
             Config::updateConfig('main', 'pageLimit', (int) Input::post('pageLimit'));
             Config::updateConfig('uploads', 'enabled', Input::post('uploads'));
@@ -501,6 +506,7 @@ class Admin extends Controller
         }
         $select = self::$template->standardView('admin.groupSelect', self::$group->listGroups());
         self::$template->set('groupSelect', $select);
+        self::$template->set('LOGO', $logo);
         self::$template->set('NAME', $a ? Input::post('name') : Config::get('main/name'));
         self::$template->set('TEMPLATE', $a ? Input::post('template') : Config::get('main/template'));
         self::$template->set('maxFileSize', $a ? Input::post('fileSize') : Config::get('uploads/maxFileSize'));
