@@ -41,6 +41,19 @@ class Forms
      *
      * @return boolean
      */
+    public static function passwordResetCode()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
     public static function installAgreement()
     {
         if (!Check::token()) {

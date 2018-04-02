@@ -22,4 +22,4 @@
     <input type="hidden" name="token" value="{TOKEN}">
 </form><br>
 Don't have an account? You can register <a href="{BASE}register">here</a>.<br>
-if you need assistance with your username or password, please <a href="{BASE}home/forgot">Click here</a>.
+if you need assistance with your username or password, please <a href="{BASE}register/recover">Click here</a>.

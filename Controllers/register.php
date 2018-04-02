@@ -101,7 +101,7 @@ class Register extends Controller
             self::$user->newCode(self::$user->data()->ID);
             self::$user->get(Input::post('entry'));
             $userData = self::$user->data();
-            Email::send($userData->email, 'forgot' . $type, $userData->confirmationCode, ['template' => true]);
+            Email::send($userData->email, 'forgotPassword', $userData->confirmationCode, ['template' => true]);
             Issue::notice('Details for resetting your password have been sent to your registered email address');
             Redirect::to('home/index');
         }
@@ -165,7 +165,7 @@ class Register extends Controller
                 $code = Input::post('resetCode');
             }
         }
-        if (self::$user->checkCode($code)) {
+        if (!self::$user->checkCode($code)) {
             Issue::error('There was an error with your reset code. Please try again.');
             $this->view('passwordResetCode');
             exit();
@@ -183,6 +183,6 @@ class Register extends Controller
         self::$user->changePassword($code, Input::post('password'));
         Email::send(self::$user->data()->email, 'passwordChange', null, ['template' => true]);
         Session::flash('success', 'Your Password has been changed, please use your new password to log in.');
-        Regirect::to('home/login');
+        Redirect::to('home/login');
     }
 }

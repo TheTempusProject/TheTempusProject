@@ -413,6 +413,7 @@ class User extends Controller
         if ($data->count() > 0) {
             return true;
         }
+        Debug::error('User confirmation code not found.');
         return false;
     }
 
