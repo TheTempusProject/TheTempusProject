@@ -139,7 +139,44 @@ class Message extends Controller
             self::$template->set('RECENT_MESSAGES', '');
         }
     }
-
+    /**
+     * Retrieves the most recent relative message in a thread
+     *
+     * @param  int $parent - the id of the parent message
+     * @param  string $user   - the id of the relative user
+     * @return object
+     */
+    public function getLatestMessage($parent, $user, $type = null)
+    {
+        if (!Check::id($parent)) {
+            Debug::info('Invalid message ID');
+            return false;
+        }
+        if (!Check::id($user)) {
+            Debug::info('Invalid user ID');
+            return false;
+        }
+        $messageData = self::$db->get('messages', ['ID', '=', $parent]);
+        if ($messageData->count() == 0) {
+            Debug::info('Message not found.');
+            return false;
+        }
+        $message = $messageData->first();
+        $params = ['parent', '=', $parent];
+        if ($type !== null) {
+            $params = array_merge($params, ["AND", $type, '=', $user]);
+        }
+        $messageData = self::$db->getPaginated('messages', $params, 'ID', 'DESC', [0, 1]);
+        if ($messageData->count() != 0) {
+            if ($messageData->first()->recieverDeleted == 0) {
+                $message = $messageData->first();
+            } else {
+                $message->recieverDeleted = 1;
+            }
+        }
+        return $message;
+    }
+    
     /**
      * This calls a view of the requested message.
      *
@@ -199,12 +236,17 @@ class Message extends Controller
             $limit = 10;
         }
         $limit = [0, $limit];
-        $messageData = self::$db->getPaginated('messages', ['userTo', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'recieverDeleted', '=', 0], 'ID', 'DESC', $limit);
+        $messageData = self::$db->get('messages', ['parent', '=', 0, "AND", 'userFrom', '=', self::$activeUser->ID, "OR", 'parent', '=', 0, "AND", 'userTo', '=', self::$activeUser->ID], 'ID', 'DESC', $limit);
         if ($messageData->count() == 0) {
             Debug::info('No messages found');
             return false;
         }
-        return $this->processMessage($messageData->results());
+        $filters = [
+            'importantUser' => self::$activeUser->ID,
+            'deleted' => false,
+            'type' => 'userTo'
+        ];
+        return $this->processMessage($messageData->results(), $filters);
     }
 
     /**
@@ -218,12 +260,17 @@ class Message extends Controller
             $limit = 10;
         }
         $limit = [0, $limit];
-        $messageData = self::$db->get('messages', ['userFrom', '=', self::$activeUser->ID, "AND", 'parent', '=', 0, "AND", 'senderDeleted', '=', 0], 'ID', 'DESC', $limit);
+        $messageData = self::$db->get('messages', ['parent', '=', 0, "AND", 'userFrom', '=', self::$activeUser->ID], 'ID', 'DESC', $limit);
         if ($messageData->count() == 0) {
             Debug::info('No messages found');
             return false;
         }
-        return $this->processMessage($messageData->results());
+        $filters = [
+            'importantUser' => self::$activeUser->ID,
+            'deleted' => false,
+            'type' => 'userFrom'
+        ];
+        return $this->processMessage($messageData->results(), $filters);
     }
 
     /**
@@ -237,29 +284,62 @@ class Message extends Controller
      *
      * @todo  add filtering for BB-code.
      */
-    private function processMessage($messageArray)
+    private function processMessage($messageArray, $filters = [])
     {
         if (!isset(self::$user)) {
             self::$user = $this->model('user');
         }
-        foreach ($messageArray as &$message) {
+        $out = null;
+        foreach ($messageArray as $message) {
+            if (isset($filters['type']) && isset($filters['importantUser'])) {
+                $type = $filters['type'];
+            } else {
+                $type = null;
+            }
+            if (isset($filters['importantUser'])) {
+                $user = $filters['importantUser'];
+            } else {
+                $user = self::$activeUser->ID;
+            }
+            if ($message->parent == 0) {
+                $last = $this->getLatestMessage($message->ID, $user, $type);
+            } else {
+                $last = $message;
+            }
+            if ($type != null && $message->$type != $user && $last->$type != $user) {
+                continue;
+            }
+            if (isset($filters['deleted']) && $filters['deleted'] == false) {
+                if ($type == 'userFrom') {
+                    if ($last->senderDeleted == 1) {
+                        continue;
+                    }
+                }
+                if ($type == 'userTo') {
+                    if ($last->recieverDeleted == 1) {
+                        continue;
+                    }
+                }
+            }
+            $messageOut = (array) $message;
             $short = explode(" ", Sanitize::contentShort($message->message));
             $summary = implode(" ", array_splice($short, 0, 25));
             if (count($short, 1) >= 25) {
-                $message->summary = $summary . '...';
+                $messageOut['summary'] = $summary . '...';
             } else {
-                $message->summary = $summary;
+                $messageOut['summary'] = $summary;
             }
-            if ($message->isRead == 0) {
-                $message->unreadBadge = self::$template->standardView('message.unreadBadge');
+            if ($last->isRead == 0) {
+                $messageOut['unreadBadge'] = self::$template->standardView('message.unreadBadge');
             } else {
-                $message->unreadBadge = '';
+                $messageOut['unreadBadge'] = '';
             }
-            $message->fromAvatar = self::$user->getAvatar($message->userFrom);
-            $message->userTo = self::$user->getUsername($message->userTo);
-            $message->userFrom = self::$user->getUsername($message->userFrom);
+            $messageOut['fromAvatar'] = self::$user->getAvatar($message->userFrom);
+            $messageOut['userTo'] = self::$user->getUsername($message->userTo);
+            $messageOut['userFrom'] = self::$user->getUsername($message->userFrom);
+            $out[] = (object) $messageOut;
         }
-        return $messageArray;
+        return $out;
     }
 
     /**
@@ -365,7 +445,7 @@ class Message extends Controller
             Debug::info('Cannot send messages to yourself');
             return false;
         }
-        if (!self::$db->update('messages', $messageData->ID, ['lastReply' => time(),'isRead' => 0])) {
+        if (!self::$db->update('messages', $messageData->ID, ['lastReply' => time()])) {
             new CustomException('messagesReplyUpdate');
             return false;
         }

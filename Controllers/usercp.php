@@ -239,10 +239,10 @@ class Usercp extends Controller
                     self::$message->deleteMessage(Input::post('F_'));
                 }
                 if (Input::exists('ID')) {
-                    self::$message->deleteMessage(Input::get('ID'));
+                    self::$message->deleteMessage([Input::get('ID')]);
                 }
                 if (!empty($data)) {
-                    self::$message->deleteMessage($data);
+                    self::$message->deleteMessage([$data]);
                 }
                 break;
         }
