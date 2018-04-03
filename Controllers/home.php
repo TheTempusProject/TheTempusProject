@@ -34,6 +34,7 @@ class Home extends Controller
     private static $session;
     private static $subscribe;
     private static $feedback;
+    private static $recaptcha;
     private static $bugreport;
     private static $user;
 
@@ -42,6 +43,7 @@ class Home extends Controller
         Debug::log('Controller Constructing: ' . get_class($this));
         self::$session = $this->model('session');
         self::$subscribe = $this->model('subscribe');
+        self::$recaptcha = $this->model('recaptcha');
         self::$feedback = $this->model('feedback');
         self::$bugreport = $this->model('bugreport');
         self::$user = $this->model('user');
@@ -198,6 +200,11 @@ class Home extends Controller
         }
         if (!Check::form('login')) {
             Issue::error('There was an error with your login.', Check::userErrors());
+            $this->view('login');
+            exit();
+        }
+        if (!self::$recaptcha->verify(Input::post('g-recaptcha-response'))) {
+            Issue::error('There was an error with your login.', self::$recaptcha->getErrors());
             $this->view('login');
             exit();
         }

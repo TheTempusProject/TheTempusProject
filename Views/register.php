@@ -39,6 +39,7 @@
     		</center>
         </div>
     </fieldset>
+    {RECAPTCHA}
     <input type="hidden" name="token" value="{TOKEN}">
 	<button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Sign up</button><br>
 </form>

@@ -18,6 +18,7 @@
             <input name="remember" id="remember" type="checkbox" value="remember-me">
         </div>
     </div>
+    {RECAPTCHA}
     <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary center-block">Sign in</button>
     <input type="hidden" name="token" value="{TOKEN}">
 </form><br>

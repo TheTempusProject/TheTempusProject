@@ -32,12 +32,15 @@ use TempusProjectCore\Classes\Redirect;
 
 class Register extends Controller
 {
+    private static $recaptcha;
     private static $session;
     private static $user;
+    
     public function __construct()
     {
         self::$template->noIndex();
         self::$session = $this->model('session');
+        self::$recaptcha = $this->model('recaptcha');
         self::$user = $this->model('user');
     }
 
@@ -65,6 +68,11 @@ class Register extends Controller
         if (!Check::form('register')) {
             Issue::error('There was an error with your registration.', Check::userErrors());
             $this->view('register');
+            exit();
+        }
+        if (!self::$recaptcha->verify(Input::post('g-recaptcha-response'))) {
+            Issue::error('There was an error with your login.', self::$recaptcha->getErrors());
+            $this->view('login');
             exit();
         }
         $code = Code::genConfirmation();

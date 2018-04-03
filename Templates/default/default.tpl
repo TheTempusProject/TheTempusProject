@@ -18,6 +18,7 @@
         <!-- Required JS -->
         <script language="JavaScript" type="text/javascript" src="{BASE}vendor/tinymce/tinymce/tinymce.min.js"></script>
         <script language="JavaScript" type="text/javascript" src="{BASE}JS/default.js"></script>
+        <script language="JavaScript" type="text/javascript" src='http://www.google.com/recaptcha/api.js'></script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
