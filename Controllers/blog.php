@@ -73,27 +73,76 @@ class Blog extends Controller
         exit();
     }
 
+    public function comments($sub, $data)
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        if (!self::$isLoggedIn) {
+            Issue::notice('You must be logged in to do that.');
+            exit();
+        }
+        switch ($sub) {
+            case 'post':
+                $post = self::$blog->find($data);
+                if (!Check::form('newComment')) {
+                    Issue::error('There was a problem posting your comment.', Check::userErrors());
+                }
+                self::$comment->create('blog', $post->ID, Input::post('comment'));
+                Issue::error('There was an error posting you comment, please try again.');
+                Issue::success('Comment posted');
+                break;
+             
+            case 'edit':
+                $comment = self::$comment->findById($data);
+                if (!self::$isLoggedIn || (!self::$isAdmin && $comment->author != self::$activeUser->ID)) {
+                    Issue::error('You do not have permission to edit this comment');
+                    exit();
+                }
+                if (!Input::exists('submit')) {
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
+                    exit();
+                }
+                if (!Check::form('editComment')) {
+                    Issue::error('There was a problem editing your comment.', Check::userErrors());
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
+                    exit();
+                }
+                if (self::$comment->update($data, Input::post('comment'))) {
+                    Issue::success('Comment updated');
+                } else {
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
+                    exit();
+                }
+                break;
+            
+            case 'delete':
+                $comment = self::$comment->findById($data);
+                if (!self::$isLoggedIn || (!self::$isAdmin && $comment->author != self::$activeUser->ID)) {
+                    Issue::error('You do not have permission to edit this comment');
+                    exit();
+                }
+                if (!self::$comment->delete((array) $data)) {
+                    Issue::error('There was an error with your request.');
+                } else {
+                    Issue::success('Comment has been deleted');
+                }
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
+
     public function post($data)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Blog Post';
-        $post = self::$blog->find($data);
-        if (Input::exists('submit')) {
-            if (!self::$isLoggedIn) {
-                Issue::notice('You must be logged in to post comments.');
-            } elseif (!Check::form('newComment')) {
-                Issue::error('There was a problem posting your comment.', Check::userErrors());
-            } elseif (self::$comment->create('blog', $post->ID, Input::post('comment'))) {
-                Issue::success('Comment posted');
-            } else {
-                Issue::error('There was an error posting you comment, please try again.');
-            }
-        }
         if (self::$isLoggedIn) {
             self::$template->set('NEWCOMMENT', self::$template->standardView('commentNew'));
         } else {
             self::$template->set('NEWCOMMENT', '');
         }
+        $post = self::$blog->find($data);
         self::$template->set('count', self::$comment->count('blog', $post->ID));
         self::$template->set('COMMENTS', self::$template->standardView('commentList', self::$comment->display(10, 'blog', $post->ID)));
         $this->view('blog.post', $post);

@@ -21,6 +21,7 @@ use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Core\Template;
 use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Log;
 
@@ -273,6 +274,11 @@ class Comment extends Controller
             if (!is_object($instance)) {
                 $instance = $data;
                 $end = true;
+            }
+            if (self::$isAdmin || (self::$isLoggedIn && $instance->author == self::$activeUser->ID)) {
+                $instance->commentControl = Template::standardView('commentControl', ["ID" => $instance->ID]);
+            } else {
+                $instance->commentControl = "";
             }
             $authorName = self::$user->getUsername($instance->author);
             $authorAvatar = self::$user->getAvatar($instance->author);

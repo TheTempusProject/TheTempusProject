@@ -21,16 +21,7 @@
                         <div class="comment-text">
                             {content}
                         </div>
-                        {ADMIN}
-                        <div class="action">
-                            <a href="{BASE}admin/comments/edit/{ID}" class="btn btn-warning btn-xs" role="button">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
-                            <a href="{BASE}admin/comments/delete/{ID}" class="btn btn-danger btn-xs" role="button">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </a>
-                        </div>
-                        {/ADMIN}
+                        {commentControl}
                     </div>
                 </div>
             </li>
