@@ -620,12 +620,10 @@ class Admin extends Controller
     }
 
     public function logs($sub = null, $data = null)
-    {
-        $regex = "#\<ul(.*)id=\"log-menu\" class=\"collapse\"\>#i";
-        $replace = "<ul$1id=\"$yyyyyy\"$2class=\"\">";
-        self::$template->addFilter('logui', $regTop, $repTop, true);
+    {   
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Logs';
+        Template::addFilter('logMenu', "#<ul id=\"log-menu\" class=\"collapse\">#is", "<ul id=\"log-menu\" class=\"\">", true);
         /*
          * @todo since i didn't want to tackled adding support
          * for dynamically deleting different logs in one spot.
@@ -689,6 +687,7 @@ class Admin extends Controller
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Admin Logs';
+        Template::addFilter('logMenu', "#<ul id=\"log-menu\" class=\"collapse\">#is", "<ul id=\"log-menu\" class=\"\">", true);
         switch ($sub) {
             case 'view':
                 $this->view('admin.logAdmin', self::$log->get($data));
@@ -762,6 +761,7 @@ class Admin extends Controller
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Errors';
+        Template::addFilter('logMenu', "#<ul id=\"log-menu\" class=\"collapse\">#is", "<ul id=\"log-menu\" class=\"\">", true);
         switch ($sub) {
             case 'view':
                 $this->view('admin.logError', self::$log->getError($data));
@@ -790,6 +790,7 @@ class Admin extends Controller
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Login Logs';
+        Template::addFilter('logMenu', "#<ul id=\"log-menu\" class=\"collapse\">#is", "<ul id=\"log-menu\" class=\"\">", true);
         switch ($sub) {
             case 'view':
                 $this->view('admin.logLogin', self::$log->get($data));

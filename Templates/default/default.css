@@ -490,7 +490,15 @@ ul.alert-dropdown {
     color: #fff;
 }
 
+.side-nav .active > a {
+    color: #fff;
+    background-color: #080808;
+}
 
+.side-nav .active > a:hover {
+    color: #fff;
+    background-color: #080808;
+}
 
 
 /**
