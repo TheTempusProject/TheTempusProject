@@ -71,7 +71,6 @@ class Track extends Controller
         return $flags;
     }
 
-
     /**
      * This function is used to install database structures needed for this model.
      *
@@ -81,15 +80,15 @@ class Track extends Controller
     {
         self::$db->newTable('tracked');
         self::$db->addfield('referer', 'varchar', '1024');
-        self::$db->addfield('hash', 'varchar', '256');
+        self::$db->addfield('trackingHash', 'varchar', '256');
         self::$db->addfield('time', 'int', '10');
         self::$db->addfield('data', 'text', '');
         self::$db->createTable();
         self::$db->newTable('trackingReference');
-        self::$db->addfield('createdBy', 'varchar', '32');
-        self::$db->addfield('created', 'int', '10');
+        self::$db->addfield('createdBy', 'int', '10');
+        self::$db->addfield('createdAt', 'int', '10');
         self::$db->addfield('linkType', 'varchar', '32');
-        self::$db->addfield('hash', 'varchar', '256');
+        self::$db->addfield('trackingHash', 'varchar', '256');
         self::$db->createTable();
         return self::$db->getStatus();
     }
