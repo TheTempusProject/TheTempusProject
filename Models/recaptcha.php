@@ -16,6 +16,8 @@
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Debug;
+use ReCaptcha\RequestMethod\CurlPost;
+use ReCaptcha\RequestMethod\Post;
 use ReCaptcha\ReCaptcha as GoogleReCaptcha;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Config;
@@ -29,6 +31,8 @@ class ReCaptcha extends Controller
     private static $enabled = null;
     private static $privateKey = null;
     private static $siteKey = null;
+    private static $request = null;
+    private static $requestMethod = null;
     private static $sendIP = null;
 
     /**
@@ -92,6 +96,7 @@ class ReCaptcha extends Controller
         Config::addConfig('recaptcha', 'privateKey', '');
         Config::addConfig('recaptcha', 'sendIP', false);
         Config::addConfig('recaptcha', 'enabled', false);
+        Config::addConfig('recaptcha', 'method', "curlPost");
         return Config::saveConfig();
     }
 
@@ -109,7 +114,7 @@ class ReCaptcha extends Controller
     public function verify($hash)
     {
         self::$errors = null;
-        $this->recaptcha = new GoogleReCaptcha(self::$privateKey);
+        $this->recaptcha = new GoogleReCaptcha(self::$privateKey, self::$request);
         if (self::$sendIP) {
             $response = $this->recaptcha->verify($hash, $_SERVER['REMOTE_ADDR']);
         } else {
@@ -133,6 +138,12 @@ class ReCaptcha extends Controller
             self::$privateKey = Config::get('recaptcha/privateKey');
             self::$siteKey = Config::get('recaptcha/siteKey');
             self::$sendIP = Config::get('recaptcha/sendIP');
+            self::$requestMethod = Config::get('recaptcha/method');
+            if (self::$requestMethod == "curlPost") {
+                self::$request = new CurlPost();
+            } else {
+                self::$request = new Post();
+            }
         }
         return self::$enabled;
     }
