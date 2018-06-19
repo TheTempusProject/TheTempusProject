@@ -17,7 +17,7 @@ namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
@@ -278,11 +278,11 @@ class Group extends Controller
     public function getPermissions($data)
     {
         if (!is_object($data)) {
-            $docLocation = Docroot::getLocation('appPermissions');
+            $docLocation = Routes::getLocation('appPermissions');
             if ($docLocation->error) {
-                $docLocation = Docroot::getLocation('appPermissionsDefault');
+                $docLocation = Routes::getLocation('appPermissionsDefault');
                 if ($docLocation->error) {
-                    $docLocation = Docroot::getLocation('permissionsDefault');
+                    $docLocation = Routes::getLocation('permissionsDefault');
                 }
             }
             $json = json_decode(file_get_contents($docLocation->fullPath), true);

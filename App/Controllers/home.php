@@ -16,7 +16,7 @@
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Redirect;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Config;
@@ -191,7 +191,7 @@ class Home extends Controller
         self::$title = 'Portal - {SITENAME}';
         self::$pageDescription = 'Please log in to use {SITENAME} member features.';
         if (self::$isLoggedIn) {
-            Issue::notice('You are already logged in. Please <a href="' . Docroot::getAddress() . 'home/logout">click here</a> to log out.');
+            Issue::notice('You are already logged in. Please <a href="' . Routes::getAddress() . 'home/logout">click here</a> to log out.');
             exit();
         }
         if (!Input::exists()) {

@@ -24,7 +24,7 @@ use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Session as SessionClass;
 use TempusProjectCore\Classes\Cookie;
@@ -277,7 +277,7 @@ class Session extends Controller
             $expire = (time() + (3600 * 24));
             Debug::log('Using default expiration time');
         }
-        $lastPage = Docroot::getUrl();
+        $lastPage = Routes::getUrl();
         if (self::$activeSession !== false) {
             // there is already an active session
             if ($override === false) {

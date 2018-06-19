@@ -22,7 +22,7 @@ use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Preference;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\CustomException;
 use TempusProjectCore\Classes\Hash;
 
@@ -555,11 +555,11 @@ class User extends Controller
         if (empty($fields)) {
             return false;
         }
-        $docLocation = Docroot::getLocation('appPreferences');
+        $docLocation = Routes::getLocation('appPreferences');
         if ($docLocation->error) {
-            $docLocation = Docroot::getLocation('appPreferencesDefault');
+            $docLocation = Routes::getLocation('appPreferencesDefault');
             if ($docLocation->error) {
-                $docLocation = Docroot::getLocation('preferencesDefault');
+                $docLocation = Routes::getLocation('preferencesDefault');
             }
         }
         $decodedDefaultPrefs = json_decode(file_get_contents($docLocation->fullPath), true);

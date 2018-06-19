@@ -20,7 +20,7 @@ require_once 'index.php';
 
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Core\Installer;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Redirect;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Config;

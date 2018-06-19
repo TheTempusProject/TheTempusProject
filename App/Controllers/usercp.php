@@ -16,7 +16,7 @@
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;

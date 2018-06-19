@@ -41,6 +41,8 @@ class ReCaptcha extends Controller
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
+        // This is for debugging purposes only.
+        self::$enabled = false;
         $this->load();
     }
 
@@ -113,8 +115,13 @@ class ReCaptcha extends Controller
 
     public function verify($hash)
     {
+        if (self::$enabled === false) {
+            Debug::warn('Recaptcha is disabled.');
+            return true;
+        }
         self::$errors = null;
         $this->recaptcha = new GoogleReCaptcha(self::$privateKey, self::$request);
+
         if (self::$sendIP) {
             $response = $this->recaptcha->verify($hash, $_SERVER['REMOTE_ADDR']);
         } else {
@@ -129,7 +136,7 @@ class ReCaptcha extends Controller
 
     public function load()
     {
-        if (self::$enabled == null) {
+        if (self::$enabled === null) {
             $mods = apache_get_modules();
             if (!in_array('mod_rewrite', $mods)) {
                 self::$enabled = false;

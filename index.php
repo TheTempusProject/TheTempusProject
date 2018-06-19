@@ -19,7 +19,7 @@ namespace TheTempusProject;
 
 use TempusProjectCore\Classes\Pagination;
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Core\Template;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\Debug;
@@ -60,7 +60,7 @@ class Appload extends Controller
         self::$template->set('SITENAME', Config::get('main/name'));
         self::$template->set('RECAPTCHA_SITE_KEY', Config::get('recaptcha/siteKey'));
         self::$template->set('RECAPTCHA', Template::standardView('recaptcha'));
-        self::$template->set('RURL', Docroot::getUrl());
+        self::$template->set('RURL', Routes::getUrl());
         self::$template->addFilter('member', '#{MEMBER}(.*?){/MEMBER}#is', (self::$isMember ? '$1' : ''), true);
         self::$template->addFilter('mod', '#{MOD}(.*?){/MOD}#is', (self::$isMod ? '$1' : ''), true);
         self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', (self::$isAdmin ? '$1' : ''), true);
