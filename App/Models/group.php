@@ -21,7 +21,6 @@ use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Log;
 use TempusProjectCore\Classes\Input;
 
 class Group extends Controller

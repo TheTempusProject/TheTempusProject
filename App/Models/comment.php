@@ -23,7 +23,6 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Core\Template;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Log;
 
 class Comment extends Controller
 {
