@@ -20,7 +20,7 @@
 				<td>{ID}</td>
 				<td>{DTC}{time}{/DTC}</td>
 				<td>{action}</td>
-				<td><a href="{BASE}admin/logins/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
+				<td><a href="{BASE}admin/logins/viewLogin/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
                 <td><a href="{BASE}admin/logins/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="L_[]">

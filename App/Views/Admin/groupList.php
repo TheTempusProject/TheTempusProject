@@ -16,7 +16,7 @@
         <tbody>
             {LOOP}
             <tr>
-                <td><a href="{BASE}admin/groups/view/{ID}">{name}</a></td>
+                <td><a href="{BASE}admin/groups/viewGroup/{ID}">{name}</a></td>
                 <td><a href="{BASE}admin/groups/listmembers/{ID}">{userCount}</a></td>
                 <td><a href="{BASE}admin/groups/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
                 <td><a href="{BASE}admin/groups/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>

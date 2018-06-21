@@ -19,7 +19,7 @@
 									<td align="right">{DTC}{time}{/DTC}</td>
 								<tr>
 									<td>Submitted by</td>
-									<td align="right"><a href="{base}admin/users/view/{userID}">{submittedBy}</a></td>
+									<td align="right"><a href="{base}admin/users/viewUser/{userID}">{submittedBy}</a></td>
 								</tr>
 								<tr>
 									<td>IP</td>

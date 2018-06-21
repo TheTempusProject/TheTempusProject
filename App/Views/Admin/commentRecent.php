@@ -18,8 +18,8 @@
         <tbody>
             {LOOP}
             <tr>
-                <td><a href="{BASE}admin/users/view/{author}">{authorName}</a></td>
-                <td><a href="{BASE}admin/blog/view/{contentID}">{contentTitle}</a></td>
+                <td><a href="{BASE}admin/users/viewUser/{author}">{authorName}</a></td>
+                <td><a href="{BASE}admin/blog/viewPost/{contentID}">{contentTitle}</a></td>
                 <td>{content}</td>
                 <td>{DTC}{created}{/DTC}</td> 
                 <td><a href="{BASE}admin/comments/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>

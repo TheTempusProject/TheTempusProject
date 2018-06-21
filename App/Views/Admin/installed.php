@@ -15,13 +15,13 @@
     <tbody>
         {LOOP}
         <tr>
-            <td><a href="{BASE}admin/installed/view/{name}">{name}</a></td>
+            <td><a href="{BASE}admin/installed/viewModel/{name}">{name}</a></td>
             <td>{installStatus}</td>
             <td>{DTC=date}{installDate}{/DTC}</td>
             <td>{DTC=date}{lastUpdate}{/DTC}</td>
             <td>{currentVersion}</td>
             <td>{version}</td>
-            <td><a href="{BASE}admin/installed/view/{name}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
+            <td><a href="{BASE}admin/installed/viewModel/{name}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
         </tr>
         {/LOOP}
         {ALT}

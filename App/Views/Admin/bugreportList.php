@@ -20,7 +20,7 @@
 				<td align="center">{ID}</td>
 				<td align="center">{DTC}{time}{/DTC}</td>
 				<td>{description}</td>
-				<td><a href="{BASE}admin/bugreports/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
+				<td><a href="{BASE}admin/bugreports/viewReport/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
                 <td><a href="{BASE}admin/bugreports/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="BR_[]">

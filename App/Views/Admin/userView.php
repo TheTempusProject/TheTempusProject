@@ -20,7 +20,7 @@
 									</tr>
 									<tr>
 										<td>Group:</td>
-										<td><a href="{BASE}/admin/groups/view/{userGroup}">{groupName}</a></td>
+										<td><a href="{BASE}/admin/groups/viewGroup/{userGroup}">{groupName}</a></td>
 									</tr>
 									{/ADMIN}
 									<tr>

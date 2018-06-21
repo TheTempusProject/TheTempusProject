@@ -3,7 +3,7 @@
     <div class="col-sm-8 blog-main">
         <div class="blog-post">
             <h2 class="blog-post-title">{title}</h2>
-            <p class="blog-post-meta">{DTC}{created}{/DTC} by <a href="{BASE}admin/user/view/{author}">{authorName}</a></p>
+            <p class="blog-post-meta">{DTC}{created}{/DTC} by <a href="{BASE}admin/user/viewUser/{author}">{authorName}</a></p>
             {content}
         </div><!-- /.blog-post -->
     </div><!-- /.blog-main -->

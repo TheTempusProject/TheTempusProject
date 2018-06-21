@@ -18,7 +18,7 @@
 	        {LOOP}
 			<tr>
 				<td align="center">{ID}</td>
-				<td><a href='{BASE}admin/users/view/{ID}'>{username}</a></td>
+				<td><a href='{BASE}admin/users/viewUser/{ID}'>{username}</a></td>
 				<td>{DTC date}{registered}{/DTC}</td>
 				<td><a href="{BASE}admin/users/edit/{ID}" class="btn btn-sm btn-warning" role="button"><i class="glyphicon glyphicon-edit"></i></a></td>
                 <td><a href="{BASE}admin/users/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>

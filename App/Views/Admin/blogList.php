@@ -19,7 +19,7 @@
         <tbody>
             {LOOP}
             <tr>
-                <td><a href="{BASE}admin/blog/view/{ID}">{title}</a>{isDraft}</td>
+                <td><a href="{BASE}admin/blog/viewPost/{ID}">{title}</a>{isDraft}</td>
                 <td>{authorName}</td>
                 <td>{commentCount}</td>
                 <td>{DTC}{created}{/DTC}</td>

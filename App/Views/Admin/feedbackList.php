@@ -20,7 +20,7 @@
 				<td>{ID}</td>
 				<td>{DTC}{time}{/DTC}</td>
 				<td>{feedback}</td>
-				<td><a href="{BASE}admin/feedback/view/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
+				<td><a href="{BASE}admin/feedback/viewFeedback/{ID}" class="btn btn-sm btn-primary" role="button"><i class="glyphicon glyphicon-open"></i></a></td>
                 <td><a href="{BASE}admin/feedback/delete/{ID}" class="btn btn-sm btn-danger" role="button"><i class="glyphicon glyphicon-trash"></i></a></td>
 				<td>
 					<input type="checkbox" value="{ID}" name="F_[]">
