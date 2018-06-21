@@ -266,7 +266,7 @@ class Install extends Controller
         $error = false;
         $models = Input::post('M_');
         foreach ($models as $model) {
-            if (!self::$installer->installModel('Models', $model, ['installResources' => false])) {
+            if (!self::$installer->installModel($model, '', ['installResources' => false])) {
                 $error = true;
             }
         }
@@ -301,7 +301,7 @@ class Install extends Controller
         $error = false;
         $models = self::$installer->getModelList('Models');
         foreach ($models as $model) {
-            if (!self::$installer->installModel('Models', $model, $flags)) {
+            if (!self::$installer->installModel($model, '', $flags)) {
                 $error = true;
             }
         }

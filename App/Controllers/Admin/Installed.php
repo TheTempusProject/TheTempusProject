@@ -37,7 +37,6 @@ class Installed extends AdminController
     public function index($data = null)
     {
         $models = $this->installer->getModelVersionList();
-        Debug::error(var_export($models,true));
         foreach ($models as $model) {
             $modelArray = (array) $model;
             $node = $this->installer->getNode($model->name);
@@ -54,13 +53,12 @@ class Installed extends AdminController
                     'installResources' => '',
                     'installPreferences' => '',
                     'currentVersion' => '',
-                    'version' => $this->installer->getModelVersion('Models', $model->name)
+                    'version' => $this->installer->getModelVersion($model->name)
                 ];
             }
             $out[] = (object) array_merge($modelArray, $node);
         }
         $this->view('admin.installed', $out);
-        
         exit();
     }
     public function viewModel($data = null)
@@ -82,9 +80,8 @@ class Installed extends AdminController
                 'version' => ''
             ];
         } else {
-            $out = array_merge(['version' => $this->installer->getModelVersion('Models', $data)], (array) $node);
+            $out = array_merge(['version' => $this->installer->getModelVersion($data)], (array) $node);
         }
-        
         $this->view('admin.installedView', $out);
         exit();
     }
@@ -95,7 +92,7 @@ class Installed extends AdminController
             $this->view('admin.install');
             exit();
         }
-        if (!$this->installer->installModel('Models', $data)) {
+        if (!$this->installer->installModel($data)) {
             Issue::error('There was an error with the Installation.', $this->installer->getErrors());
         }
         $this->index();
@@ -107,7 +104,7 @@ class Installed extends AdminController
             $this->view('admin.uninstall');
             exit();
         }
-        if (!$this->installer->uninstallModel('Models', $data)) {
+        if (!$this->installer->uninstallModel($data)) {
             Issue::error('There was an error with the uninstall.', $this->installer->getErrors());
         }
         $this->index();
