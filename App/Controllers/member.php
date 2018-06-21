@@ -28,12 +28,13 @@ class Member extends Controller
 
     public function __construct()
     {
+        Debug::log('Controller Constructing: ' . get_class($this));
         self::$template->noIndex();
         if (!self::$isMember) {
             Issue::error('You do not have permission to view this page.');
             exit();
         }
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
     }
     
     public function __destruct()

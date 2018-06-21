@@ -20,7 +20,7 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Session as Session;
 use TempusProjectCore\Classes\Preference;
 use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\CustomException;
@@ -261,7 +261,7 @@ class User extends Controller
             self::$log = $this->model('log');
         }
         if (!isset(self::$session)) {
-            self::$session = $this->model('session');
+            self::$session = $this->model('sessions');
         }
         Debug::group('login', 1);
         if (!Check::username($username)) {
@@ -312,10 +312,10 @@ class User extends Controller
     public function logOut()
     {
         if (!isset(self::$session)) {
-            self::$session = $this->model('session');
+            self::$session = $this->model('sessions');
         }
         Debug::group("Logout", 1);
-        self::$session->destroy(Session::get(Session::get(self::$sessionPrefix . 'SessionToken')));
+        self::$session->destroy(Session::get(self::$sessionPrefix . 'SessionToken'));
         self::$isLoggedIn = false;
         self::$isMember = false;
         self::$isMod = false;

@@ -41,7 +41,7 @@ class Home extends Controller
     public function __construct()
     {
         Debug::log('Controller Constructing: ' . get_class($this));
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
         self::$subscribe = $this->model('subscribe');
         self::$recaptcha = $this->model('recaptcha');
         self::$feedback = $this->model('feedback');

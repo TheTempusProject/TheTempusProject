@@ -26,10 +26,10 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\DB;
-use TempusProjectCore\Classes\Session as SessionClass;
+use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Cookie;
 
-class Session extends Controller
+class Sessions extends Controller
 {
     private static $group;
     private static $user;
@@ -136,7 +136,7 @@ class Session extends Controller
         if (!isset(self::$group)) {
             self::$group = $this->model('group');
         }
-        if (!$this->checkSession(SessionClass::get('SessionID')) &&
+        if (!$this->checkSession(Session::get('SessionID')) &&
             !$this->checkCookie(Cookie::get('RememberToken'), true)) {
             Debug::info('Sessions->authenticate - Could not authenticate cookie or session');
             return false;
@@ -316,7 +316,7 @@ class Session extends Controller
                             ]);
         $data = self::$db->get('sessions', ['userID', '=', $userObject->ID]);
         $sessionData = self::$db->first();
-        SessionClass::put('SessionID', $sessionData->ID);
+        Session::put('SessionID', $sessionData->ID);
         if ($remember) {
             Cookie::put('RememberToken', $sessionData->token, $expire * 30);
         }
@@ -366,7 +366,7 @@ class Session extends Controller
      */
     public function destroy($ID)
     {
-        SessionClass::delete('SessionID');
+        Session::delete('SessionID');
         Cookie::delete('RememberToken');
         if (!Check::id($ID)) {
             Debug::info('Session::destroy - Invalid ID');

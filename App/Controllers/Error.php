@@ -28,7 +28,8 @@ class Error extends Controller
     
     public function __construct()
     {
-        self::$session = $this->model('session');
+        Debug::log('Controller Constructing: ' . get_class($this));
+        self::$session = $this->model('sessions');
     }
     
     public function __destruct()

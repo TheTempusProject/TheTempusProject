@@ -34,13 +34,14 @@ class Usercp extends Controller
 
     public function __construct()
     {
+        Debug::log('Controller Constructing: ' . get_class($this));
         self::$template->activePageSelect('navigation.usercp');
         self::$template->noIndex();
         if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to view this page!');
             exit();
         }
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
         self::$user = $this->model('user');
         self::$message = $this->model('message');
     }

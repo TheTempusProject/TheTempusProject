@@ -38,8 +38,9 @@ class Register extends Controller
     
     public function __construct()
     {
+        Debug::log('Controller Constructing: ' . get_class($this));
         self::$template->noIndex();
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
         self::$recaptcha = $this->model('recaptcha');
         self::$user = $this->model('user');
     }

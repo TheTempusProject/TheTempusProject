@@ -29,10 +29,11 @@ class Tracking extends Controller
 
     public function __construct()
     {
+        Debug::log('Controller Constructing: ' . get_class($this));
         self::$template->noIndex();
         self::$template->noFollow();
         self::$tracking = $this->model('tracking');
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
     }
     
     public function __destruct()

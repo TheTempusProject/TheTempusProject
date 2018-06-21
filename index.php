@@ -51,7 +51,7 @@ class Appload extends Controller
             self::$initiated = true;
         }
         parent::__construct();
-        self::$session = $this->model('session');
+        self::$session = $this->model('sessions');
         self::$message = $this->model('message');
         // Authenticate our session
         self::$session->authenticate();
