@@ -2,7 +2,8 @@
 /**
  * Controllers/Admin/AdminController.php
  *
- * This is the main admin controller.
+ * This is the main admin controller. Every other admin controller should 
+ * ecxtend this Controller.
  *
  * @version 3.0
  *
@@ -16,16 +17,8 @@
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Core\Installer;
-use TempusProjectCore\Core\Template;
-use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Check;
-use TempusProjectCore\Classes\Image;
-use TempusProjectCore\Classes\Log;
 
 class AdminController extends Controller
 {

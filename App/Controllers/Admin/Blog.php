@@ -19,8 +19,7 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Classes\Check;
 use TheTempusProject\Controllers\AdminController;
 
 require_once 'AdminController.php';
@@ -32,11 +31,11 @@ class Blog extends AdminController
         parent::__construct();
         Debug::log('Controller Constructing: ' . get_class($this));
         self::$blog = $this->model('blog');
+        self::$title = 'Admin - Blog';
     }
     public function index($data = null)
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
-        self::$title = 'Admin - Blog';
         $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
         exit();
     }
@@ -50,11 +49,10 @@ class Blog extends AdminController
         }
         if (!Check::form('newBlogPost')) {
             Issue::error('There was an error with your request.', Check::userErrors());
-            break;
+            $this->index();
         }
         self::$blog->newPost(Input::post('title'), Input::post('blogPost'), Input::post('submit'));
-        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
-        exit();
+        $this->index();
     }
     public function edit($data = null)
     {
@@ -69,15 +67,14 @@ class Blog extends AdminController
         }
         if (!Check::form('editBlogPost')) {
             Issue::error('There was an error with your form.', Check::userErrors());
-            break;
+            $this->index();
         }
         if (self::$blog->updatePost($data, Input::post('title'), Input::post('blogPost'), Input::post('submit')) === true) {
             Issue::success('Post Updated.');
-            break;
+            $this->index();
         }
         Issue::error('There was an error with your request.');
-        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
-        exit();
+        $this->index();
     }
     public function viewPost($data = null)
     {
@@ -88,8 +85,7 @@ class Blog extends AdminController
             exit();
         }
         Issue::error('Post not found.');
-        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
-        exit();
+        $this->index();
     }
     public function delete($data = null)
     {
@@ -104,8 +100,7 @@ class Blog extends AdminController
         } else {
             Issue::success('Post has been deleted');
         }
-        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
-        exit();
+        $this->index();
     }
     public function preview($data = null)
     {

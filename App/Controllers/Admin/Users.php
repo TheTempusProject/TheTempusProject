@@ -15,12 +15,11 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Image;
 use TheTempusProject\Controllers\AdminController;
 
 require_once 'AdminController.php';
@@ -39,6 +38,7 @@ class Users extends AdminController
             $sub = 'edit';
         }
         self::$user = $this->model('user');
+        self::$group = $this->model('group');
     }
     public function index($data = null)
     {

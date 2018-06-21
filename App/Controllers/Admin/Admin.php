@@ -1,8 +1,8 @@
 <?php
 /**
- * Controllers/Admin/.php
+ * Controllers/Admin/Admin.php
  *
- * This is the xxxxxx controller.
+ * This is the Admin Log controller.
  *
  * @version 1.0
  *
@@ -15,12 +15,7 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Core\Template;
 use TheTempusProject\Controllers\AdminController;
 
