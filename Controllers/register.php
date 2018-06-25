@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -32,9 +31,9 @@ use TempusProjectCore\Classes\Redirect;
 
 class Register extends Controller
 {
-    private static $recaptcha;
-    private static $session;
-    private static $user;
+    protected static $recaptcha;
+    protected static $session;
+    protected static $user;
     
     public function __construct()
     {

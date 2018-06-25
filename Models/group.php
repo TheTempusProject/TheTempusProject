@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -26,7 +25,7 @@ use TempusProjectCore\Classes\Input;
 
 class Group extends Controller
 {
-    private static $log;
+    protected static $log;
 
     /**
      * The model constructor.

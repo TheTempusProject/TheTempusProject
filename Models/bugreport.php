@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -25,9 +24,9 @@ use TempusProjectCore\Classes\DB;
 
 class Bugreport extends Controller
 {
-    private static $log;
-    private static $user;
-    private static $enabled = null;
+    protected static $log;
+    protected static $user;
+    protected static $enabled = null;
     
     /**
      * The model constructor.

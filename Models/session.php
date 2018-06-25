@@ -16,7 +16,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Core\Controller;
@@ -31,9 +30,9 @@ use TempusProjectCore\Classes\Cookie;
 
 class Session extends Controller
 {
-    private static $group;
-    private static $user;
-    private static $activeSession = false;
+    protected static $group;
+    protected static $user;
+    protected static $activeSession = false;
 
     /**
      * The model constructor.

@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -24,8 +23,8 @@ use TempusProjectCore\Classes\Code;
 
 class Tracking extends Controller
 {
-    private static $tracking;
-    private static $session;
+    protected static $tracking;
+    protected static $session;
 
     public function __construct()
     {

@@ -17,7 +17,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Templates;
 
 use TempusProjectCore\Core\Controller as Controller;

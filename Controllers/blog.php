@@ -15,7 +15,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -33,9 +32,9 @@ use TempusProjectCore\Classes\Redirect;
 
 class Blog extends Controller
 {
-    private static $session;
-    private static $blog;
-    private static $comment;
+    protected static $session;
+    protected static $blog;
+    protected static $comment;
 
     public function __construct()
     {

@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -29,17 +28,17 @@ use TempusProjectCore\Classes\Log;
 
 class Admin extends Controller
 {
-    private static $blog;
-    private static $bugreport;
-    private static $comment;
-    private static $feedback;
-    private static $group;
-    private static $log;
-    private static $message;
-    private static $session;
-    private static $subscribe;
-    private static $tracking;
-    private static $user;
+    protected static $blog;
+    protected static $bugreport;
+    protected static $comment;
+    protected static $feedback;
+    protected static $group;
+    protected static $log;
+    protected static $message;
+    protected static $session;
+    protected static $subscribe;
+    protected static $tracking;
+    protected static $user;
 
     public function __construct()
     {

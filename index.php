@@ -14,7 +14,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject;
 
 use TempusProjectCore\Classes\Pagination;
@@ -33,9 +32,9 @@ require_once "init.php";
 class Appload extends Controller
 {
     // Prevents the application from initiating twice.
-    private static $initiated = false;
-    private static $session;
-    private static $message;
+    protected static $initiated = false;
+    protected static $session;
+    protected static $message;
     /**
      * The constructor takes care of everything that we will need before
      * finally calling appload to instantiate the appropriate controller/method.

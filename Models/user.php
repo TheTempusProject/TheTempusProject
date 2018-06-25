@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -28,12 +27,12 @@ use TempusProjectCore\Classes\Hash;
 
 class User extends Controller
 {
-    private static $session;
-    private static $group;
-    private static $log;
-    private $usernames;
-    private $avatars;
-    private $data = [];
+    protected static $session;
+    protected static $group;
+    protected static $log;
+    protected $usernames;
+    protected $avatars;
+    protected $data = [];
 
     /**
      * The model constructor.

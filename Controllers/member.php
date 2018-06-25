@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -24,7 +23,7 @@ use TempusProjectCore\Classes\Code;
 
 class Member extends Controller
 {
-    private static $session;
+    protected static $session;
 
     public function __construct()
     {

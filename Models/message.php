@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -27,9 +26,9 @@ use TempusProjectCore\Core\Template;
 
 class Message extends Controller
 {
-    private static $user;
-    private $messages;
-    private $usernames;
+    protected static $user;
+    protected $messages;
+    protected $usernames;
 
     /**
      * The model constructor.

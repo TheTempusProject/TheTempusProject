@@ -13,7 +13,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -27,9 +26,9 @@ use TempusProjectCore\Classes\Log;
 
 class Comment extends Controller
 {
-    public static $log;
-    public static $blog;
-    public static $user;
+    protected static $log;
+    protected static $blog;
+    protected static $user;
 
     /**
      * The model constructor.

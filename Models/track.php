@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Debug;
@@ -21,7 +20,7 @@ use TempusProjectCore\Core\Controller;
 
 class Track extends Controller
 {
-    private static $log;
+    protected static $log;
 
     /**
      * The model constructor.
