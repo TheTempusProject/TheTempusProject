@@ -37,7 +37,7 @@ require_once 'vendor/autoload.php';
 set_exception_handler('TempusProjectCore\\Functions\\ExceptionHandler::ExceptionHandler');
 
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Redirect;
 
 /**
@@ -47,8 +47,8 @@ use TempusProjectCore\Classes\Redirect;
  *
  * @todo  - Deal with this differently.
  */
-$htaccessPath = Docroot::getFull().'.htaccess';
-$installPath = Docroot::getFull().'install.php';
+$htaccessPath = Routes::getFull().'.htaccess';
+$installPath = Routes::getFull().'install.php';
 
 if (!file_exists($htaccessPath) && !file_exists($installPath)) {
     echo file_get_contents('Views/Errors/533.php');

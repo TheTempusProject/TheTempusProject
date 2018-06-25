@@ -19,7 +19,7 @@ require_once 'index.php';
 
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Core\Installer;
-use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Redirect;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Config;
@@ -265,7 +265,7 @@ class Install extends Controller
         $error = false;
         $models = Input::post('M_');
         foreach ($models as $model) {
-            if (!self::$installer->installModel('Models', $model, ['installResources' => false])) {
+            if (!self::$installer->installModel($model, '', ['installResources' => false])) {
                 $error = true;
             }
         }
@@ -300,7 +300,7 @@ class Install extends Controller
         $error = false;
         $models = self::$installer->getModelList('Models');
         foreach ($models as $model) {
-            if (!self::$installer->installModel('Models', $model, $flags)) {
+            if (!self::$installer->installModel($model, '', $flags)) {
                 $error = true;
             }
         }
