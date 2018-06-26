@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Core\Controller;
@@ -22,9 +21,9 @@ use TempusProjectCore\Classes\Sanitize;
 
 class Blog extends Controller
 {
-    private static $comment;
-    private static $user;
-    private static $log;
+    protected static $comment;
+    protected static $user;
+    protected static $log;
     
     /**
      * The model constructor.

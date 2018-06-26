@@ -15,7 +15,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject;
 
 use TempusProjectCore\Classes\Input as Input;

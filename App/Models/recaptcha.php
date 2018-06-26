@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Debug;
@@ -25,15 +24,15 @@ use TempusProjectCore\Core\Controller;
 
 class ReCaptcha extends Controller
 {
-    public static $errors = null;
-    private $recaptcha;
-    private static $log;
-    private static $enabled = null;
-    private static $privateKey = null;
-    private static $siteKey = null;
-    private static $request = null;
-    private static $requestMethod = null;
-    private static $sendIP = null;
+    protected static $errors = null;
+    protected $recaptcha;
+    protected static $log;
+    protected static $enabled = null;
+    protected static $privateKey = null;
+    protected static $siteKey = null;
+    protected static $request = null;
+    protected static $requestMethod = null;
+    protected static $sendIP = null;
 
     /**
      * The model constructor.

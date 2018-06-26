@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -24,9 +23,9 @@ use TempusProjectCore\Classes\CustomException;
 
 class Log extends Controller
 {
-    private static $enabled;
-    private static $user;
-    private $usernames;
+    protected static $enabled;
+    protected static $user;
+    protected $usernames;
 
     /**
      * The model constructor

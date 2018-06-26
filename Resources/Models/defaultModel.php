@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Debug as Debug;

@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -28,9 +27,9 @@ use TempusProjectCore\Classes\Check;
 
 class Usercp extends Controller
 {
-    private static $session;
-    private static $user;
-    private static $message;
+    protected static $session;
+    protected static $user;
+    protected static $message;
 
     public function __construct()
     {

@@ -12,7 +12,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
@@ -31,12 +30,12 @@ use TempusProjectCore\Classes\DB;
 
 class Home extends Controller
 {
-    private static $session;
-    private static $subscribe;
-    private static $feedback;
-    private static $recaptcha;
-    private static $bugreport;
-    private static $user;
+    protected static $session;
+    protected static $subscribe;
+    protected static $feedback;
+    protected static $recaptcha;
+    protected static $bugreport;
+    protected static $user;
 
     public function __construct()
     {

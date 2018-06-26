@@ -14,7 +14,6 @@
  *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
@@ -26,8 +25,8 @@ use TempusProjectCore\Classes\DB;
 
 class Feedback extends Controller
 {
-    private static $log;
-    private static $enabled = null;
+    protected static $log;
+    protected static $enabled = null;
 
     /**
      * The model constructor.
