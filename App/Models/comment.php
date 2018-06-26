@@ -130,7 +130,7 @@ class Comment extends Controller
 
             return false;
         }
-        return $this->filterComments($commentData->results());
+        return $this->filterComments($commentData->first());
     }
     /**
      * Function to delete the specified post.
@@ -296,7 +296,7 @@ class Comment extends Controller
             $instance->contentTitle = $title;
             $out[] = $instance;
             if (!empty($end)) {
-                $out = $out[0];
+                $out = $instance;
                 break;
             }
         }

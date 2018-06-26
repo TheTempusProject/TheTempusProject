@@ -85,9 +85,9 @@ class Blog extends Controller
                 $post = self::$blog->find($data);
                 if (!Check::form('newComment')) {
                     Issue::error('There was a problem posting your comment.', Check::userErrors());
+                    break;
                 }
                 self::$comment->create('blog', $post->ID, Input::post('comment'));
-                Issue::error('There was an error posting you comment, please try again.');
                 Issue::success('Comment posted');
                 break;
              
@@ -95,7 +95,8 @@ class Blog extends Controller
                 $comment = self::$comment->findById($data);
                 if (!self::$isLoggedIn || (!self::$isAdmin && $comment->author != self::$activeUser->ID)) {
                     Issue::error('You do not have permission to edit this comment');
-                    exit();
+                    $data = $comment->contentID;
+                    break;
                 }
                 if (!Input::exists('submit')) {
                     $this->view('admin.commentEdit', self::$comment->findById($data));
@@ -106,19 +107,20 @@ class Blog extends Controller
                     $this->view('admin.commentEdit', self::$comment->findById($data));
                     exit();
                 }
-                if (self::$comment->update($data, Input::post('comment'))) {
-                    Issue::success('Comment updated');
-                } else {
-                    $this->view('admin.commentEdit', self::$comment->findById($data));
-                    exit();
+                if (!self::$comment->update($data, Input::post('comment'))) {
+                    Issue::error('There was a problem editing your comment.', Check::userErrors());
+                    $data = $comment->contentID;
+                    break;
                 }
+                Issue::success('Comment updated');
+                $data = self::$comment->findById($data)->author;
                 break;
             
             case 'delete':
                 $comment = self::$comment->findById($data);
                 if (!self::$isLoggedIn || (!self::$isAdmin && $comment->author != self::$activeUser->ID)) {
                     Issue::error('You do not have permission to edit this comment');
-                    exit();
+                    break;
                 }
                 if (!self::$comment->delete((array) $data)) {
                     Issue::error('There was an error with your request.');
@@ -126,19 +128,17 @@ class Blog extends Controller
                     Issue::success('Comment has been deleted');
                 }
                 break;
-            
-            default:
-                # code...
-                break;
         }
+        $this->post($data);
     }
 
     public function post($data)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Blog Post';
+        self::$template->set('POST_ID', $data);
         if (self::$isLoggedIn) {
-            self::$template->set('NEWCOMMENT', self::$template->standardView('commentNew'));
+            self::$template->set('NEWCOMMENT', self::$template->standardView('blog.commentNew'));
         } else {
             self::$template->set('NEWCOMMENT', '');
         }
@@ -154,7 +154,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by author - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by author.';
-        $this->view('blog.blog', self::$blog->byAuthor($data));
+        $this->view('blog.postList', self::$blog->byAuthor($data));
         exit();
     }
 
@@ -163,7 +163,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts By Month - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by month.';
-        $this->view('blog.blog', self::$blog->byMonth($month, $year));
+        $this->view('blog.postList', self::$blog->byMonth($month, $year));
         exit();
     }
 
@@ -172,7 +172,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by Year - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by years.';
-        $this->view('blog.blog', self::$blog->byYear($year));
+        $this->view('blog.postList', self::$blog->byYear($year));
         exit();
     }
 }
