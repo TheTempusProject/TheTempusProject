@@ -36,6 +36,7 @@ use TempusProjectCore\Classes\Hash;
 class Install extends Controller
 {
     private static $installer = null;
+    private static $user;
 
     public function __construct()
     {
@@ -85,7 +86,7 @@ class Install extends Controller
         self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
         Debug::log("Controller initiated: " . __METHOD__ . '.');
         if (Check::form('installStart')) {
-            self::$installer->nextStep('terms');
+            self::$installer->nextStep('terms', true);
             return;
         }
         $this->view('install.start');
@@ -101,7 +102,7 @@ class Install extends Controller
             $this->view('install.agreement');
             return;
         }
-        self::$installer->nextStep('verify');
+        self::$installer->nextStep('verify', true);
     }
 
     public function verify()
@@ -118,7 +119,7 @@ class Install extends Controller
             $this->view('install.check');
             return;
         }
-        self::$installer->nextStep('configure');
+        self::$installer->nextStep('configure', true);
     }
 
     public function configure()
@@ -227,7 +228,7 @@ class Install extends Controller
             Issue::error('Config file already exists so the installer has been halted. If there was an error with installation, please delete App/config.php manually and try again. The installer should automatically bring you back to this step.');
             return;
         }
-        self::$installer->nextStep('htaccess');
+        self::$installer->nextStep('htaccess', true);
     }
 
     public function htaccess()
@@ -245,7 +246,7 @@ class Install extends Controller
             return;
         }
         self::$installer->checkHtaccess(true);
-        self::$installer->nextStep('install');
+        self::$installer->nextStep('install', true);
     }
 
     public function install()
@@ -253,7 +254,7 @@ class Install extends Controller
         self::$template->set('menu-Install', 'active');
         self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
         Issue::info('Installing models');
-        $models = self::$installer->getModelVersionList('Models');
+        $models = self::$installer->getModelVersionList('App/Models');
         if (!Input::exists()) {
             $this->view('install.models', $models);
             return;
@@ -274,7 +275,7 @@ class Install extends Controller
             Issue::error('There was an error with the Installation.', self::$installer->getErrors());
             return;
         }
-        self::$installer->nextStep('resources');
+        self::$installer->nextStep('resources', true);
     }
 
     public function resources()
@@ -299,9 +300,9 @@ class Install extends Controller
             'installPreferences' => false
          ];
         $error = false;
-        $models = self::$installer->getModelList('Models');
+        $models = self::$installer->getModelList('App/Models');
         foreach ($models as $model) {
-            if (!self::$installer->installModel($model, '', $flags)) {
+            if (!self::$installer->installModel($model, 'App/Models', $flags)) {
                 $error = true;
             }
         }
@@ -309,7 +310,7 @@ class Install extends Controller
             Issue::error('There was an error with the Installation.', self::$installer->getErrors());
             return;
         }
-        self::$installer->nextStep('user');
+        self::$installer->nextStep('user', true);
     }
 
     public function user()
@@ -326,6 +327,7 @@ class Install extends Controller
             $this->view('install.adminUser');
             return;
         }
+        self::$user = $this->model('user');
         if (!self::$user->create([
             'username' => Input::post('newUsername'),
             'password' => Hash::make(Input::post('userPassword')),
@@ -339,7 +341,7 @@ class Install extends Controller
             Issue::error('There was an error creating the admin user.');
             return;
         }
-        self::$installer->nextStep('complete');
+        self::$installer->nextStep('complete', true);
     }
 
     public function complete()
@@ -349,7 +351,7 @@ class Install extends Controller
         Issue::success('The Tempus Project has been installed successfully.');
         Email::send(Input::post('email'), 'install', null, ['template' => true]);
         $this->view('install.complete');
-        self::$installer->nextStep('delete', false);
+        self::$installer->nextStep('delete');
     }
     public function delete()
     {
