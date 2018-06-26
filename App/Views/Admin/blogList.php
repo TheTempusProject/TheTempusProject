@@ -40,6 +40,6 @@
             {/ALT}
         </tbody>
     </table>
-    <a href="{BASE}admin/blog/new" class="btn btn-sm btn-primary" role="button">Create</a>
+    <a href="{BASE}admin/blog/newPost" class="btn btn-sm btn-primary" role="button">Create</a>
     <button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button>
 </form>

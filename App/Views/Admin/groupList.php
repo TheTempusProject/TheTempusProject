@@ -34,6 +34,6 @@
             {/ALT}
         </tbody>
     </table>
-    <a href="{BASE}admin/groups/new" class="btn btn-sm btn-primary" role="button">Create</a>
+    <a href="{BASE}admin/groups/newGroup" class="btn btn-sm btn-primary" role="button">Create</a>
     <button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger">Delete</button>
 </form>

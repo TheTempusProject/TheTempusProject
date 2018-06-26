@@ -20,7 +20,7 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Classes\Email;
 use TheTempusProject\Controllers\AdminController;
 
 require_once 'AdminController.php';
@@ -33,6 +33,8 @@ class Contact extends AdminController
         parent::__construct();
         Debug::log('Controller Constructing: ' . get_class($this));
         self::$title = 'Admin - Contact';
+        self::$user = $this->model('user');
+        self::$subscribe = $this->model('subscribe');
     }
     public function index($data = null)
     {

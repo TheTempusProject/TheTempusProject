@@ -19,7 +19,7 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
+use TempusProjectCore\Classes\Image;
 use TempusProjectCore\Classes\Config;
 use TempusProjectCore\Core\Installer;
 use TheTempusProject\Controllers\AdminController;
@@ -28,7 +28,6 @@ require_once 'AdminController.php';
 
 class Settings extends AdminController
 {
-    
     public function __construct()
     {
         parent::__construct();

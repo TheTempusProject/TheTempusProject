@@ -38,14 +38,15 @@ class Logs extends AdminController
     }
     public function index($data = null)
     {   
-        $this->view('admin.logAdminList', self::$log->adminList());
         $this->view('admin.logErrorList', self::$log->errorList());
+        $this->view('admin.logAdminList', self::$log->adminList());
         $this->view('admin.logLoginList', self::$log->loginList());
         exit();
     }
     public function delete($data = null)
     {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");if (self::$log->delete($data) === true) {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        if (self::$log->delete($data) === true) {
             Issue::success('Log Deleted');
         } else {
             Issue::error('There was an error with your request.');
@@ -54,7 +55,8 @@ class Logs extends AdminController
     }
     public function viewLog($data = null)
     {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");$logData = self::$log->getLog($data);
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        $logData = self::$log->getLog($data);
         if ($logData !== false) {
             $this->view('admin.log', self::$log->getLog($data));
             exit();

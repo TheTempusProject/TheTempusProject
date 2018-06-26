@@ -37,7 +37,7 @@
 				</div>
 				<div class="panel-footer">
 					{ADMIN}
-					<form action="{base}admin/logins/delete" method="post">
+					<form action="{base}admin/admin/delete" method="post">
 						<INPUT type="hidden" name="L_" value="{ID}"/>
 						<input type="hidden" name="token" value="{TOKEN}" />
 						<button name="submit" value="submit" type="submit" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></button>

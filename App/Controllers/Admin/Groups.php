@@ -20,7 +20,7 @@ use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Classes\Check;
 use TheTempusProject\Controllers\AdminController;
 
 require_once 'AdminController.php';
@@ -37,6 +37,8 @@ class Groups extends AdminController
     public function index($data = null)
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
+        $this->view('admin.groupList', self::$group->listGroups());
+        exit();
     }
     public function viewGroup($data = null)
     {
@@ -47,8 +49,7 @@ class Groups extends AdminController
             exit();
         }
         Issue::error('Group not found');
-        $this->view('admin.groupList', self::$group->listGroups());
-        exit();
+        $this->index();
     }
     public function listmembers($data = null)
     {
@@ -60,8 +61,7 @@ class Groups extends AdminController
             exit();
         }
         Issue::error('Group not found');
-        $this->view('admin.groupList', self::$group->listGroups());
-        exit();
+        $this->index();
     }
     public function newGroup($data = null)
     {
@@ -80,8 +80,7 @@ class Groups extends AdminController
         } else {
             Issue::error('There was an error creating your group.');
         }
-        $this->view('admin.groupList', self::$group->listGroups());
-        exit();
+        $this->index();
     }
     public function edit($data = null)
     {
@@ -109,8 +108,7 @@ class Groups extends AdminController
         } else {
             Issue::error('There was an error with your request.');
         }
-        $this->view('admin.groupList', self::$group->listGroups());
-        exit();
+        $this->index();
     }
     public function delete($data = null)
     {
@@ -123,7 +121,6 @@ class Groups extends AdminController
         } else {
             Issue::success('Group has been deleted');
         }
-        $this->view('admin.groupList', self::$group->listGroups());
-        exit();
+        $this->index();
     }
 }
