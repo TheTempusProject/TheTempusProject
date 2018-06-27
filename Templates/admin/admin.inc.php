@@ -48,7 +48,7 @@ class AdminLoader extends Controller
             $this->components['STATUS'] = Template::standardView('navigation.statusLoggedOut');
         }
         $this->components['ADMINNAV'] = Template::standardView('navigation.admin');
-        $this->components['ADMINNAV'] = Template::activePageSelect(null, null, $this->components['ADMINNAV']);
+        $this->components['ADMINNAV'] = Template::activePageSelect(null, 'admin/' . CORE_CONTROLLER, $this->components['ADMINNAV']);
         $this->components['MAINNAV'] = Template::standardView('navigation.main');
         $this->components['MAINNAV'] = Template::activePageSelect(null, null, $this->components['MAINNAV']);
     }
