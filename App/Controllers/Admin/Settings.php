@@ -15,7 +15,6 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
@@ -61,6 +60,10 @@ class Settings extends AdminController
             Config::updateConfig('logging', 'logins', Input::post('logL'));
             Config::updateConfig('bugreports', 'enabled', Input::post('logBR'));
             Config::updateConfig('group', 'defaultGroup', Input::post('groupSelect'));
+            Config::updateConfig('recaptcha', 'siteKey', Input::post('siteHash'));
+            Config::updateConfig('recaptcha', 'privateKey', Input::post('privateHash'));
+            Config::updateConfig('recaptcha', 'sendIP', Input::post('sendIP'));
+            Config::updateConfig('recaptcha', 'enabled', Input::post('recaptcha'));
             Config::saveConfig();
         }
         $select = self::$template->standardView('admin.groupSelect', self::$group->listGroups());
@@ -71,6 +74,8 @@ class Settings extends AdminController
         self::$template->set('maxFileSize', $a ? Input::post('fileSize') : Config::get('uploads/maxFileSize'));
         self::$template->set('maxImageSize', $a ? Input::post('imageSize') : Config::get('uploads/maxImageSize'));
         self::$template->set('cookieExpiry', $a ? Input::post('cookieExpiry') : Config::get('cookie/cookieExpiry'));
+        self::$template->set('siteHash', $a ? Input::post('siteHash') : Config::get('recaptcha/siteKey'));
+        self::$template->set('privateHash', $a ? Input::post('privateHash') : Config::get('recaptcha/privateKey'));
         self::$template->set('LIMIT', $a ? Input::post('loginLimit') : Config::get('main/loginLimit'));
         self::$template->selectOption($a ? Input::post('groupSelect') : Config::get('group/defaultGroup'));
         self::$template->selectOption($a ? Input::post('timezone') : Config::get('main/timezone'));
@@ -80,6 +85,8 @@ class Settings extends AdminController
         self::$template->selectRadio('logins', $a ? Input::post('logL') : Config::getString('logging/logins'));
         self::$template->selectRadio('bugReports', $a ? Input::post('logBR') : Config::getString('bugreports/enabled'));
         self::$template->selectRadio('uploads', $a ? Input::post('uploads') : Config::getString('uploads/enabled'));
+        self::$template->selectRadio('sendIP', $a ? Input::post('sendIP') : Config::getString('recaptcha/sendIP'));
+        self::$template->selectRadio('recaptcha', $a ? Input::post('recaptcha') : Config::getString('recaptcha/enabled'));
         self::$template->set('securityHash', $installer->getNode('installHash'));
         $this->view('admin.settings');
         exit();
