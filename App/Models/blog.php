@@ -304,16 +304,21 @@ class Blog extends Controller
         return $this->filterPost($postData->first());
     }
 
-    public function archive()
+    public function archive($includeDraft = false)
     {
+        $whereClause = [];
         $currentTimeUnix = time();
         $x = 0;
         $dataOut = [];
         $month = date("F", $currentTimeUnix);
         $year = date("Y", $currentTimeUnix);
         $previous = date("U", strtotime("$month 1st $year"));
+        if ($includeDraft !== true) {
+            $whereClause = ['draft', '=', '0', 'AND'];
+        }
         while ($x <= 5) {
-            $data = self::$db->get('posts', ['created', '<=', $currentTimeUnix, 'AND', 'created', '>=', $previous]);
+            $where =  array_merge($whereClause, ['created', '<=', $currentTimeUnix, 'AND', 'created', '>=', $previous]);
+            $data = self::$db->get('posts', $where);
             $x++;
             $month = date("m", $previous);
             $montht = date("F", $previous);
@@ -340,12 +345,18 @@ class Blog extends Controller
         return (object) $dataOut;
     }
 
-    public function recent($limit = null)
+    public function recent($limit = null, $includeDraft = false)
     {
-        if (empty($limit)) {
-            $postData = self::$db->getPaginated('posts', '*');
+        $whereClause = [];
+        if ($includeDraft !== true) {
+            $whereClause = ['draft', '=', '0'];
         } else {
-            $postData = self::$db->get('posts', ['ID', '>', '0'], 'ID', 'DESC', [0, $limit]);
+            $whereClause = '*';
+        }
+        if (empty($limit)) {
+            $postData = self::$db->getPaginated('posts', $whereClause);
+        } else {
+            $postData = self::$db->getPaginated('posts', $whereClause, 'ID', 'DESC', [0, $limit]);
         }
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
@@ -374,15 +385,20 @@ class Blog extends Controller
         return $this->filterPost($postData->results());
     }
 
-    public function byYear($year)
+    public function byYear($year, $includeDraft = false)
     {
         if (!Check::id($year)) {
             Debug::info("Invalid Year");
             return false;
         }
+        $whereClause = [];
+        if ($includeDraft !== true) {
+            $whereClause = ['draft', '=', '0', 'AND'];
+        }
         $firstDayUnix = date("U", strtotime("first day of $year"));
         $lastDayUnix = date("U", strtotime("last day of $year"));
-        $postData = self::$db->get('posts', ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
+        $whereClause =  array_merge($whereClause, ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
+        $postData = self::$db->getPaginated('posts', $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
@@ -391,13 +407,18 @@ class Blog extends Controller
         return $this->filterPost($postData->results());
     }
 
-    public function byAuthor($ID)
+    public function byAuthor($ID, $includeDraft = false)
     {
         if (!Check::id($ID)) {
             Debug::info("Invalid Author");
             return false;
         }
-        $postData = self::$db->getPaginated('posts', ['author' => $ID]);
+        $whereClause = [];
+        if ($includeDraft !== true) {
+            $whereClause = ['draft', '=', '0', 'AND'];
+        }
+        $whereClause =  array_merge($whereClause, ['author' => $ID]);
+        $postData = self::$db->getPaginated('posts', $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
@@ -406,7 +427,7 @@ class Blog extends Controller
         return $this->filterPost($postData->results());
     }
 
-    public function byMonth($month, $year = 2017)
+    public function byMonth($month, $year = 2018, $includeDraft = false)
     {
         if (!Check::id($month)) {
             Debug::info("Invalid Month");
@@ -416,10 +437,15 @@ class Blog extends Controller
             Debug::info("Invalid Year");
             return false;
         }
+        $whereClause = [];
+        if ($includeDraft !== true) {
+            $whereClause = ['draft', '=', '0', 'AND'];
+        }
         $firstDayUnix = date("U", strtotime("$month/01/$year"));
         $month = date("F", $firstDayUnix);
         $lastDayUnix = date("U", strtotime("last day of $month $year"));
-        $postData = self::$db->get('posts', ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
+        $whereClause =  array_merge($whereClause, ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
+        $postData = self::$db->getPaginated('posts', $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
