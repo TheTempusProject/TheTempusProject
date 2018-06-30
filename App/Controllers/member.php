@@ -45,7 +45,6 @@ class Member extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Members Area';
-        $this->view('test');
         exit();
     }
 }
