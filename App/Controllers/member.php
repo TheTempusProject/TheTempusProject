@@ -4,7 +4,7 @@
  *
  * This is the members controller.
  *
- * @version 1.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -17,9 +17,6 @@ namespace TheTempusProject\Controllers;
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
 
 class Member extends Controller
 {
@@ -48,6 +45,7 @@ class Member extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Members Area';
+        $this->view('test');
         exit();
     }
 }

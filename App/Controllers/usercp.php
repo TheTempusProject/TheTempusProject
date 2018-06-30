@@ -4,7 +4,7 @@
  *
  * This is the userCP controller.
  *
- * @version 1.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *

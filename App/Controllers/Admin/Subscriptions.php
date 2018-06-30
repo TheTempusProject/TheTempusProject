@@ -1,10 +1,10 @@
 <?php
 /**
- * Controllers/Admin/.php
+ * Controllers/Admin/Subscriptions.php
  *
- * This is the xxxxxx controller.
+ * This is the Subscriptions controller.
  *
- * @version 1.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -15,12 +15,9 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
 use TheTempusProject\Controllers\AdminController;
 
 require_once 'AdminController.php';

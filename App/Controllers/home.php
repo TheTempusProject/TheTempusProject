@@ -4,7 +4,7 @@
  *
  * This is the home controller.
  *
- * @version 1.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -18,15 +18,11 @@ use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Classes\Redirect;
 use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Classes\Cookie;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Log;
-use TempusProjectCore\Classes\DB;
 
 class Home extends Controller
 {

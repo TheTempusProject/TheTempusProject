@@ -4,7 +4,7 @@
  *
  * This is the register controller.
  *
- * @version 1.0
+ * @version 3.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -16,8 +16,6 @@ namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Classes\DB;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Cookie;
 use TempusProjectCore\Classes\Input;
@@ -26,7 +24,6 @@ use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Code;
 use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Token;
 use TempusProjectCore\Classes\Redirect;
 
 class Register extends Controller
