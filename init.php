@@ -25,11 +25,11 @@ define('APP_SPACE', __NAMESPACE__);
 
 $mods = apache_get_modules();
 if (!in_array('mod_rewrite', $mods)) {
-    echo file_get_contents('Views/Errors/rewrite.php');
+    echo file_get_contents('App/Views/Errors/Rewrite.php');
     exit();
 }
 if (!file_exists('vendor/autoload.php')) {
-    echo file_get_contents('Views/Errors/composer.php');
+    echo file_get_contents('App/Views/Errors/Composer.php');
     exit();
 }
 require_once 'vendor/autoload.php';
@@ -51,6 +51,6 @@ $htaccessPath = Routes::getFull().'.htaccess';
 $installPath = Routes::getFull().'install.php';
 
 if (!file_exists($htaccessPath) && !file_exists($installPath)) {
-    echo file_get_contents('Views/Errors/533.php');
+    echo file_get_contents('App/Views/Errors/533.php');
     exit();
 }
