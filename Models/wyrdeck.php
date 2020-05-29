@@ -24,7 +24,7 @@ use TempusProjectCore\Classes\CustomException as CustomException;
 use TempusProjectCore\Classes\DB as DB;
 use TempusProjectCore\Core\Updater as Updater;
 
-class Bugreport extends Controller
+class wyrdeck extends Controller
 {
     private static $enabled = null;
     public function __construct()
@@ -40,23 +40,12 @@ class Bugreport extends Controller
      */
     public static function install()
     {
-        self::$db->newTable('wyr');
-        self::$db->addfield('userID', 'int', '11');
-        self::$db->addfield('time', 'int', '10');
-        self::$db->addfield('deck', 'int', '5');
-        self::$db->addfield('cardText', 'text', '');
-        self::$db->createTable();
         self::$db->newTable('wyr_decks');
         self::$db->addfield('userID', 'int', '11');
         self::$db->addfield('time', 'int', '10');
         self::$db->addfield('title', 'varchar', '80');
         self::$db->addfield('description', 'text', '');
         self::$db->createTable();
-        Permission::addPerm('wyr', false);
-        Permission::savePerms(true);
-        Config::addConfigCategory('wyr');
-        Config::addConfig('wyr', 'enabled', true);
-        Config::saveConfig();
         return self::$db->getStatus();
     }
 
@@ -80,9 +69,9 @@ class Bugreport extends Controller
         if (!Check::id($ID)) {
             return false;
         }
-        $data = self::$db->get('wyr', ['ID', '=', $ID]);
+        $data = self::$db->get('wyr_decks', ['ID', '=', $ID]);
         if ($data->count() == 0) {
-            Debug::info('Card not found.');
+            Debug::info('Deck not found.');
             return false;
         }
         return $this->parse($data->first());
@@ -113,7 +102,7 @@ class Bugreport extends Controller
     }
 
 
-    public function listAllCards($filter = null)
+    public function listCards($deckId = null)
     {
         $data = self::$db->getPaginated('wyr', '*');
         if ($data->count() == 0) {
@@ -123,9 +112,9 @@ class Bugreport extends Controller
 
         return (object) $this->parse($data->results());
     }
-    public function listCardsByDeck($filter = null)
+    public function list($filter = null)
     {
-        $data = self::$db->getPaginated('wyr', '*');
+        $data = self::$db->getPaginated('wyr_decks', '*');
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;
@@ -133,9 +122,9 @@ class Bugreport extends Controller
 
         return (object) $this->parse($data->results());
     }
-    public function listCardsByUser($filter = null)
+    public function listDecksByUser($filter = null)
     {
-        $data = self::$db->getPaginated('wyr', '*');
+        $data = self::$db->getPaginated('wyr_decks', '*');
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;
@@ -144,7 +133,7 @@ class Bugreport extends Controller
         return (object) $this->parse($data->results());
     }
 
-    public static function create($ID, $deck, $cardText)
+    public static function create($ID, $title, $description)
     {
         if (!Check::id($ID)) {
             return false;
@@ -157,11 +146,11 @@ class Bugreport extends Controller
         $fields = [
             'userID' => $ID,
             'time' => time(),
-            'deck' => $deck,
-            'cardText' => $cardText,
+            'title' => $title,
+            'description' => $description,
         ];
-        if (!self::$db->insert('wyr', $fields)) {
-            new CustomException('wyr');
+        if (!self::$db->insert('wyr_decks', $fields)) {
+            new CustomException('wyr_decks');
 
             return false;
         }
@@ -176,9 +165,9 @@ class Bugreport extends Controller
      *
      * @todo  this is probably dumb
      */
-    public function clearDeck($deckId)
+    public function clear($deckId)
     {
-        self::$db->delete('bugreports', ['deck', '=', $deckId]);
+        self::$db->delete('wyr_decks', ['ID', '=', $deckId]);
         self::$log->admin("Cleared wyr Deck");
         Debug::info("wyr deck Cleared");
         return true;
@@ -201,9 +190,9 @@ class Bugreport extends Controller
             if (!Check::id($instance)) {
                 $error = true;
             }
-            self::$db->delete('wyr', ['ID', '=', $instance]);
-            self::$log->admin("Deleted wyr card: $instance");
-            Debug::info("card deleted: $instance");
+            self::$db->delete('wyr_decks', ['ID', '=', $instance]);
+            self::$log->admin("Deleted wyr deck: $instance");
+            Debug::info("deck deleted: $instance");
             if (!empty($end)) {
                 break;
             }

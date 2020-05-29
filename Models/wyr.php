@@ -117,6 +117,7 @@ class wyr extends Controller
 
         return (object) $this->parse($data->results());
     }
+    
     public function listByDeck($filter = null)
     {
         $data = self::$db->getPaginated('wyr', '*');
