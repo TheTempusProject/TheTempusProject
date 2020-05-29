@@ -52,9 +52,20 @@ class Wyr extends Controller
     public function createdeck()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = 'Would You rather?';
-        $this->view('wyr.create.deck');
-        exit();
+        self::$title = 'Create Deck - {SITENAME}';
+        self::$pageDescription = '';
+        if (!Input::exists()) {
+            $this->view('wyr.create.deck');
+            // exit();
+        }
+        if (!Check::form('createDeck')) {
+            Issue::error('There was an error creating your deck.', Check::userErrors());
+            $this->view('wyr.create.deck');
+            // exit();
+        }
+        self::$wyrDeck->create(self::$activeUser->ID, Input::post('title'), Input::post('entry'));
+        Session::flash('success', 'Your deck has been created.');
+        Redirect::to('wyr/index');
     }
 
     public function createcard()

@@ -104,7 +104,7 @@ class wyrdeck extends Controller
 
     public function listCards($deckId = null)
     {
-        $data = self::$db->getPaginated('wyr', '*');
+        $data = self::$db->getPaginated('wyr', ["deck", "=" "deckId"]);
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;
@@ -124,7 +124,7 @@ class wyrdeck extends Controller
     }
     public function listDecksByUser($filter = null)
     {
-        $data = self::$db->getPaginated('wyr_decks', '*');
+        $data = self::$db->getPaginated('wyr_decks', ["userID", "=" "deckId"]);
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;
