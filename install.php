@@ -1,5 +1,4 @@
 <?php
-ob_start();
 /**
  * install.php
  *
@@ -16,6 +15,7 @@ ob_start();
  */
 
 namespace TheTempusProject\Controllers;
+ob_start();
 
 require_once 'index.php';
 
