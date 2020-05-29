@@ -62,6 +62,18 @@ class Wyr extends Controller
         return self::$enabled;
     }
 
+    public static function count($deckID)
+    {
+        $where = ['deck', '=', $deckID];
+        $data = self::$db->get('wyr', $where);
+        if (!$data->count()) {
+            Debug::info("No comments found.");
+
+            return 0;
+        }
+        return $data->count();
+    }
+
     /**
      * Select a bug report from the logs table.
      *
@@ -80,6 +92,18 @@ class Wyr extends Controller
             return false;
         }
         return $this->parse($data->first());
+    }
+    public function getRandFromDeck($deckID, $count)
+    {
+        if (!Check::id($deckID)) {
+            return false;
+        }
+        $data = self::$db->get('wyr', ['deck', '=', $deckID]);
+        if ($data->count() == 0) {
+            Debug::info('Card not found.');
+            return false;
+        }
+        return $this->parse($data->results()[($count - 1)]);
     }
 
     /**
@@ -118,9 +142,9 @@ class Wyr extends Controller
         return (object) $this->parse($data->results());
     }
     
-    public function listByDeck($filter = null)
+    public function listByDeck($deckID)
     {
-        $data = self::$db->getPaginated('wyr', '*');
+        $data = self::$db->getPaginated('wyr', ['deck', '=', $deckID]);
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;

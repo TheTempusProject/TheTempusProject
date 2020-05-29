@@ -51,6 +51,7 @@ class Wyrdeck extends Controller
 
     private static function enabled()
     {
+        return true;
         if (empty(self::$enabled)) {
             self::$enabled = (DB::enabled() && Config::get('wyr/enabled') == true);
         }
@@ -101,10 +102,14 @@ class Wyrdeck extends Controller
         return $out;
     }
 
-
+    public function countCards($deckID)
+    {
+        $data = self::$db->get('wyr', ['deck', '=', $deckID]);
+        return $data->count();
+    }
     public function listCards($deckId = null)
     {
-        $data = self::$db->getPaginated('wyr', ["deck", "=", "deckId"]);
+        $data = self::$db->getPaginated('wyr', ["deck", "=", $deckId]);
         if ($data->count() == 0) {
             Debug::info('No cards found.');
             return false;
@@ -116,7 +121,7 @@ class Wyrdeck extends Controller
     {
         $data = self::$db->getPaginated('wyr_decks', '*');
         if ($data->count() == 0) {
-            Debug::info('No cards found.');
+            Debug::info('No decks found.');
             return false;
         }
 
@@ -150,7 +155,7 @@ class Wyrdeck extends Controller
             'description' => $description,
         ];
         if (!self::$db->insert('wyr_decks', $fields)) {
-            new CustomException('wyr_decks');
+            // new CustomException('wyr_decks');
 
             return false;
         }

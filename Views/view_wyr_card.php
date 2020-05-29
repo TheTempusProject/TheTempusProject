@@ -19,7 +19,7 @@
                                     </tr>
                                     <tr>
                                         <td>Would you rather?</td>
-                                        <td>{cardText)</td>
+                                        <td>{cardText}</td>
                                     </tr>
                                 </tbody>
                             </table>
