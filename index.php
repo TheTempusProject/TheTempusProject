@@ -17,6 +17,8 @@
 
 namespace TheTempusProject;
 
+ob_start();
+
 use TempusProjectCore\Classes\Pagination as Pagination;
 use TempusProjectCore\Core\Controller as Controller;
 use TempusProjectCore\Functions\Docroot as Docroot;
