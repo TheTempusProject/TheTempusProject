@@ -24,7 +24,7 @@ use TempusProjectCore\Classes\CustomException as CustomException;
 use TempusProjectCore\Classes\DB as DB;
 use TempusProjectCore\Core\Updater as Updater;
 
-class wyr extends Controller
+class Wyr extends Controller
 {
     private static $enabled = null;
     public function __construct()
