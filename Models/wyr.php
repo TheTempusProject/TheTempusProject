@@ -56,6 +56,7 @@ class Wyr extends Controller
 
     private static function enabled()
     {
+        return true;
         if (empty(self::$enabled)) {
             self::$enabled = (DB::enabled() && Config::get('wyr/enabled') == true);
         }
