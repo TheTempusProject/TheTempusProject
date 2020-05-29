@@ -108,7 +108,7 @@ class Wyr extends Controller
     public function play()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = 'Would You rather?';
+        self::$title = 'Playing: Would You rather?';
         $decks = self::$template->standardView('wyr.deck.select', self::$wyrDeck->list());
         self::$template->set('deckSelect', $decks);
         if (!Input::exists()) {
@@ -116,12 +116,25 @@ class Wyr extends Controller
             exit();
         }
         self::$template->set('deck_title', self::$wyrDeck->get(intval(Input::post('deckSelect')))[0]->title);
-        $max = self::$wyrDeck->countCards(intval(Input::post('deckSelect')));
-        $randomID = intval(rand(1,$max));
-        // echo var_export(self::$wyr->get($randomID)[0],true);
-        // exit;
-        $randomCard = self::$wyr->getRandFromDeck(intval(Input::post('deckSelect')), $randomID);
-        $this->view('wyr.card', $randomCard);
+        self::$template->set('currentDeck', intval(Input::post('deckSelect')));
+        if (Input::post('submit') == 'random') {
+            $max = self::$wyrDeck->countCards(intval(Input::post('deckSelect')));
+            $cardId = intval(rand(1,$max));
+            // echo var_export(self::$wyr->get($randomID)[0],true);
+            // exit;
+            $card = self::$wyr->getRandFromDeck(intval(Input::post('deckSelect')), $cardId);
+        } else {
+            $cardId = 1;
+            if (!empty(Input::post('currentCard'))) {
+                $cardId = intval(Input::post('currentCard')) + 1;
+            }
+            // echo var_export(self::$wyr->get($randomID)[0],true);
+            // exit;
+            $card = self::$wyr->getRandFromDeck(intval(Input::post('deckSelect')), $cardId);
+        }
+        
+        $this->view('wyr.card', $card);
+        self::$template->set('ID', $cardId);
         $this->view('wyr');
         exit();
     }
