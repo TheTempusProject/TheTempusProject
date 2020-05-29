@@ -1,8 +1,10 @@
 <form action="" method="post" class="form-horizontal">
-    <legend>Would you rather?</legend>
-    <a href="createdeck" class="btn btn-lg btn-primary center-block">Create a Deck</a><br>
-    <a href="createcard" class="btn btn-lg btn-primary center-block">Create a Card</a><br>
-    <a href="viewdecks" class="btn btn-lg btn-primary center-block">View Decks/Cards</a><br>
-    <a href="play" class="btn btn-lg btn-primary center-block">Play</a><br>
+    <div class="col-lg-4 col-lg-offset-4">
+    <legend style="text-align: center;">Would you rather?</legend>
+	    <a href="wyr/createdeck" class="btn btn-md btn-primary center-block">Create a Deck</a><br>
+	    <a href="wyr/createcard" class="btn btn-md btn-primary center-block">Create a Card</a><br>
+	    <a href="wyr/viewdecks" class="btn btn-md btn-primary center-block">View Decks/Cards</a><br>
+	    <a href="wyr/play" class="btn btn-md btn-primary center-block">Play</a><br>
+    </div>
     <input type="hidden" name="token" value="{TOKEN}">
 </form>
