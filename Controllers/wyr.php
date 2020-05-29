@@ -45,7 +45,7 @@ class Wyr extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Would You rather?';
-        $this->view('wyr');
+        $this->view('wyr.select');
         exit();
     }
 
@@ -53,7 +53,7 @@ class Wyr extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Would You rather?';
-        $this->view('wyr');
+        $this->view('wyr.create.deck');
         exit();
     }
 
@@ -61,7 +61,7 @@ class Wyr extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Would You rather?';
-        $this->view('wyr');
+        $this->view('wyr.create.card');
         exit();
     }
 
@@ -69,7 +69,7 @@ class Wyr extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Would You rather?';
-        $this->view('wyr');
+        $this->view('wyr.decks');
         exit();
     }
 
@@ -77,7 +77,7 @@ class Wyr extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Would You rather?';
-        $this->view('wyr');
+        $this->view('wyr.card');
         exit();
     }
 
