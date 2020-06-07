@@ -1,8 +1,8 @@
 <?php
 /**
- * Templates/admin/admin.inc.php
+ * Templates/blog/blog.inc.php
  *
- * This is the loader for the admin template.
+ * This is the loader for the blog template.
  *
  * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
@@ -15,23 +15,24 @@ use TempusProjectCore\Core\Controller as Controller;
 use TempusProjectCore\Core\Template as Template;
 use TempusProjectCore\Classes\Config as Config;
 
-class AdminLoader extends Controller
+class BlogLoader extends Controller
 {
     private $components = [];
 
     public function __construct()
     {
+        $blog = $this->model('blog');
         $this->components['LOGO'] = Config::get('main/logo');
         $this->components['FOOT'] = Template::standardView('foot');
         $this->components["COPY"] = Template::standardView('copy');
+        $this->components["SIDEBAR"] = Template::standardView('blog.sidebar', $blog->recent(5));
+        $this->components["SIDEBAR2"] = Template::standardView('blog.sidebar2', $blog->archive());
         if (self::$isLoggedIn) {
             $this->components['STATUS'] = Template::standardView('navigation.statusLoggedIn');
             $this->components['USERNAME'] = self::$activeUser->username;
         } else {
             $this->components['STATUS'] = Template::standardView('navigation.statusLoggedOut');
         }
-        $this->components['ADMINNAV'] = Template::standardView('navigation.admin');
-        $this->components['ADMINNAV'] = Template::activePageSelect(null, 'admin/' . CORE_CONTROLLER, $this->components['ADMINNAV']);
         $this->components['MAINNAV'] = Template::standardView('navigation.main');
         $this->components['MAINNAV'] = Template::activePageSelect(null, null, $this->components['MAINNAV']);
     }

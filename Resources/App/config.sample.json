@@ -1,7 +1,7 @@
 {
 	"main":{
 		"name":"The Tempus Project",
-		"logo":"Images\/logo.png",
+		"logo":"images\/logo.png",
 		"template":"default",
 		"tokenName":"TPC_SESSION_TOKEN",
 		"loginLimit":5,

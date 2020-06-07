@@ -1,15 +1,12 @@
 <?php
 /**
- * Controllers/default.php
+ * controllers/example.php
  *
  * This is the Default controller design.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Controllers;

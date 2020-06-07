@@ -6,12 +6,9 @@
  * In this file we initiate all models we will need, authenticate sessions, set
  * template objects, and call appload to initialize the appropriate controller/method.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject;
@@ -31,7 +28,6 @@ require_once "init.php";
 
 class Appload extends Controller
 {
-    // Prevents the application from initiating twice.
     protected static $initiated = false;
     protected static $session;
     protected static $message;
@@ -39,11 +35,11 @@ class Appload extends Controller
      * The constructor takes care of everything that we will need before
      * finally calling appload to instantiate the appropriate controller/method.
      *
-     * @param string $urlDirected - A custom url string to be used when initiating
-     *                              the application.
+     * @param string $urlDirected - A custom url for initiating the app
      */
     public function __construct($urlDirected = null)
     {
+        // Prevents the application from initiating twice.
         if (self::$initiated === true) {
             return;
         } else {
@@ -52,6 +48,7 @@ class Appload extends Controller
         parent::__construct();
         self::$session = $this->model('sessions');
         self::$message = $this->model('message');
+
         // Authenticate our session
         self::$session->authenticate();
 
@@ -65,7 +62,7 @@ class Appload extends Controller
         self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', (self::$isAdmin ? '$1' : ''), true);
         self::$message->loadInterface();
         
-        // This also needs to be moved somewhere else
+        // This needs to be moved somewhere else if possible
         if (self::$isAdmin) {
             if (file_exists(self::$location . "install.php")) {
                 if (Debug::status()) {

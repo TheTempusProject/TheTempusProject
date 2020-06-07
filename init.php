@@ -4,20 +4,19 @@
  *
  * The purpose of this file is to have a sequence of events that
  * will always take place before any other classes or functions
- * start loading.
+ * start loading. Its basically Gandalf, if you don't meet these
+ * requirements, "YOU SHALL NOT PASS".
  *
- * @todo    Create a custom autoloader as a fall-back option to
- *          prevent app failure for a bad composer install.
- *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject;
+
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Functions\Routes;
+use TempusProjectCore\Classes\Redirect;
 
 session_start();
 
@@ -35,10 +34,6 @@ if (!file_exists('vendor/autoload.php')) {
 require_once 'vendor/autoload.php';
 
 set_exception_handler('TempusProjectCore\\Functions\\ExceptionHandler::ExceptionHandler');
-
-use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Functions\Routes;
-use TempusProjectCore\Classes\Redirect;
 
 /**
  * This will check for the htaccess file since it controls

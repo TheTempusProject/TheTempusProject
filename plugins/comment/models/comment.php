@@ -26,7 +26,6 @@ use TempusProjectCore\Classes\DB;
 class Comment extends Controller
 {
     protected static $log;
-    protected static $blog;
     protected static $user;
 
     /**
@@ -56,7 +55,6 @@ class Comment extends Controller
     {
         $required = [
             'log',
-            'blog',
             'user'
         ];
         return $required;
@@ -126,7 +124,7 @@ class Comment extends Controller
         }
         $commentData = self::$db->get('comments', ['ID', '=', $id]);
         if (!$commentData->count()) {
-            Debug::info("No Blog posts found.");
+            Debug::info("No comments found.");
 
             return false;
         }
@@ -265,9 +263,6 @@ class Comment extends Controller
         if (!isset(self::$user)) {
             self::$user = $this->model('user');
         }
-        if (!isset(self::$blog)) {
-            self::$blog = $this->model('blog');
-        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -280,14 +275,6 @@ class Comment extends Controller
             }
             $authorName = self::$user->getUsername($instance->author);
             $authorAvatar = self::$user->getAvatar($instance->author);
-            switch ($instance->contentType) {
-                case 'blog':
-                    $content = self::$blog->find($instance->contentID);
-                    if ($content !== false) {
-                        $title = $content->title;
-                    }
-                    break;
-            }
             if (!isset($title)) {
                 $title = 'Unknown';
             }
@@ -302,23 +289,20 @@ class Comment extends Controller
         }
         return $out;
     }
+
+
     public function recent($contentType = 'all', $limit = null)
     {
-        switch ($contentType) {
-            case 'blog':
-                if (empty($limit)) {
-                    $commentData = self::$db->getPaginated('comments', '*');
-                } else {
-                    $commentData = self::$db->get('comments', ['contentType', '=', $contentType], 'created', 'DESC', [0, $limit]);
-                }
-                break;
-            default:
-                if (empty($limit)) {
-                    $commentData = self::$db->getPaginated('comments', '*');
-                } else {
-                    $commentData = self::$db->get('comments', ['ID', '>', '0'], 'created', 'DESC', [0, $limit]);
-                }
-                break;
+        if ($contentType === 'all') {
+            $where = ['ID', '>', '0'];
+        } else {
+            $where = ['contentType', '=', $contentType];
+        }
+
+        if (empty($limit)) {
+            $commentData = self::$db->getPaginated('comments', $where, 'created', 'DESC');
+        } else {
+            $commentData = self::$db->get('comments', $where, 'created', 'DESC', [0, $limit]);
         }
         
         if (!$commentData->count()) {

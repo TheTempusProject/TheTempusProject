@@ -2,15 +2,12 @@
 /**
  * install.php
  *
- * This is the install controller for the application. All traffic should be funneled
+ * This is the install controller for the application.
  * After completion: YOU SHOULD DELETE THIS FILE.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Controllers;
@@ -34,17 +31,20 @@ use TempusProjectCore\Classes\Hash;
 
 class Install extends Controller
 {
-    private static $installer = null;
+    private static $installer;
     private static $user;
 
     public function __construct()
     {
+        Debug::group("Controller: " . get_class($this), 1);
+        self::$title = 'TTP Installer';
+        self::$pageDescription = 'This is the install script for the tempus project.';
+
+        self::$installer = new Installer;
+
         self::$template->noIndex();
         self::$template->noFollow();
-        Debug::group("Controller: " . get_class($this), 1);
-        self::$pageDescription = 'This is the install script for the tempus project.';
-        self::$title = 'TTP Installer';
-        self::$installer = new Installer;
+
         self::$template->set('menu-Welcome', 'disabled');
         self::$template->set('menu-Terms', 'disabled');
         self::$template->set('menu-Verify', 'disabled');
@@ -54,17 +54,18 @@ class Install extends Controller
         self::$template->set('menu-Resources', 'disabled');
         self::$template->set('menu-User', 'disabled');
         self::$template->set('menu-Complete', 'disabled');
-        if (self::$installer->getStatus() !== false) {
-            if (self::$installer->checkSession() !== false) {
-                $location = self::$installer->getStatus();
-                $this->$location();
-                exit();
-            } else {
-                Issue::notice('We cannot verify your current install session. If you recieve this message in error, please delete App/install.json and begin the installation process again.');
-            }
+
+        if (self::$installer->getStatus() === false) {
+            $this->index();
+            exit;
         }
-        $this->index();
-        exit;
+        if (self::$installer->checkSession() !== false) {
+            $location = self::$installer->getStatus();
+            $this->$location();
+            exit();
+        }
+        Issue::notice('We cannot verify your current install session. If you recieve this message in error, please delete App/install.json and begin the installation process again.');
+        exit();
     }
 
     public function __destruct()

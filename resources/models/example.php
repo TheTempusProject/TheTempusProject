@@ -1,15 +1,12 @@
 <?php
 /**
- * Models/defaultModel.php
+ * models/defaultModel.php
  *
  * This class is an default/testing model.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;

@@ -1,15 +1,12 @@
 <?php
 /**
- * Models/user.php
+ * models/user.php
  *
  * This class is used for the manipulation of the user database table.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;
@@ -49,7 +46,7 @@ class User extends Controller
      */
     public static function modelVersion()
     {
-        return '3.0.0';
+        return '2.0.0';
     }
 
     /**

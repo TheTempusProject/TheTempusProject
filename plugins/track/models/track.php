@@ -1,15 +1,12 @@
 <?php
 /**
- * Models/track.php
+ * models/track.php
  *
  * This class is used to provide a link and click treacking interface.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;

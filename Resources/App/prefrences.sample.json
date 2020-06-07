@@ -6,5 +6,5 @@
 	"gender":"unspecified",
 	"email":true,
 	"newsletter":true,
-	"avatar":"Images\/defaultAvatar.png"
+	"avatar":"images\/defaultAvatar.png"
 }
