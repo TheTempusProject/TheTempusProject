@@ -1,38 +1,27 @@
 <?php
 /**
- * Models/blog.php
+ * models/blog.php
  *
  * This class is used for the manipulation of the blog database table.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Sanitize;
+use TempusProjectCore\Core\DatabaseModel;
 
-class Blog extends Controller
+class Blog extends DatabaseModel
 {
+    public static $tableName = "posts";
     protected static $comment;
     protected static $user;
-    protected static $log;
     
-    /**
-     * The model constructor.
-     */
-    public function __construct()
-    {
-        Debug::log('Model Constructed: '.get_class($this));
-    }
-
     /**
      * Returns the current model version.
      *
@@ -40,7 +29,7 @@ class Blog extends Controller
      */
     public static function modelVersion()
     {
-        return '3.0.0';
+        return '1.0.0';
     }
 
     /**
@@ -67,10 +56,7 @@ class Blog extends Controller
     {
         $flags = [
             'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => true,
-            'installPreferences' => false
+            'installResources' => true
         ];
         return $flags;
     }
@@ -82,7 +68,7 @@ class Blog extends Controller
      */
     public static function installDB()
     {
-        self::$db->newTable('posts');
+        self::$db->newTable(self::$tableName);
         self::$db->addfield('author', 'int', '11');
         self::$db->addfield('created', 'int', '10');
         self::$db->addfield('edited', 'int', '10');
@@ -109,52 +95,7 @@ class Blog extends Controller
             'edited' => time(),
             'draft' => 0
             ];
-        return self::$db->insert('posts', $fields);
-    }
-
-    /**
-     * This method will remove all the installed model components.
-     *
-     * @return bool - if the uninstall was completed without error
-     */
-    public static function uninstall()
-    {
-        self::$db->removeTable('posts');
-        return true;
-    }
-
-    /**
-     * Function to delete the specified post.
-     *
-     * @param  int|array $data - the log ID or array of ID's to be deleted
-     *
-     * @return bool
-     */
-    public function delete($data)
-    {
-        if (!isset(self::$log)) {
-            self::$log = $this->model('log');
-        }
-        foreach ($data as $instance) {
-            if (!is_array($data)) {
-                $instance = $data;
-                $end = true;
-            }
-            if (!Check::id($instance)) {
-                $error = true;
-            }
-            self::$db->delete('posts', ['ID', '=', $instance]);
-            self::$log->admin("Deleted blog post: $instance");
-            Debug::info("Post deleted: $instance");
-            if (!empty($end)) {
-                break;
-            }
-        }
-        if (!empty($error)) {
-            Debug::info('One or more invalid ID\'s.');
-            return false;
-        }
-        return true;
+        return self::$db->insert(self::$tableName, $fields);
     }
     
     public function newPost($title, $post, $draft)
@@ -177,7 +118,7 @@ class Blog extends Controller
             'content' => Sanitize::rich($post),
             'title' => $title,
             ];
-        if (!self::$db->insert('posts', $fields)) {
+        if (!self::$db->insert(self::$tableName, $fields)) {
             Debug::error("Blog Post: $data not updated: $fields");
             new customException('userUpdate');
 
@@ -212,7 +153,7 @@ class Blog extends Controller
             'content' => Sanitize::rich($content),
             'title' => $title,
             ];
-        if (!self::$db->update('posts', $id, $fields)) {
+        if (!self::$db->update(self::$tableName, $id, $fields)) {
             new CustomException('blogUpdate');
             Debug::error("Blog Post: $id not updated: $fields");
 
@@ -238,7 +179,7 @@ class Blog extends Controller
         return (object) $fields;
     }
 
-    public function filterPost($postArray, $params = [])
+    public function filter($postArray, $params = [])
     {
         if (!isset(self::$user)) {
             self::$user = $this->model('user');
@@ -288,22 +229,6 @@ class Blog extends Controller
         return $out;
     }
 
-    public function find($id)
-    {
-        if (!Check::id($id)) {
-            Debug::info("blog find: Invalid ID.");
-
-            return false;
-        }
-        $postData = self::$db->get('posts', ['ID', '=', $id]);
-        if (!$postData->count()) {
-            Debug::info("No Blog posts found.");
-
-            return false;
-        }
-        return $this->filterPost($postData->first());
-    }
-
     public function archive($includeDraft = false)
     {
         $whereClause = [];
@@ -318,7 +243,7 @@ class Blog extends Controller
         }
         while ($x <= 5) {
             $where =  array_merge($whereClause, ['created', '<=', $currentTimeUnix, 'AND', 'created', '>=', $previous]);
-            $data = self::$db->get('posts', $where);
+            $data = self::$db->get(self::$tableName, $where);
             $x++;
             $month = date("m", $previous);
             $montht = date("F", $previous);
@@ -354,16 +279,16 @@ class Blog extends Controller
             $whereClause = '*';
         }
         if (empty($limit)) {
-            $postData = self::$db->getPaginated('posts', $whereClause);
+            $postData = self::$db->getPaginated(self::$tableName, $whereClause);
         } else {
-            $postData = self::$db->getPaginated('posts', $whereClause, 'ID', 'DESC', [0, $limit]);
+            $postData = self::$db->getPaginated(self::$tableName, $whereClause, 'ID', 'DESC', [0, $limit]);
         }
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
             return false;
         }
-        return $this->filterPost($postData->results());
+        return $this->filter($postData->results());
     }
 
     public function listPosts($params = [])
@@ -373,16 +298,16 @@ class Blog extends Controller
         } else {
             $whereClause = ['draft', '=', '0'];
         }
-        $postData = self::$db->getPaginated('posts', $whereClause);
+        $postData = self::$db->getPaginated(self::$tableName, $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
             return false;
         }
         if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
-            return $this->filterPost($postData->results(), ['stripHtml' => true]);
+            return $this->filter($postData->results(), ['stripHtml' => true]);
         }
-        return $this->filterPost($postData->results());
+        return $this->filter($postData->results());
     }
 
     public function byYear($year, $includeDraft = false)
@@ -398,13 +323,13 @@ class Blog extends Controller
         $firstDayUnix = date("U", strtotime("first day of $year"));
         $lastDayUnix = date("U", strtotime("last day of $year"));
         $whereClause =  array_merge($whereClause, ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
-        $postData = self::$db->getPaginated('posts', $whereClause);
+        $postData = self::$db->getPaginated(self::$tableName, $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
             return false;
         }
-        return $this->filterPost($postData->results());
+        return $this->filter($postData->results());
     }
 
     public function byAuthor($ID, $includeDraft = false)
@@ -418,13 +343,13 @@ class Blog extends Controller
             $whereClause = ['draft', '=', '0', 'AND'];
         }
         $whereClause =  array_merge($whereClause, ['author' => $ID]);
-        $postData = self::$db->getPaginated('posts', $whereClause);
+        $postData = self::$db->getPaginated(self::$tableName, $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
             return false;
         }
-        return $this->filterPost($postData->results());
+        return $this->filter($postData->results());
     }
 
     public function byMonth($month, $year = 2018, $includeDraft = false)
@@ -445,12 +370,12 @@ class Blog extends Controller
         $month = date("F", $firstDayUnix);
         $lastDayUnix = date("U", strtotime("last day of $month $year"));
         $whereClause =  array_merge($whereClause, ['created', '<=', $lastDayUnix, 'AND', 'created', '>=', $firstDayUnix]);
-        $postData = self::$db->getPaginated('posts', $whereClause);
+        $postData = self::$db->getPaginated(self::$tableName, $whereClause);
         if (!$postData->count()) {
             Debug::info("No Blog posts found.");
 
             return false;
         }
-        return $this->filterPost($postData->results());
+        return $this->filter($postData->results());
     }
 }
