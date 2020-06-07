@@ -1,6 +1,6 @@
 <?php
 /**
- * Templates/rss/rss.inc.php
+ * templates/rss/rss.inc.php
  *
  * This is the loader for the rss template.
  *

@@ -1,6 +1,6 @@
 <?php
 /**
- * Templates/default/default.inc.php
+ * templates/default/default.inc.php
  *
  * This is the loader for the default template.
  *

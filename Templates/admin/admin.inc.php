@@ -1,6 +1,6 @@
 <?php
 /**
- * Templates/admin/admin.inc.php
+ * templates/admin/admin.inc.php
  *
  * This is the loader for the admin template.
  *

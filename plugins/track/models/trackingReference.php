@@ -1,8 +1,8 @@
 <?php
 /**
- * track/models/track.php
+ * track/models/trackingReference.php
  *
- * This class is used to provide a link tracking system
+ * This class is used to provide a reference table for the link tracking system
  *
  * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
@@ -13,9 +13,9 @@ namespace TheTempusProject\Models;
 
 use TempusProjectCore\Core\DatabaseModel;
 
-class Track extends Controller
+class TrackingReference extends DatabaseModel
 {
-    public static $tableName = "tracking_links";
+    public static $tableName = "trackingReference";
 
     /**
      * Returns the current model version.
@@ -28,20 +28,6 @@ class Track extends Controller
     }
 
     /**
-     * Returns an array of models required to run this model without error.
-     *
-     * @return array - An array of models
-     */
-    public static function requiredModels()
-    {
-        $required = [
-            'log',
-            'trackingReference'
-        ];
-        return $required;
-    }
-
-    /**
      * This function is used to install database structures needed for this model.
      *
      * @return boolean - The status of the completed install
@@ -49,12 +35,12 @@ class Track extends Controller
     public static function installDB()
     {
         self::$db->newTable(self::$tableName);
-        self::$db->addfield('referer', 'varchar', '1024');
+        self::$db->addfield('createdBy', 'int', '10');
+        self::$db->addfield('createdAt', 'int', '10');
+        self::$db->addfield('linkType', 'varchar', '32');
         self::$db->addfield('trackingHash', 'varchar', '256');
-        self::$db->addfield('time', 'int', '10');
-        self::$db->addfield('data', 'text', '');
         self::$db->createTable();
-
+        
         return self::$db->getStatus();
     }
 }
