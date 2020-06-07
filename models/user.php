@@ -32,14 +32,6 @@ class User extends Controller
     protected $data = [];
 
     /**
-     * The model constructor.
-     */
-    public function __construct()
-    {
-        Debug::log('Model Constructed: '.get_class($this));
-    }
-
-    /**
      * Returns the current model version.
      *
      * @return string - the correct model version

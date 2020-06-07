@@ -4,37 +4,24 @@
  *
  * This class is used for the manipulation of the feedback database table.
  *
- * @todo  make this send a confirmation email
- *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Permission;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Core\DatabaseModel;
 
-class Feedback extends Controller
+class Feedback extends DatabaseModel
 {
-    protected static $log;
+    public static $tableName = "xxxxxx";
     protected static $enabled = null;
-
-    /**
-     * The model constructor.
-     */
-    public function __construct()
-    {
-        Debug::log('Model Constructed: '.get_class($this));
-    }
 
     /**
      * Returns the current model version.
@@ -44,19 +31,6 @@ class Feedback extends Controller
     public static function modelVersion()
     {
         return '3.0.0';
-    }
-
-    /**
-     * Returns an array of models required to run this model without error.
-     *
-     * @return array - An array of models
-     */
-    public static function requiredModels()
-    {
-        $required = [
-            'log'
-        ];
-        return $required;
     }
 
     /**
@@ -83,7 +57,7 @@ class Feedback extends Controller
      */
     public static function installDB()
     {
-        self::$db->newTable('feedback');
+        self::$db->newTable(self::$tableName);
         self::$db->addfield('name', 'varchar', '32');
         self::$db->addfield('time', 'int', '10');
         self::$db->addfield('email', 'varchar', '75');
@@ -117,19 +91,6 @@ class Feedback extends Controller
     {
         Permission::addPerm('feedback', false);
         return Permission::savePerms(true);
-    }
-
-    /**
-     * This method will remove all the installed model components.
-     *
-     * @return bool - if the uninstall was completed without error
-     */
-    public static function uninstall()
-    {
-        Config::removeConfigCategory('feedback', true);
-        Permission::removePerm('feedback', true);
-        self::$db->removeTable('feedback');
-        return true;
     }
     
     private static function enabled()

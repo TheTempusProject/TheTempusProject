@@ -5,36 +5,25 @@
  * This class is used for the creation, retrieval, and manipulation
  * of the comments table.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;
 
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Code;
-use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Core\Template;
 use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Core\Template;
+use TempusProjectCore\Core\DatabaseModel;
 
-class Comment extends Controller
+class Comment extends DatabaseModel
 {
-    protected static $log;
+    public static $tableName = "xxxxxx";
     protected static $user;
-
-    /**
-     * The model constructor.
-     */
-    public function __construct()
-    {
-        Debug::log('Model Constructed: '.get_class($this));
-    }
 
     /**
      * Returns the current model version.
@@ -43,7 +32,7 @@ class Comment extends Controller
      */
     public static function modelVersion()
     {
-        return '3.0.0';
+        return '1.0.0';
     }
 
     /**
@@ -59,23 +48,6 @@ class Comment extends Controller
         ];
         return $required;
     }
-    
-    /**
-     * Tells the installer which types of integrations your model needs to install.
-     *
-     * @return array - Install flags
-     */
-    public static function installFlags()
-    {
-        $flags = [
-            'installDB' => true,
-            'installPermissions' => false,
-            'installConfigs' => false,
-            'installResources' => false,
-            'installPreferences' => false
-        ];
-        return $flags;
-    }
 
     /**
      * This function is used to install database structures needed for this model.
@@ -84,7 +56,7 @@ class Comment extends Controller
      */
     public static function installDB()
     {
-        self::$db->newTable('comments');
+        self::$db->newTable(self::$tableName);
         self::$db->addfield('author', 'int', '11');
         self::$db->addfield('contentID', 'int', '11');
         self::$db->addfield('created', 'int', '10');
@@ -94,17 +66,6 @@ class Comment extends Controller
         self::$db->addfield('content', 'text', '');
         self::$db->createTable();
         return self::$db->getStatus();
-    }
-
-    /**
-     * This method will remove all the installed model components.
-     *
-     * @return bool - if the uninstall was completed without error
-     */
-    public static function uninstall()
-    {
-        self::$db->removeTable('comments');
-        return true;
     }
     
     /**

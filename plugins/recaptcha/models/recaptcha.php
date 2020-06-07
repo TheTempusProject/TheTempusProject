@@ -1,32 +1,29 @@
 <?php
 /**
- * Models/recaptcha.php
+ * models/recaptcha.php
  *
- * This class is for the use and management of google's recapcha2.
+ * This class is for the use and management of google's recapcha.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Debug;
+use ReCaptcha\ReCaptcha as GoogleReCaptcha;
 use ReCaptcha\RequestMethod\CurlPost;
 use ReCaptcha\RequestMethod\Post;
-use ReCaptcha\ReCaptcha as GoogleReCaptcha;
+use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\Model;
 
-class ReCaptcha extends Controller
+class ReCaptcha extends Model
 {
+    public static $configName = "recaptcha";
     protected static $errors = null;
     protected $recaptcha;
-    protected static $log;
     protected static $enabled = null;
     protected static $privateKey = null;
     protected static $siteKey = null;
@@ -35,37 +32,13 @@ class ReCaptcha extends Controller
     protected static $sendIP = null;
 
     /**
-     * The model constructor.
-     */
-    public function __construct()
-    {
-        Debug::log('Model Constructed: '.get_class($this));
-        // This is for debugging purposes only.
-        self::$enabled = false;
-        $this->load();
-    }
-
-    /**
      * Returns the current model version.
      *
      * @return string - the correct model version
      */
     public static function modelVersion()
     {
-        return '3.0.0';
-    }
-
-    /**
-     * Returns an array of models required to run this model without error.
-     *
-     * @return array - An array of models
-     */
-    public static function requiredModels()
-    {
-        $required = [
-            'log'
-        ];
-        return $required;
+        return '1.0.0';
     }
     
     /**
@@ -76,11 +49,7 @@ class ReCaptcha extends Controller
     public static function installFlags()
     {
         $flags = [
-            'installDB' => false,
-            'installPermissions' => false,
-            'installConfigs' => true,
-            'installResources' => false,
-            'installPreferences' => false
+            'installConfigs' => true
         ];
         return $flags;
     }
@@ -92,24 +61,13 @@ class ReCaptcha extends Controller
      */
     public static function installConfigs()
     {
-        Config::addConfigCategory('recaptcha');
-        Config::addConfig('recaptcha', 'siteKey', '');
-        Config::addConfig('recaptcha', 'privateKey', '');
-        Config::addConfig('recaptcha', 'sendIP', false);
-        Config::addConfig('recaptcha', 'enabled', false);
-        Config::addConfig('recaptcha', 'method', "curlPost");
+        Config::addConfigCategory(self::$configName);
+        Config::addConfig(self::$configName, 'siteKey', '');
+        Config::addConfig(self::$configName, 'privateKey', '');
+        Config::addConfig(self::$configName, 'sendIP', false);
+        Config::addConfig(self::$configName, 'enabled', false);
+        Config::addConfig(self::$configName, 'method', "curlPost");
         return Config::saveConfig();
-    }
-
-    /**
-     * This method will remove all the installed model components.
-     *
-     * @return bool - if the uninstall was completed without error
-     */
-    public static function uninstall()
-    {
-        Config::removeConfigCategory('recaptcha', true);
-        return true;
     }
 
     public function verify($hash)
@@ -140,11 +98,11 @@ class ReCaptcha extends Controller
             if (!in_array('mod_rewrite', $mods)) {
                 self::$enabled = false;
             }
-            self::$enabled = Config::get('recaptcha/enabled');
-            self::$privateKey = Config::get('recaptcha/privateKey');
-            self::$siteKey = Config::get('recaptcha/siteKey');
-            self::$sendIP = Config::get('recaptcha/sendIP');
-            self::$requestMethod = Config::get('recaptcha/method');
+            self::$enabled = Config::get(self::$configName . '/enabled');
+            self::$privateKey = Config::get(self::$configName . '/privateKey');
+            self::$siteKey = Config::get(self::$configName . '/siteKey');
+            self::$sendIP = Config::get(self::$configName . '/sendIP');
+            self::$requestMethod = Config::get(self::$configName . '/method');
             if (self::$requestMethod == "curlPost") {
                 self::$request = new CurlPost();
             } else {
@@ -161,6 +119,7 @@ class ReCaptcha extends Controller
         }
         return self::$enabled;
     }
+
     public function getErrors()
     {
         return self::$errors;
