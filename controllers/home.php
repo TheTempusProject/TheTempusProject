@@ -1,15 +1,12 @@
 <?php
 /**
- * Controllers/home.php
+ * controllers/home.php
  *
  * This is the home controller.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Controllers;
@@ -20,17 +17,13 @@ use TempusProjectCore\Classes\Redirect;
 use TempusProjectCore\Classes\Session;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
 use TempusProjectCore\Classes\Check;
 use TempusProjectCore\Classes\Issue;
 
 class Home extends Controller
 {
     protected static $session;
-    protected static $subscribe;
-    protected static $feedback;
     protected static $recaptcha;
-    protected static $bugreport;
     protected static $user;
 
     public function __construct()
@@ -38,11 +31,9 @@ class Home extends Controller
         Debug::log('Controller Constructing: ' . get_class($this));
         self::$session = $this->model('sessions');
         self::$subscribe = $this->model('subscribe');
-        self::$recaptcha = $this->model('recaptcha');
-        self::$feedback = $this->model('feedback');
-        self::$bugreport = $this->model('bugreport');
         self::$user = $this->model('user');
     }
+
     public function __destruct()
     {
         Debug::log('Controller Destructing: ' . get_class($this));
@@ -58,107 +49,6 @@ class Home extends Controller
         self::$pageDescription = 'This is the homepage of your new Tempus Project Installation. Thank you for installing. find more info at http://www.thetempusproject.com';
         $this->view('index');
         exit();
-    }
-
-    public function subscribe()
-    {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = 'Subscribe - {SITENAME}';
-        self::$pageDescription = 'We are always publishing great content and keeping our members up to date. If you would like to join our list, you can subscribe here.';
-        if (!Input::exists('email')) {
-            $this->view('subscribe');
-            exit();
-        }
-        if (!Check::form('subscribe')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('subscribe');
-            exit();
-        }
-        if (!self::$subscribe->add(Input::post('email'))) {
-            Issue::error('There was an error with your request, please try again.');
-            $this->view('subscribe');
-            exit();
-        }
-        $data = self::$subscribe->get(Input::post('email'));
-        Email::send(Input::post('email'), 'subscribe', $data->confirmationCode, ['template' => true]);
-        Issue::success('You have successfully been subscribed to our mailing list.');
-        exit();
-    }
-
-    public function unsubscribe($email = null, $code = null)
-    {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = '{SITENAME}';
-        self::$pageDescription = '';
-        if (!empty($email) && !empty($code)) {
-            if (self::$subscribe->unsubscribe($email, $code)) {
-                Issue::success('You have been successfully unsubscribed from receiving further mailings.');
-                exit();
-            }
-            Issue::error('There was an error with your request.');
-            $this->view('unsubscribe');
-            exit();
-        }
-        if (!Input::exists('submit')) {
-            $this->view('unsubscribe');
-            exit();
-        }
-        if (!Check::form('unsubscribe')) {
-            Issue::error('There was an error with your request.', Check::userErrors());
-            $this->view('unsubscribe');
-            exit();
-        }
-        $data = self::$subscribe->get(Input::post('email'));
-        if (empty($data)) {
-            Issue::notice('There was an error with your request.');
-            $this->view('unsubscribe');
-            exit();
-        }
-        Email::send(Input::post('email'), 'unsubInstructions', $data->confirmationCode, ['template' => true]);
-        Session::flash('success', 'An email with instructions on how to unsubscribe has been sent to your email.');
-        Redirect::to('home/index');
-    }
-
-    public function feedback()
-    {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = 'Feedback - {SITENAME}';
-        self::$pageDescription = 'At {SITENAME}, we value our users\' input. You can provide any feedback or suggestions using this form.';
-        if (!Input::exists()) {
-            $this->view('feedback');
-            exit();
-        }
-        if (!Check::form('feedback')) {
-            Issue::error('There was an error with your form, please check your submission and try again.', Check::userErrors());
-            $this->view('feedback');
-            exit();
-        }
-        self::$feedback->create(Input::post('name'), Input::post('feedbackEmail'), Input::post('entry'));
-        Session::flash('success', 'Thank you! Your feedback has been received.');
-        Redirect::to('home/index');
-    }
-
-    public function bugreport()
-    {
-        Debug::log("Controller initiated: " . __METHOD__ . ".");
-        self::$title = 'Bug Report - {SITENAME}';
-        self::$pageDescription = 'On this page you can submit a bug report for the site.';
-        if (!self::$isLoggedIn) {
-            Issue::notice('You must be logged in to report bugs.');
-            exit();
-        }
-        if (!Input::exists()) {
-            $this->view('bugreport');
-            exit();
-        }
-        if (!Check::form('bugreport')) {
-            Issue::error('There was an error with your report.', Check::userErrors());
-            $this->view('bugreport');
-            exit();
-        }
-        self::$bugreport->create(self::$activeUser->ID, Input::post('url'), Input::post('ourl'), Input::post('repeat'), Input::post('entry'));
-        Session::flash('success', 'Your Bug Report has been received. We may contact you for more information at the email address you provided.');
-        Redirect::to('home/index');
     }
 
     public function profile($data = null)
@@ -198,6 +88,7 @@ class Home extends Controller
             $this->view('login');
             exit();
         }
+        self::$recaptcha = $this->model('recaptcha');
         if (!self::$recaptcha->verify(Input::post('g-recaptcha-response'))) {
             Issue::error('There was an error with your login.', self::$recaptcha->getErrors());
             $this->view('login');
