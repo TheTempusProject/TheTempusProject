@@ -1,28 +1,21 @@
 <?php
 /**
- * Controllers/Admin/Blog.php
+ * controllers/admin/blog.php
  *
  * This is the Blog admin controller.
  *
- * @version 3.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\AdminController;
 use TempusProjectCore\Classes\Debug;
 use TempusProjectCore\Classes\Issue;
 use TempusProjectCore\Classes\Input;
 use TempusProjectCore\Classes\Check;
-use TheTempusProject\Controllers\AdminController;
-
-require_once 'AdminController.php';
 
 class Blog extends AdminController
 {
