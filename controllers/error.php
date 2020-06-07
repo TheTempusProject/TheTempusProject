@@ -1,25 +1,18 @@
 <?php
 /**
- * Controllers/Error.php
+ * controllers/error.php
  *
  * This is the error controller.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Controllers;
 
 use TempusProjectCore\Core\Controller;
 use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Hash;
-use TempusProjectCore\Classes\Code;
 
 class Error extends Controller
 {
