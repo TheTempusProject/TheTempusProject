@@ -13,7 +13,7 @@ namespace TheTempusProject\Models;
 
 use TempusProjectCore\Core\DatabaseModel;
 
-class Track extends Controller
+class Track extends DatabaseModel
 {
     public static $tableName = "tracking_links";
 
