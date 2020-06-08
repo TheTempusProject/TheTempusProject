@@ -28,7 +28,7 @@ if (!in_array('mod_rewrite', $mods)) {
     exit();
 }
 if (!file_exists('vendor/autoload.php')) {
-    echo file_get_contents('App/Views/Errors/Composer.php');
+    echo file_get_contents('views/errors/composer.php');
     exit();
 }
 require_once 'vendor/autoload.php';
