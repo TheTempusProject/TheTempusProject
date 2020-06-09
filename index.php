@@ -14,7 +14,7 @@
 namespace TheTempusProject;
 
 use TempusProjectCore\Classes\Pagination;
-use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\TPCore;
 use TempusProjectCore\Functions\Routes;
 use TempusProjectCore\Core\Template;
 use TempusProjectCore\Classes\Config;
@@ -26,7 +26,7 @@ use TempusProjectCore\App;
 
 require_once "init.php";
 
-class Appload extends Controller
+class Appload extends TPCore
 {
     protected static $initiated = false;
     protected static $session;
