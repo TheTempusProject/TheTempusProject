@@ -1,1 +1,0 @@
-<div class="g-recaptcha" data-sitekey="{RECAPTCHA_SITE_KEY}"></div>
