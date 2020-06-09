@@ -1,1 +1,0 @@
- class="bg-info"
