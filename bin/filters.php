@@ -1,6 +1,6 @@
 <?php
 /**
- * bpp/filters.php
+ * bin/filters.php
  *
  * This class is used in conjunction with TempusProjectCore\Core\Template
  * to house filters used by the framework. Filters provide another way to
