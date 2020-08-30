@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the bugreports database table.
  *
- * @version 1.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -15,17 +15,19 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Permission as Permission;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\CustomException as CustomException;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Core\Updater as Updater;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Permission;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\CustomException;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Core\Updater;
 
 class Bugreport extends Controller
 {
+    private static $log;
+    private static $user;
     private static $enabled = null;
     public function __construct()
     {
@@ -38,7 +40,7 @@ class Bugreport extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('bugreports');
         self::$db->addfield('userID', 'int', '11');
@@ -49,15 +51,46 @@ class Bugreport extends Controller
         self::$db->addfield('ip', 'varchar', '15');
         self::$db->addfield('description', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+
+    public function requiredModels()
+    {
+        $required = [
+            'log',
+            'user'
+        ];
+        return $required;
+    }
+    
+    public static function installPermissions()
+    {
         Permission::addPerm('bugreport', false);
-        Permission::savePerms(true);
+        return Permission::savePerms(true);
+    }
+    public static function installConfigs()
+    {
         Config::addConfigCategory('bugreports');
         Config::addConfig('bugreports', 'enabled', true);
         Config::addConfig('bugreports', 'email', true);
         Config::addConfig('bugreports', 'emailCopy', true);
         Config::addConfig('bugreports', 'emailTemplate', true);
-        Config::saveConfig();
-        return self::$db->getStatus();
+        return Config::saveConfig();
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
 
     private static function enabled()
@@ -98,6 +131,9 @@ class Bugreport extends Controller
      */
     private function parse($data)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -178,6 +214,9 @@ class Bugreport extends Controller
      */
     public function clear()
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         self::$db->delete('bugreports', ['ID', '>=', '0']);
         self::$log->admin("Cleared Bug Reports");
         Debug::info("Bug Reports Cleared");
@@ -193,6 +232,9 @@ class Bugreport extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;

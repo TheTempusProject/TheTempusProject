@@ -5,6 +5,7 @@ config.json
 permissions.default.json
 preferences.default.json
 config.default.json
+install.json
 
 # Windows image file caches
 Thumbs.db

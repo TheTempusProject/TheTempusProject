@@ -51,3 +51,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 random.php
+App/install.json
+App/config.default.json
+App/config.json

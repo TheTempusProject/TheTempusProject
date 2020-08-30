@@ -6,7 +6,7 @@
  *
  * @todo  make this send a confirmation email
  *
- * @version 1.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -17,17 +17,19 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Permission as Permission;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Core\Installer as Installer;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Permission;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Core\Installer;
 
 class Feedback extends Controller
 {
+    private static $log;
     private static $enabled = null;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
@@ -39,7 +41,7 @@ class Feedback extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('feedback');
         self::$db->addfield('name', 'varchar', '32');
@@ -48,15 +50,43 @@ class Feedback extends Controller
         self::$db->addfield('ip', 'varchar', '15');
         self::$db->addfield('feedback', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+    public static function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
+    public static function installConfigs()
+    {
         Config::addConfigCategory('feedback');
         Config::addConfig('feedback', 'enabled', true);
         Config::addConfig('feedback', 'sendEmail', false);
         Config::addConfig('feedback', 'emailTemplate', 'default');
         Config::addConfig('feedback', 'emailVersion', 'feedbackResponse');
-        Config::saveConfig();
+        return Config::saveConfig();
+    }
+    public static function installPermissions()
+    {
         Permission::addPerm('feedback', false);
-        Permission::savePerms(true);
-        return self::$db->getStatus();
+        return Permission::savePerms(true);
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => true,
+            'installConfigs' => true,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
     }
     private static function enabled()
     {
@@ -113,7 +143,7 @@ class Feedback extends Controller
      *
      * @return bool
      */
-    public static function create($name, $email, $feedback)
+    public function create($name, $email, $feedback)
     {
         if (!self::enabled()) {
             Debug::warn('Feedback is disabled in the config.');
@@ -143,6 +173,9 @@ class Feedback extends Controller
      */
     public function clear()
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         self::$db->delete('feedback', ['ID', '>=', '0']);
         self::$log->admin('Cleared Feedback');
         Debug::info("Feedback Cleared");
@@ -158,6 +191,9 @@ class Feedback extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;

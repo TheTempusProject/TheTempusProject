@@ -18,24 +18,31 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Cookie as Cookie;
-use TempusProjectCore\Classes\Log as Log;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Redirect as Redirect;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Cookie;
+use TempusProjectCore\Classes\Log;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Redirect;
 
 class Blog extends Controller
 {
+    private static $session;
+    private static $blog;
+    private static $comment;
+
     public function __construct()
     {
         self::$template->setTemplate('blog');
+        self::$session = $this->model('session');
+        self::$blog = $this->model('blog');
+        self::$comment = $this->model('comment');
     }
 
     public function __destruct()
@@ -51,7 +58,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = '{SITENAME} Blog';
         self::$pageDescription = '{SITENAME} blog';
-        $this->view('blog', self::$blog->listPosts());
+        $this->view('blog.postList', self::$blog->listPosts());
         exit();
     }
 
@@ -61,7 +68,8 @@ class Blog extends Controller
         self::$title = '{SITENAME} Feed';
         self::$pageDescription = '{SITENAME} blog RSS feed.';
         self::$template->setTemplate('rss');
-        $this->view('blog.rss', self::$blog->listPosts());
+        header('Content-Type: text/xml');
+        $this->view('blog.rss', self::$blog->listPosts(['stripHtml' => true]));
         exit();
     }
 
@@ -82,12 +90,12 @@ class Blog extends Controller
             }
         }
         if (self::$isLoggedIn) {
-            self::$template->set('NEWCOMMENT', self::$template->standardView('comment.new'));
+            self::$template->set('NEWCOMMENT', self::$template->standardView('commentNew'));
         } else {
             self::$template->set('NEWCOMMENT', '');
         }
         self::$template->set('count', self::$comment->count('blog', $post->ID));
-        self::$template->set('COMMENTS', self::$template->standardView('comment.list', self::$comment->display(10, 'blog', $post->ID)));
+        self::$template->set('COMMENTS', self::$template->standardView('commentList', self::$comment->display(10, 'blog', $post->ID)));
         $this->view('blog.post', $post);
         exit();
     }
@@ -97,7 +105,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by author - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by author.';
-        $this->view('blog', self::$blog->byAuthor($data));
+        $this->view('blog.blog', self::$blog->byAuthor($data));
         exit();
     }
 
@@ -106,7 +114,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts By Month - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by month.';
-        $this->view('blog', self::$blog->byMonth($month, $year));
+        $this->view('blog.blog', self::$blog->byMonth($month, $year));
         exit();
     }
 
@@ -115,7 +123,7 @@ class Blog extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Posts by Year - {SITENAME}';
         self::$pageDescription = '{SITENAME} blog posts easily and conveniently sorted by years.';
-        $this->view('blog', self::$blog->byYear($year));
+        $this->view('blog.blog', self::$blog->byYear($year));
         exit();
     }
 }

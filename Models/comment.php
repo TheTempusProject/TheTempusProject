@@ -5,7 +5,7 @@
  * This class is used for the creation, retrieval, and manipulation
  * of the comments table.
  *
- * @version 1.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -16,21 +16,24 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Code as Code;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\DB as DB;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Cookie as Cookie;
-use TempusProjectCore\Classes\Log as Log;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Core\Installer as Installer;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\DB;
+use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Cookie;
+use TempusProjectCore\Classes\Log;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Core\Installer;
 
 class Comment extends Controller
 {
+    public static $log;
+    public static $blog;
+    public static $user;
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
@@ -42,7 +45,7 @@ class Comment extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('comments');
         self::$db->addfield('author', 'int', '11');
@@ -55,6 +58,30 @@ class Comment extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public static function requiredModels()
+    {
+        $required = [
+            'log',
+            'blog',
+            'user'
+        ];
+        return $required;
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
+    }
     /**
      * Retrieves a comment by its ID and parses it.
      *
@@ -63,7 +90,7 @@ class Comment extends Controller
      *
      * @return object - The parsed comment db entry.
      */
-    public static function findById($id)
+    public function findById($id)
     {
         if (!Check::id($id)) {
             Debug::info("comments: illegal ID.");
@@ -76,7 +103,7 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
     /**
      * Function to delete the specified post.
@@ -87,6 +114,9 @@ class Comment extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -108,7 +138,7 @@ class Comment extends Controller
         }
         return true;
     }
-    public static function count($contentType, $contentID)
+    public function count($contentType, $contentID)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -129,7 +159,7 @@ class Comment extends Controller
         }
         return $data->count();
     }
-    public static function display($displayCount, $contentType, $contentID)
+    public function display($displayCount, $contentType, $contentID)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -148,10 +178,13 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
-    public static function update($data, $comment)
+    public function update($data, $comment)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::id($data)) {
             Debug::info("Comments: illegal ID.");
             
@@ -171,7 +204,7 @@ class Comment extends Controller
         self::$log->admin("Updated Comment: $data");
         return true;
     }
-    public static function create($contentType, $contentID, $comment)
+    public function create($contentType, $contentID, $comment)
     {
         if (!Check::id($contentID)) {
             Debug::info("Comments: illegal ID.");
@@ -200,8 +233,14 @@ class Comment extends Controller
         }
         return true;
     }
-    public static function filterComments($data)
+    public function filterComments($data)
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
+        if (!isset(self::$blog)) {
+            self::$blog = $this->model('blog');
+        }
         foreach ($data as $instance) {
             if (!is_object($instance)) {
                 $instance = $data;
@@ -231,7 +270,7 @@ class Comment extends Controller
         }
         return $out;
     }
-    public static function recent($contentType = 'all', $limit = null)
+    public function recent($contentType = 'all', $limit = null)
     {
         switch ($contentType) {
             case 'blog':
@@ -255,6 +294,6 @@ class Comment extends Controller
 
             return false;
         }
-        return self::filterComments($commentData->results());
+        return $this->filterComments($commentData->results());
     }
 }

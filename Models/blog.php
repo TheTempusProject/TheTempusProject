@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the blog database table.
  *
- * @version 1.0
+ * @version 2.1
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -15,16 +15,20 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Functions\Docroot as Docroot;
-use TempusProjectCore\Classes\Sanitize as Sanitize;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Core\Updater as Updater;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Functions\Docroot;
+use TempusProjectCore\Classes\Sanitize;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Core\Updater;
 
 class Blog extends Controller
 {
+    private static $comment;
+    private static $user;
+    private static $log;
+
     public function __construct()
     {
         Debug::log('Model Constructed: '.get_class($this));
@@ -36,7 +40,7 @@ class Blog extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('posts');
         self::$db->addfield('author', 'int', '11');
@@ -46,6 +50,21 @@ class Blog extends Controller
         self::$db->addfield('title', 'varchar', '86');
         self::$db->addfield('content', 'text', '');
         self::$db->createTable();
+        return self::$db->getStatus();
+    }
+
+    public static function requiredModels()
+    {
+        $required = [
+            'log',
+            'user',
+            'comment'
+        ];
+        return $required;
+    }
+
+    public static function installResources()
+    {
         $fields = [
             'title' => 'Welcome',
             'content' =>'<p>This is just a simple message to say thank you for installing The Tempus Project. If you have any questions you can find everything through our website <a href="https://TheTempusProject.com">here</a>.</p>',
@@ -54,8 +73,24 @@ class Blog extends Controller
             'edited' => time(),
             'draft' => 0
             ];
-        self::$db->insert('posts', $fields);
-        return self::$db->getStatus();
+        return self::$db->insert('posts', $fields);
+    }
+
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => true,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    
+    public static function modelVersion()
+    {
+        return '2.7.0';
     }
 
     /**
@@ -67,6 +102,9 @@ class Blog extends Controller
      */
     public function delete($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;
@@ -89,7 +127,7 @@ class Blog extends Controller
         return true;
     }
     
-    public static function newPost($title, $post, $draft)
+    public function newPost($title, $post, $draft)
     {
         if (!Check::dataTitle($title)) {
             Debug::info("modelBlog: illegal title.");
@@ -117,8 +155,12 @@ class Blog extends Controller
         }
         return true;
     }
-    public static function updatePost($id, $title, $content, $draft)
+
+    public function updatePost($id, $title, $content, $draft)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         if (!Check::id($id)) {
             Debug::info("modelBlog: illegal ID.");
             
@@ -150,7 +192,7 @@ class Blog extends Controller
         return true;
     }
 
-    public static function preview($title, $content)
+    public function preview($title, $content)
     {
         if (!Check::dataTitle($title)) {
             Debug::info("modelBlog: illegal characters.");
@@ -166,8 +208,14 @@ class Blog extends Controller
         return (object) $fields;
     }
 
-    public static function filterPost($postArray)
+    public function filterPost($postArray, $params = [])
     {
+        if (!isset(self::$user)) {
+            self::$user = $this->model('user');
+        }
+        if (!isset(self::$comment)) {
+            self::$comment = $this->model('comment');
+        }
         foreach ($postArray as $instance) {
             if (!is_object($instance)) {
                 $instance = $postArray;
@@ -197,6 +245,9 @@ class Blog extends Controller
             $instance->isDraft = $draft;
             $instance->authorName = $authorName;
             $instance->contentSummary = $contentSummary;
+            if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
+                $instance->contentSummary = strip_tags($instance->content);
+            }
             $instance->commentCount = self::$comment->count('blog', $instance->ID);
             $out[] = $instance;
             if (!empty($end)) {
@@ -207,7 +258,7 @@ class Blog extends Controller
         return $out;
     }
 
-    public static function find($id)
+    public function find($id)
     {
         if (!Check::id($id)) {
             Debug::info("blog find: Invalid ID.");
@@ -220,9 +271,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->first());
+        return $this->filterPost($postData->first());
     }
-    public static function archive()
+
+    public function archive()
     {
         $currentTimeUnix = time();
         $x = 0;
@@ -257,7 +309,8 @@ class Blog extends Controller
         }
         return (object) $dataOut;
     }
-    public static function recent($limit = null)
+
+    public function recent($limit = null)
     {
         if (empty($limit)) {
             $postData = self::$db->getPaginated('posts', '*');
@@ -269,11 +322,12 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function listPosts($includeDrafts = false)
+
+    public function listPosts($params = [])
     {
-        if ($includeDrafts === true) {
+        if (isset($params['includeDrafts']) && $params['includeDrafts'] === true) {
             $whereClause = '*';
         } else {
             $whereClause = ['draft', '=', '0'];
@@ -284,9 +338,13 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        if (isset($params['stripHtml']) && $params['stripHtml'] === true) {
+            return $this->filterPost($postData->results(), ['stripHtml' => true]);
+        }
+        return $this->filterPost($postData->results());
     }
-    public static function byYear($year)
+
+    public function byYear($year)
     {
         if (!Check::id($year)) {
             Debug::info("Invalid Year");
@@ -300,9 +358,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function byAuthor($ID)
+
+    public function byAuthor($ID)
     {
         if (!Check::id($ID)) {
             Debug::info("Invalid Author");
@@ -314,9 +373,10 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
-    public static function byMonth($month, $year = 2017)
+
+    public function byMonth($month, $year = 2017)
     {
         if (!Check::id($month)) {
             Debug::info("Invalid Month");
@@ -335,6 +395,6 @@ class Blog extends Controller
 
             return false;
         }
-        return self::filterPost($postData->results());
+        return $this->filterPost($postData->results());
     }
 }

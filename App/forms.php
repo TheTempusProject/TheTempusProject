@@ -28,8 +28,38 @@ class Forms
      *
      * @return boolean
      */
-    public static function install()
+    public static function installStart()
     {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installAgreement()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installCheck()
+    {
+        if (!Check::uploads()) {
+            Check::addUserError('Uploads are disabled.');
+            return false;
+        }
         if (!Check::php()) {
             Check::addUserError('PHP version is too old.');
             return false;
@@ -46,26 +76,104 @@ class Forms
             Check::addUserError('Safe mode is enabled.');
             return false;
         }
-        if (!Check::username(Input::post('newUsername'))) {
-            Check::addUserError('Invalid username.');
+        if (!Check::token()) {
             return false;
         }
-        if (!Check::password(Input::post('password'))) {
-            Check::addUserError('Invalid password.');
-            return false;
-        }
-        if (Input::post('password') !== Input::post('password2')) {
-            Check::addUserError('Passwords do not match.');
-            return false;
-        }
-        if (Input::post('email') !== Input::post('email2')) {
-            Check::addUserError('Emails do not match.');
-            return false;
-        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installConfigure()
+    {
         if (!Check::db(Input::post('dbHost'), Input::post('dbName'), Input::post('dbUsername'), Input::post('dbPassword'))) {
             Check::addUserError('DB connection error.');
             return false;
         }
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installhtaccess()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installModels()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installResources()
+    {
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function installAdminUser()
+    {
+        if (!Check::username(Input::post('newUsername'))) {
+            Check::addUserError('Invalid username.');
+            return false;
+        }
+        if (!Check::password(Input::post('userPassword'))) {
+            Check::addUserError('Invalid password.');
+            return false;
+        }
+        if (Input::post('userPassword') !== Input::post('userPassword2')) {
+            Check::addUserError('Passwords do not match.');
+            return false;
+        }
+        if (Input::post('userEmail') !== Input::post('userEmail2')) {
+            Check::addUserError('Emails do not match.');
+            return false;
+        }
+        if (!Check::token()) {
+            return false;
+        }
+        
+        return true;
+    }
+    /**
+     * Validates the installer form.
+     *
+     * @return boolean
+     */
+    public static function install()
+    {
         if (!Check::token()) {
             return false;
         }
@@ -145,7 +253,7 @@ class Forms
             Check::addUserError('Invalid name.');
             return false;
         }
-        if (Input::exists('email') && !Check::email(Input::post('email'))) {
+        if (Input::exists('feedbackEmail') && !Check::email(Input::post('feedbackEmail'))) {
             Check::addUserError('Invalid Email.');
             return false;
         }
@@ -530,6 +638,64 @@ class Forms
         if (!Check::token()) {
             return false;
         }
+        return true;
+    }
+
+    /**
+     * Check the group form.
+     *
+     * @return bool
+     *
+     * @todo  finish/start
+     */
+    public static function crashcourse()
+    {
+        if (!Input::exists('name')) {
+            Check::addUserError('You must specify a name');
+            return false;
+        }
+        if (!Input::exists('email')) {
+            Check::addUserError('You must specify an email');
+            return false;
+        }
+        if (!Input::exists('os')) {
+            Check::addUserError('You must specify a OS');
+            return false;
+        }
+        if (!Input::exists('experience')) {
+            Check::addUserError('You must specify an experience level');
+            return false;
+        }
+        if (!Input::exists('goals')) {
+            Check::addUserError('You must specify goals');
+            return false;
+        }
+        if (!Input::exists('info')) {
+            Check::addUserError('You must specify some information');
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Check the group form.
+     *
+     * @return bool
+     *
+     * @todo  finish/start
+     */
+    public static function ticket()
+    {
+        return true;
+    }
+    /**
+     * Check the group form.
+     *
+     * @return bool
+     *
+     * @todo  finish/start
+     */
+    public static function ticketUpdate()
+    {
         return true;
     }
 }

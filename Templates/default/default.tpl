@@ -15,9 +15,19 @@
         <link rel="stylesheet" href="{BASE}vendor/fortawesome/font-awesome/css/font-awesome.min.css">
         <!-- Custom styles for this template -->
         <link rel="stylesheet" href="{BASE}Templates/default/default.css">
+        <!-- Google Analytics -->
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-91106209-1', 'auto');
+            ga('send', 'pageview');
+        </script>
         <!-- Required JS -->
         <script language="JavaScript" type="text/javascript" src="{BASE}vendor/tinymce/tinymce/tinymce.min.js"></script>
         <script language="JavaScript" type="text/javascript" src="{BASE}JS/default.js"></script>
+        <script language="JavaScript" type="text/javascript" src='http://www.google.com/recaptcha/api.js'></script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -52,6 +62,7 @@
                     {ERROR}
                     {NOTICE}
                     {SUCCESS}
+                    {INFO}
                 </div>
             </div>
             {/UI}

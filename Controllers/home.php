@@ -1,39 +1,38 @@
 <?php
 /**
- * Controllers/home.php
+ * controllers/home.php
  *
  * This is the home controller.
  *
- * @version 1.0
- *
+ * @version 2.0
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
- *
  * @link    https://TheTempusProject.com
- *
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
-
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Redirect as Redirect;
-use TempusProjectCore\Classes\Session as Session;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Cookie as Cookie;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Log as Log;
-use TempusProjectCore\Classes\DB as DB;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Functions\Routes;
+use TempusProjectCore\Classes\Redirect;
+use TempusProjectCore\Classes\Session;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Issue;
 
 class Home extends Controller
 {
+    protected static $session;
+    protected static $recaptcha;
+    protected static $user;
+
     public function __construct()
     {
         Debug::log('Controller Constructing: ' . get_class($this));
+        self::$session = $this->model('sessions');
+        self::$user = $this->model('user');
     }
+
     public function __destruct()
     {
         Debug::log('Controller Destructing: ' . get_class($this));
@@ -47,10 +46,55 @@ class Home extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = '{SITENAME}';
         self::$pageDescription = 'This is the homepage of your new Tempus Project Installation. Thank you for installing. find more info at http://www.thetempusproject.com';
+        /** @var TWITTER STUFF
+        */
+        $twitter_customer_key           = 'LQaXOANU96tK63xSMpUTzovvY';
+        $twitter_customer_secret        = 'muiWEmlLBQuyyaO5dPakj2XiZrgKXdyxoU4CJCDzMJh0IZ0IVu';
+        $twitter_access_token           = '3147098962-Quh94uHXwp1TZDkqwkVZxn5lzVo7rFDhlugD7sB';
+        $twitter_access_token_secret    = 'w8S7qr8qU6FKn9ob8Uhs1X1BRtpCbTAwaNPv5JN34mbAk';
+        $connection = new TwitterOAuth($twitter_customer_key, $twitter_customer_secret, $twitter_access_token, $twitter_access_token_secret);
+        $my_tweets = $connection->get('statuses/user_timeline', array('screen_name' => 'projecttempus', 'count' => 5));
+        $test = $my_tweets[0]->user->profile_image_url_https;
+        self::$template->set('profile_image_url_https', $test);
+        self::$template->set('tweets', self::$template->standardView('tweets', $my_tweets));
+        self::$template->set('POSTS', Template::standardView('blog.recent.widget', self::$blog->recent(3)));
         $this->view('index');
         exit();
     }
-
+    public function downloads()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Downloads - {SITENAME}';
+        self::$pageDescription = 'Here you will find all of the available downloads and versions for the tempus project..';
+        $this->view('downloads');
+        exit();
+    }
+    public function crashcourse()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Crash Course Sign-up - {SITENAME}';
+        self::$pageDescription = 'On this page you can sign up for the tempus project crash course.';
+        if (!Input::exists('email')) {
+            $this->view('form.crashcourse');
+            exit();
+        }
+        if (!Check::form('crashCourse')) {
+            Issue::error('There was an error with your form.', Check::userErrors());
+            $this->view('form.crashcourse');
+            exit();
+        }
+        self::$db->insert('crash', [
+                'name' => Input::post('name'),
+                'email' => Input::post('email'),
+                'os' => Input::post('os'),
+                'xp' => Input::post('experience'),
+                'goals' => Input::post('goals'),
+                'info' => Input::post('info'),
+                ]);
+        Session::flash('success', 'Your Application has been received.');
+        Redirect::to('home/index');
+    }
+    
     public function subscribe()
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
@@ -61,7 +105,7 @@ class Home extends Controller
             exit();
         }
         if (!Check::form('subscribe')) {
-            Issue::notice('There was an error with your request.');
+            Issue::error('There was an error with your form.', Check::userErrors());
             $this->view('subscribe');
             exit();
         }
@@ -133,18 +177,18 @@ class Home extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Bug Report - {SITENAME}';
-        self::$pageDescription = 'On this page you can submit a bug report for the site.';
+        self::$pageDescription = 'On this page you can submit a bug report for the site or the Tempus Project framework.';
         if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to report bugs.');
             exit();
         }
         if (!Input::exists()) {
-            $this->view('bug.report');
+            $this->view('bugreport');
             exit();
         }
         if (!Check::form('bugreport')) {
             Issue::error('There was an error with your report.', Check::userErrors());
-            $this->view('bug.report');
+            $this->view('bugreport');
             exit();
         }
         self::$bugreport->create(self::$activeUser->ID, Input::post('url'), Input::post('ourl'), Input::post('repeat'), Input::post('entry'));
@@ -167,7 +211,7 @@ class Home extends Controller
             exit();
         }
         self::$title = $user->username . '\'s Profile - {SITENAME}';
-        self::$pageDescription = 'User Profile for '.$user->username.' - {SITENAME}';
+        self::$pageDescription = 'User Profile for ' . $user->username . ' - {SITENAME}';
         $this->view('user', $user);
     }
 
@@ -177,7 +221,7 @@ class Home extends Controller
         self::$title = 'Portal - {SITENAME}';
         self::$pageDescription = 'Please log in to use {SITENAME} member features.';
         if (self::$isLoggedIn) {
-            Issue::notice('You are already logged in. Please <a href="'.Docroot::getAddress().'home/logout">click here</a> to log out.');
+            Issue::notice('You are already logged in. Please <a href="' . Routes::getAddress() . 'home/logout">click here</a> to log out.');
             exit();
         }
         if (!Input::exists()) {
@@ -186,6 +230,12 @@ class Home extends Controller
         }
         if (!Check::form('login')) {
             Issue::error('There was an error with your login.', Check::userErrors());
+            $this->view('login');
+            exit();
+        }
+        self::$recaptcha = $this->model('recaptcha');
+        if (!self::$recaptcha->verify(Input::post('g-recaptcha-response'))) {
+            Issue::error('There was an error with your login.', self::$recaptcha->getErrors());
             $this->view('login');
             exit();
         }
@@ -221,7 +271,31 @@ class Home extends Controller
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Terms and Conditions - {SITENAME}';
         self::$pageDescription = '{SITENAME} Terms and Conditions of use. Please use {SITENAME} safely.';
-        $this->view('terms.page');
+        $this->view('termsPage');
+        exit();
+    }
+    public function contribute()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Contribute to The Tempus Project';
+        self::$pageDescription = 'There are many ways to contribute to The Tempus Project, here you will find a list of the various ways and information on contributing to the site or code base.';
+        $this->view('contribute');
+        exit();
+    }
+    public function license()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'The Tempus Project License';
+        self::$pageDescription = 'The Tempus Project is developed and distributed under the MIT license. A copy of this license is included with every package and every derivative of The Tempus Project must also use and distribute this license..';
+        $this->view('license');
+        exit();
+    }
+    public function conduct()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'The Tempus Project Code of Conduct';
+        self::$pageDescription = 'In the interest of fostering an open and welcoming environment and to make participation in our project and our community a harassment-free experience for everyone, we require that you adhere to this code of conduct..';
+        $this->view('conduct');
         exit();
     }
 }

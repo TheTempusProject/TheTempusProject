@@ -4,7 +4,7 @@
  *
  * This class is used for the manipulation of the subscribers database table.
  *
- * @version 1.0
+ * @version 2.0
  *
  * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
  *
@@ -15,14 +15,15 @@
 
 namespace TheTempusProject\Models;
 
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Code as Code;
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Core\Installer as Installer;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Code;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Core\Installer;
 
 class Subscribe extends Controller
 {
+    private static $log;
     public function __construct()
     {
         Debug::log('Model Constructed: ' . get_class($this));
@@ -34,7 +35,7 @@ class Subscribe extends Controller
      *
      * @return boolean - The status of the completed install.
      */
-    public static function install()
+    public static function installDB()
     {
         self::$db->newTable('subscribers');
         self::$db->addfield('confirmed', 'int', '1');
@@ -44,6 +45,28 @@ class Subscribe extends Controller
         self::$db->createTable();
         return self::$db->getStatus();
     }
+    public static function requiredModels()
+    {
+        $required = [
+            'log'
+        ];
+        return $required;
+    }
+    public static function installFlags()
+    {
+        $flags = [
+            'installDB' => true,
+            'installPermissions' => false,
+            'installConfigs' => false,
+            'installResources' => false,
+            'installPreferences' => false
+        ];
+        return $flags;
+    }
+    public static function modelVersion()
+    {
+        return '2.0.0';
+    }
 
     /**
      * Adds an email to the subscribers database.
@@ -52,7 +75,7 @@ class Subscribe extends Controller
      *
      * @return bool
      */
-    public static function add($email)
+    public function add($email)
     {
         if (!Check::email($email)) {
             return false;
@@ -81,7 +104,7 @@ class Subscribe extends Controller
      *
      * @return boolean
      */
-    public static function unsubscribe($email, $code)
+    public function unsubscribe($email, $code)
     {
         if (!Check::email($email)) {
             return false;
@@ -102,8 +125,11 @@ class Subscribe extends Controller
      *
      * @return bool
      */
-    public static function remove($data)
+    public function remove($data)
     {
+        if (!isset(self::$log)) {
+            self::$log = $this->model('log');
+        }
         foreach ($data as $instance) {
             if (!is_array($data)) {
                 $instance = $data;

@@ -215,6 +215,37 @@ body {
 
 
 /**
+ * Main Carousel
+ */
+.main-text
+{
+    padding-bottom: 0px;
+    padding-top: 0px;
+    top: 10px;
+    bottom: auto;
+    z-index: 10;
+    width: auto;
+    color: #FFF;
+}
+.btn-min-block
+{
+    min-width: 170px;
+    line-height: 26px;
+}
+.btn-clear
+{
+    color: #FFF;
+    background-color: transparent;
+    border-color: #FFF;
+    margin-right: 15px;
+}
+.btn-clear:hover
+{
+    color: #000;
+    background-color: #FFF;
+}
+
+/**
  * Top Navigation
  */
 
@@ -490,7 +521,15 @@ ul.alert-dropdown {
     color: #fff;
 }
 
+.side-nav .active > a {
+    color: #fff;
+    background-color: #080808;
+}
 
+.side-nav .active > a:hover {
+    color: #fff;
+    background-color: #080808;
+}
 
 
 /**

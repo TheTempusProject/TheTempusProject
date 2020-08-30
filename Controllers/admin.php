@@ -15,23 +15,37 @@
 
 namespace TheTempusProject\Controllers;
 
-use TempusProjectCore\Core\Controller as Controller;
-use TempusProjectCore\Core\Template as Template;
-use TempusProjectCore\Classes\Config as Config;
-use TempusProjectCore\Classes\Debug as Debug;
-use TempusProjectCore\Classes\Input as Input;
-use TempusProjectCore\Classes\Email as Email;
-use TempusProjectCore\Classes\Issue as Issue;
-use TempusProjectCore\Classes\Check as Check;
-use TempusProjectCore\Classes\Image as Image;
-use TempusProjectCore\Classes\Log as Log;
+use TempusProjectCore\Core\Controller;
+use TempusProjectCore\Core\Installer;
+use TempusProjectCore\Core\Template;
+use TempusProjectCore\Classes\Config;
+use TempusProjectCore\Classes\Debug;
+use TempusProjectCore\Classes\Input;
+use TempusProjectCore\Classes\Email;
+use TempusProjectCore\Classes\Issue;
+use TempusProjectCore\Classes\Check;
+use TempusProjectCore\Classes\Image;
+use TempusProjectCore\Classes\Log;
 
 class Admin extends Controller
 {
+    private static $blog;
+    private static $bugreport;
+    private static $comment;
+    private static $feedback;
+    private static $group;
+    private static $log;
+    private static $message;
+    private static $session;
+    private static $subscribe;
+    private static $tracking;
+    private static $user;
+
     public function __construct()
     {
         self::$template->noFollow();
         self::$template->noIndex();
+        self::$session = $this->model('session');
         if (!self::$isLoggedIn) {
             Issue::notice('You must be logged in to view this page.');
             exit();
@@ -41,6 +55,16 @@ class Admin extends Controller
             exit();
         }
         self::$template->setTemplate('admin');
+        self::$blog = $this->model('blog');
+        self::$bugreport = $this->model('bugreport');
+        self::$comment = $this->model('comment');
+        self::$feedback = $this->model('feedback');
+        self::$group = $this->model('group');
+        self::$log = $this->model('log');
+        self::$message = $this->model('message');
+        self::$subscribe = $this->model('subscribe');
+        self::$tracking = $this->model('track');
+        self::$user = $this->model('user');
     }
 
     public function __destruct()
@@ -55,13 +79,189 @@ class Admin extends Controller
     {
         Debug::log("Controller initiated: " . __METHOD__ . ".");
         self::$title = 'Admin - Home';
-        $users = Template::standardView('admin.dash.users', self::$user->recent(5));
-        $comments = Template::standardView('admin.dash.comments', self::$comment->recent('all', 5));
-        $posts = Template::standardView('admin.dash.posts', self::$blog->recent(5));
+        $users = Template::standardView('admin.dashUsers', self::$user->recent(5));
+        $comments = Template::standardView('admin.dashComments', self::$comment->recent('all', 5));
+        $posts = Template::standardView('admin.dashPosts', self::$blog->recent(5));
         self::$template->set('userDash', $users);
         self::$template->set('blogDash', $posts);
         self::$template->set('commentDash', $comments);
         $this->view('admin.dash');
+    }
+    public function tickets($sub = null, $data = null, $data2 = null)
+    {
+        Debug::log('Controller initiated: '.__METHOD__.'.');
+        self::$title = 'Admin - Tickets';
+        $this->view('nav.admin.ticket');
+        switch ($sub) {
+            case 'status':
+                $this->view('nav.admin.ticket.status');
+                if (!empty($data)) {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('status', $data));
+                } else {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('newest'));
+                }
+                exit();
+            case 'category':
+                $this->view('nav.admin.ticket.category');
+                if (!empty($data)) {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('category', $data));
+                } else {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('newest'));
+                }
+                exit();
+            case 'project':
+                $this->view('nav.admin.ticket.project');
+                if (!empty($data)) {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('project', $data));
+                } else {
+                    $this->view('admin.ticket.list', self::$ticket->listTickets('newest'));
+                }
+                exit();
+            case 'newest':
+                $this->view('admin.ticket.list', self::$ticket->listTickets('newest'));
+                exit();
+            case 'oldest':
+                $this->view('admin.ticket.list', self::$ticket->listTickets('oldest'));
+                exit();
+            case 'list':
+                $this->view('admin.ticket.list', self::$ticket->listTickets($data, $data2));
+                exit();
+            case 'view':
+                $ticketData = self::$ticket->get($data);
+                if ($ticketData !== false) {
+                    if (Input::exists('submit')) {
+                        if (!Check::form('newComment')) {
+                            Issue::error('There was a problem posting your comment.', Check::userErrors());
+                        } elseif (self::$comment->create('ticket', $ticketData->ID, Input::post('comment'))) {
+                            Issue::success('Comment posted');
+                        } else {
+                            Issue::error('There was an error posting you comment, please try again.');
+                        }
+                    }
+                    self::$template->set('NEWCOMMENT', self::$template->standardView('comment.new'));
+                    self::$template->set('count', self::$comment->count('ticket', $ticketData->ID));
+                    self::$template->set('COMMENTS', self::$template->standardView('comment.list', self::$comment->display(25, 'ticket', $ticketData->ID)));
+                    $this->view('admin.ticket.view', $ticketData);
+                    exit();
+                }
+                Issue::error('Ticket not found.');
+                break;
+                // self::$comment->create('ticket', $post->ID, Input::post('comment'))) {
+            case 'new':
+                if (Input::exists('submit')) {
+                    if (self::$ticket->create()) {
+                        Issue::success('Ticket created');
+                    }
+                } else {
+                    self::$template->set('categorySelect', self::$template->standardView('admin.ticket.select.category'));
+                    self::$template->set('projectSelect', self::$template->standardView('admin.ticket.select.project'));
+                    $this->view('admin.ticket.new');
+                    exit();
+                }
+                break;
+            case 'edit':
+                if (Input::exists('submit')) {
+                    if (self::$ticket->update($data)) {
+                        Issue::success('Ticket updated');
+                    }
+                } else {
+                    $ticket = self::$ticket->get($data);
+                    self::$template->selectOption($ticket->project);
+                    self::$template->selectOption($ticket->category);
+                    self::$template->selectOption($ticket->status);
+                    self::$template->set('categorySelect', self::$template->standardView('admin.ticket.select.category'));
+                    self::$template->set('projectSelect', self::$template->standardView('admin.ticket.select.project'));
+                    self::$template->set('statusSelect', self::$template->standardView('admin.ticket.select.status'));
+                    $this->view('admin.ticket.edit', $ticket);
+                    exit();
+                }
+                break;
+            default:
+                $this->view('admin.ticket.list', self::$ticket->listTickets());
+                exit();
+        }
+    }
+    public function installed($sub = null, $name = null)
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Installed';
+        $installer = new Installer;
+        switch ($sub) {
+            case 'view':
+                $node = $installer->getNode($name);
+                if ($node === false) {
+                    $out[] = (object) [
+                        'name' => $model->name,
+                        'installDate' => 'null',
+                        'lastUpdate' => 'null',
+                        'currentVersion' => 'not installed',
+                        'installedVersion' => $installer->getModelVersion('models', $model->name),
+                        'installDB' => 'not Installed',
+                        'installPermissions' => 'not Installed',
+                        'installConfigs' => 'not Installed',
+                        'installResources' => 'not Installed',
+                        'installPreferences' => 'not Installed'
+                    ];
+                } else {
+                    $out[] = (object) [
+                        'name' => $node['name'],
+                        'installDate' => $node['installDate'],
+                        'lastUpdate' => $node['lastUpdate'],
+                        'currentVersion' => $node['currentVersion'],
+                        'installedVersion' => $installer->getModelVersion('models', $node['name']),
+                        'installDB' => $node['installDB'],
+                        'installPermissions' => $node['installPermissions'],
+                        'installConfigs' => $node['installConfigs'],
+                        'installResources' => $node['installResources'],
+                        'installPreferences' => $node['installPreferences']
+                    ];
+                }
+                $this->view('admin.installedView', $out);
+                exit();
+            case 'install':
+                self::$template->set('MODEL', $name);
+                if (!Input::exists('installHash')) {
+                    $this->view('admin.install');
+                    exit();
+                }
+                if (!$installer->installModel('Models', $name)) {
+                    Issue::error('There was an error with the Installation.', $installer->getErrors());
+                }
+                exit();
+            case 'uninstall':
+                self::$template->set('MODEL', $name);
+                if (!Input::exists('uninstallHash')) {
+                    $this->view('admin.uninstall');
+                    exit();
+                }
+                if (!$installer->uninstallModel('Models', $name)) {
+                    Issue::error('There was an error with the Installation.', $installer->getErrors());
+                }
+                exit();
+        }
+        $models = $installer->getModelVersionList('Models');
+        foreach ($models as $model) {
+            $node = $installer->getNode($model->name);
+            if ($node === false) {
+                $out[] = (object) [
+                    'name' => $model->name,
+                    'installDate' => 'null',
+                    'lastUpdate' => 'null',
+                    'currentVersion' => 'not installed',
+                    'installedVersion' => $installer->getModelVersion('models', $model->name)
+                ];
+            } else {
+                $out[] = (object) [
+                    'name' => $node['name'],
+                    'installDate' => $node['installDate'],
+                    'lastUpdate' => $node['lastUpdate'],
+                    'currentVersion' => $node['currentVersion'],
+                    'installedVersion' => $installer->getModelVersion('models', $node['name'])
+                ];
+            }
+        }
+        $this->view('admin.installed', $out);
+        exit();
     }
 
     /**
@@ -75,7 +275,7 @@ class Admin extends Controller
             case 'view':
                 $groupData = self::$group->findById($data);
                 if ($groupData !== false) {
-                    $this->view('admin.group.view', $groupData);
+                    $this->view('admin.groupView', $groupData);
                     exit();
                 }
                 Issue::error('Group not found');
@@ -85,7 +285,7 @@ class Admin extends Controller
                 $groupData = self::$group->findById($data);
                 if ($groupData !== false) {
                     self::$template->set('groupName', $groupData->name);
-                    $this->view('admin.group.list.members', self::$group->listMembers($groupData->ID));
+                    $this->view('admin.groupListMembers', self::$group->listMembers($groupData->ID));
                     exit();
                 }
                 Issue::error('Group not found');
@@ -93,12 +293,12 @@ class Admin extends Controller
 
             case 'new':
                 if (!Input::exists('submit')) {
-                    $this->view('admin.group.new');
+                    $this->view('admin.groupNew');
                     exit();
                 }
                 if (!Check::form('newGroup')) {
                     Issue::error('There was an error with your request.', Check::userErrors());
-                    $this->view('admin.group.new');
+                    $this->view('admin.groupNew');
                     exit();
                 }
                 if (self::$group->create(Input::post('name'), self::$group->formToJson(Input::post('pageLimit')))) {
@@ -119,12 +319,12 @@ class Admin extends Controller
                     self::$template->selectRadio('member', $groupData->memberAccess_string);
                     self::$template->selectRadio('modCP', $groupData->modAccess_string);
                     self::$template->selectRadio('adminCP', $groupData->adminAccess_string);
-                    $this->view('admin.group.edit', $groupData);
+                    $this->view('admin.groupEdit', $groupData);
                     exit();
                 }
                 if (!Check::form('newGroup')) {
                     Issue::error('There was an error with your request.', Check::userErrors());
-                    $this->view('admin.group.new');
+                    $this->view('admin.groupNew');
                     exit();
                 }
                 if (self::$group->update($data, Input::post('name'), self::$group->formToJson(Input::post('pageLimit')))) {
@@ -144,7 +344,7 @@ class Admin extends Controller
                 }
                 break;
         }
-        $this->view('admin.group.list', self::$group->listGroups());
+        $this->view('admin.groupList', self::$group->listGroups());
         exit();
     }
 
@@ -155,7 +355,7 @@ class Admin extends Controller
         switch ($sub) {
             case 'new':
                 if (!Input::exists('submit')) {
-                    $this->view('admin.blog.new');
+                    $this->view('admin.blogNew');
                     exit();
                 }
                 if (!Check::form('newBlogPost')) {
@@ -166,11 +366,11 @@ class Admin extends Controller
                 break;
             case 'edit':
                 if (!Input::exists('submit')) {
-                    $this->view('admin.blog.edit', self::$blog->find($data));
+                    $this->view('admin.blogEdit', self::$blog->find($data));
                     exit();
                 }
                 if (Input::post('submit') == 'preview') {
-                    $this->view('admin.blog.preview', self::$blog->preview(Input::post('title'), Input::post('blogPost')));
+                    $this->view('admin.blogPreview', self::$blog->preview(Input::post('title'), Input::post('blogPost')));
                     exit();
                 }
                 if (!Check::form('editBlogPost')) {
@@ -186,7 +386,7 @@ class Admin extends Controller
             case 'view':
                 $blogData = self::$blog->find($data);
                 if ($blogData !== false) {
-                    $this->view('admin.blog.view', $blogData);
+                    $this->view('admin.blogView', $blogData);
                     exit();
                 }
                 Issue::error('Post not found.');
@@ -204,12 +404,12 @@ class Admin extends Controller
                 }
                 break;
             case 'preview':
-                $this->view('admin.blog.preview', self::$blog->preview(Input::post('title'), Input::post('blogPost')));
+                $this->view('admin.blogPreview', self::$blog->preview(Input::post('title'), Input::post('blogPost')));
                 exit();
             default:
                 break;
         }
-        $this->view('admin.blog.list', self::$blog->listPosts(true));
+        $this->view('admin.blogList', self::$blog->listPosts(['includeDrafts' => true]));
         exit();
     }
 
@@ -217,7 +417,7 @@ class Admin extends Controller
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Contact';
-        if (Input::exists('mail_type')) {
+        if (Input::exists('mailType')) {
             $params = [
                 'subject' => Input::post('mailSubject'),
                 'title'   => Input::post('mailTitle'),
@@ -245,7 +445,7 @@ class Admin extends Controller
                         //make unsub
                         Email::send($recipient->email, 'contact', $params, ['template' => true]);
                     }
-                    $list = self::$subscribe->subscriberList();
+                    $list = self::$subscribe->listSubscribers();
                     foreach ($list as $recipient) {
                         $params['confirmationCode'] = $recipient->confirmationCode;
                         Email::send($recipient->email, 'contact', $params, ['template' => true, 'unsubscribe' => true]);
@@ -258,7 +458,7 @@ class Admin extends Controller
                         //make unsub
                         Email::send($recipient->email, 'contact', $params, ['template' => true]);
                     }
-                    $list = self::$subscribe->subscriberList();
+                    $list = self::$subscribe->listSubscribers();
                     foreach ($list as $recipient) {
                         $params['confirmationCode'] = $recipient->confirmationCode;
                         Email::send($recipient->email, 'contact', $params, ['template' => true, 'unsubscribe' => true]);
@@ -266,7 +466,7 @@ class Admin extends Controller
                     Issue::success('Email(s) Sent');
                     break;
                 case 'subscribers':
-                    $list = self::$subscribe->subscriberList();
+                    $list = self::$subscribe->listSubscribers();
                     foreach ($list as $recipient) {
                         $params['confirmationCode'] = $recipient->confirmationCode;
                         Email::send($recipient->email, 'contact', $params, ['template' => true, 'unsubscribe' => true]);
@@ -274,7 +474,8 @@ class Admin extends Controller
                     Issue::success('Email(s) Sent');
                     break;
                 default:
-                    return false;
+                    Issue::error('Invalid Request');
+                    break;
             }
         }
         $this->view('admin.contact');
@@ -287,18 +488,18 @@ class Admin extends Controller
         switch ($sub) {
             case 'edit':
                 if (!Input::exists('submit')) {
-                    $this->view('admin.comment.edit', self::$comment->findById($data));
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
                     exit();
                 }
                 if (!Check::form('editComment')) {
                     Issue::error('There was an error with your request.', Check::userErrors());
-                    $this->view('admin.comment.edit', self::$comment->findById($data));
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
                     exit();
                 }
                 if (self::$comment->update($data, Input::post('comment'))) {
                     Issue::success('Comment updated');
                 } else {
-                    $this->view('admin.comment.edit', self::$comment->findById($data));
+                    $this->view('admin.commentEdit', self::$comment->findById($data));
                     exit();
                 }
                 break;
@@ -327,13 +528,13 @@ class Admin extends Controller
                 $commentData = self::$comment->display(25, 'blog', $data);
                 if ($commentData !== false) {
                     self::$template->set('count', self::$comment->count('blog', $data));
-                    $this->view('admin.blog.comments', $commentData);
+                    $this->view('admin.blogComments', $commentData);
                     exit();
                 }
                 Issue::notice('No comments found.');
                 break;
         }
-        $this->view('admin.comment.recent', self::$comment->recent());
+        $this->view('admin.commentRecent', self::$comment->recent());
         exit();
     }
 
@@ -341,11 +542,20 @@ class Admin extends Controller
     {
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Settings';
+        $installer = new Installer;
         $a = Input::exists('submit');
+        self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
         if ($a) {
             Config::updateConfig('main', 'name', Input::post('name'));
             Config::updateConfig('main', 'template', Input::post('template'));
             Config::updateConfig('main', 'loginLimit', (int) Input::post('loginLimit'));
+            Config::updateConfig('main', 'logo', Input::post('logo'));
+            Config::updateConfig('main', 'timezone', Input::post('timezone'));
+            Config::updateConfig('main', 'pageLimit', (int) Input::post('pageLimit'));
+            Config::updateConfig('uploads', 'enabled', Input::post('uploads'));
+            Config::updateConfig('uploads', 'maxFileSize', (int) Input::post('fileSize'));
+            Config::updateConfig('uploads', 'maxImageSize', (int) Input::post('imageSize'));
+            Config::updateConfig('cookie', 'cookieExpiry', (int) Input::post('cookieExpiry'));
             Config::updateConfig('feedback', 'enabled', Input::post('logF'));
             Config::updateConfig('logging', 'errors', Input::post('logE'));
             Config::updateConfig('logging', 'logins', Input::post('logL'));
@@ -353,16 +563,23 @@ class Admin extends Controller
             Config::updateConfig('group', 'defaultGroup', Input::post('groupSelect'));
             Config::saveConfig();
         }
-        $select = self::$template->standardView('admin.group.select', self::$group->listGroups());
+        $select = self::$template->standardView('admin.groupSelect', self::$group->listGroups());
         self::$template->set('groupSelect', $select);
         self::$template->set('NAME', $a ? Input::post('name') : Config::get('main/name'));
-        self::$template->selectOption($a ? Input::post('groupSelect') : Config::get('group/defaultGroup'));
         self::$template->set('TEMPLATE', $a ? Input::post('template') : Config::get('main/template'));
+        self::$template->set('maxFileSize', $a ? Input::post('fileSize') : Config::get('uploads/maxFileSize'));
+        self::$template->set('maxImageSize', $a ? Input::post('imageSize') : Config::get('uploads/maxImageSize'));
+        self::$template->set('cookieExpiry', $a ? Input::post('cookieExpiry') : Config::get('cookie/cookieExpiry'));
         self::$template->set('LIMIT', $a ? Input::post('loginLimit') : Config::get('main/loginLimit'));
+        self::$template->selectOption($a ? Input::post('groupSelect') : Config::get('group/defaultGroup'));
+        self::$template->selectOption($a ? Input::post('timezone') : Config::get('main/timezone'));
+        self::$template->selectOption($a ? Input::post('pageLimit') : Config::get('main/pageLimit'));
         self::$template->selectRadio('feedback', $a ? Input::post('logF') : Config::getString('feedback/enabled'));
         self::$template->selectRadio('errors', $a ? Input::post('logE') : Config::getString('logging/errors'));
         self::$template->selectRadio('logins', $a ? Input::post('logL') : Config::getString('logging/logins'));
         self::$template->selectRadio('bugReports', $a ? Input::post('logBR') : Config::getString('bugreports/enabled'));
+        self::$template->selectRadio('uploads', $a ? Input::post('uploads') : Config::getString('uploads/enabled'));
+        self::$template->set('securityHash', $installer->getNode('installHash'));
         $this->view('admin.settings');
         exit();
     }
@@ -392,7 +609,7 @@ class Admin extends Controller
                 if (!empty($data)) {
                     $userData = self::$user->get($data);
                     if ($userData !== false) {
-                        $this->view('admin.user.view', $userData);
+                        $this->view('admin.userView', $userData);
                         exit();
                     }
                     Issue::error('User not found.');
@@ -410,7 +627,7 @@ class Admin extends Controller
                 if (Input::exists('submit') && Input::post('submit') != 'edit') {
                     if (Input::exists('avatar')) {
                         if (Image::upload('avatar', self::$activeUser->username)) {
-                            $avatar = 'Images/Uploads/' . self::$activeUser->username . '/' . Image::last();
+                            $avatar = 'Uploads/Images/' . self::$activeUser->username . '/' . Image::last();
                         } else {
                             $avatar = $currentUser->avatar;
                         }
@@ -450,18 +667,21 @@ class Admin extends Controller
                     $avatar = $currentUser->avatar;
                 }
                 self::$template->set('AVATAR_SETTINGS', $avatar);
-                self::$template->set('TIMEZONELIST', self::$template->standardView('timezone.dropdown'));
-                $select = self::$template->standardView('admin.group.select', self::$group->listGroups());
+                self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
+                $select = self::$template->standardView('admin.groupSelect', self::$group->listGroups());
                 self::$template->set('groupSelect', $select);
-                $this->view('admin.user.edit', $currentUser);
+                $this->view('admin.userEdit', $currentUser);
                 exit();
         }
-        $this->view('admin.user.list', self::$user->userList());
+        $this->view('admin.userList', self::$user->userList());
         exit();
     }
 
     public function logs($sub = null, $data = null)
     {
+        $regex = "#\<ul(.*)id=\"log-menu\" class=\"collapse\"\>#i";
+        $replace = "<ul$1id=\"$yyyyyy\"$2class=\"\">";
+        self::$template->addFilter('logui', $regTop, $repTop, true);
         Debug::log('Controller initiated: ' . __METHOD__ . '.');
         self::$title = 'Admin - Logs';
         /*
@@ -486,9 +706,9 @@ class Admin extends Controller
                 Issue::error('Log not found.');
                 break;
         }
-        $this->view('admin.log.admin.list', self::$log->adminList());
-        $this->view('admin.log.error.list', self::$log->errorList());
-        $this->view('admin.log.login.list', self::$log->loginList());
+        $this->view('admin.logAdminList', self::$log->adminList());
+        $this->view('admin.logErrorList', self::$log->errorList());
+        $this->view('admin.logLoginList', self::$log->loginList());
         exit();
     }
 
@@ -519,7 +739,7 @@ class Admin extends Controller
                 Issue::success('Subscriber added.');
                 break;
         }
-        $this->view('admin.subscribers.list', self::$subscribe->listSubscribers());
+        $this->view('admin.subscribersList', self::$subscribe->listSubscribers());
         exit();
     }
 
@@ -529,10 +749,10 @@ class Admin extends Controller
         self::$title = 'Admin - Admin Logs';
         switch ($sub) {
             case 'view':
-                $this->view('admin.log.admin', self::$log->get($data));
+                $this->view('admin.logAdmin', self::$log->get($data));
                 exit();
         }
-        $this->view('admin.log.admin.list', self::$log->adminList());
+        $this->view('admin.logAdminList', self::$log->adminList());
         exit();
     }
 
@@ -544,7 +764,7 @@ class Admin extends Controller
             case 'view':
                 $reportData = self::$bugreport->get($data);
                 if ($reportData !== false) {
-                    $this->view('admin.bug.report', $reportData);
+                    $this->view('admin.bugreport', $reportData);
                     exit();
                 }
                 Issue::error('Report not found.');
@@ -564,7 +784,7 @@ class Admin extends Controller
                 self::$bugreport->clear();
                 break;
         }
-        $this->view('admin.bug.report.list', self::$bugreport->listReports());
+        $this->view('admin.bugreportList', self::$bugreport->listReports());
         exit();
     }
 
@@ -592,7 +812,7 @@ class Admin extends Controller
             default:
                 break;
         }
-        $this->view('admin.feedback.list', self::$feedback->getList());
+        $this->view('admin.feedbackList', self::$feedback->getList());
         exit();
     }
 
@@ -602,7 +822,7 @@ class Admin extends Controller
         self::$title = 'Admin - Errors';
         switch ($sub) {
             case 'view':
-                $this->view('admin.log.error', self::$log->getError($data));
+                $this->view('admin.logError', self::$log->getError($data));
                 exit();
             case 'delete':
                 if (Input::exists('submit')) {
@@ -620,7 +840,7 @@ class Admin extends Controller
             default:
                 break;
         }
-        $this->view('admin.log.error.list', self::$log->errorList());
+        $this->view('admin.logErrorList', self::$log->errorList());
         exit();
     }
 
@@ -630,7 +850,7 @@ class Admin extends Controller
         self::$title = 'Admin - Login Logs';
         switch ($sub) {
             case 'view':
-                $this->view('admin.log.login', self::$log->get($data));
+                $this->view('admin.logLogin', self::$log->get($data));
                 exit();
 
             case 'delete':
@@ -650,7 +870,64 @@ class Admin extends Controller
                 break;
         }
 
-        $this->view('admin.log.login.list', self::$log->loginList());
+        $this->view('admin.logLoginList', self::$log->loginList());
         exit();
     }
+
+    public function redirects()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Redirects';
+        $this->view('admin.dash');
+    }
+
+    public function tracking()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Tracking';
+        $this->view('admin.dash');
+    }
+
+    public function api()
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - API';
+        $this->view('admin.dash');
+    }
+
+    public function dependencies($sub = null)
+    {
+        Debug::log("Controller initiated: " . __METHOD__ . ".");
+        self::$title = 'Admin - Dependencies';
+        $installer = new Installer;
+        switch ($sub) {
+            default:
+                $composerJson = $installer->getComposerJson();
+                $requiredPackages = $composerJson['require'];
+                foreach ($requiredPackages as $name => $version) {
+                    $versionsRequired[strtolower($name)] = $version;
+                }
+
+                $composerLock = $installer->getComposerLock();
+                $installedPackages = $composerLock['packages'];
+                foreach ($installedPackages as $package) {
+                    $name = strtolower($package['name']);
+                    $versionsInstalled[$name] = $package;
+                }
+
+                foreach ($versionsInstalled as $package) {
+                    $name = strtolower($package['name']);
+                    if (!empty($versionsRequired[$name])) {
+                        $versionsInstalled[$name]['requiredVersion'] = $versionsRequired[$name];
+                    } else {
+                        $versionsInstalled[$name]['requiredVersion'] = 'sub-dependency';
+                    }
+                    $out[] = (object) $versionsInstalled[$name];
+                }
+                break;
+        }
+        $this->view('admin.dependencies', $out);
+        exit();
+    }
+
 }
