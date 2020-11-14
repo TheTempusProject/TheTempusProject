@@ -1,3 +1,0 @@
-<pre>
-{DEBUG}
-</pre>

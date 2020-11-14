@@ -1,1 +1,0 @@
-htaccess is missing and so is the installer
