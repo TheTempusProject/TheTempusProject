@@ -5,136 +5,109 @@
  * This is the install controller for the application.
  * After completion: YOU SHOULD DELETE THIS FILE.
  *
- * @version 2.0
- * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
+ * @version 3.0
+ * @author  Joey Kimsey <Joey@thetempusproject.com>
  * @link    https://TheTempusProject.com
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject\Controllers;
 
-require_once 'index.php';
+require_once 'bin/autoload.php';
+require_once 'bin/tempus_project.php';
 
-use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Core\Installer;
-use TempusProjectCore\Functions\Routes;
-use TempusProjectCore\Classes\Redirect;
-use TempusProjectCore\Classes\Session;
-use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Classes\Cookie;
-use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Check;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Email;
-use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Image;
-use TempusProjectCore\Classes\Hash;
+use TheTempusProject\TheTempusProject;
+use TheTempusProject\Classes\{
+    Controller, Installer, Forms
+};
+use TempusProjectCore\Classes\{
+    Config, CustomException, Email
+};
+use TempusProjectCore\Functions\{
+    Redirect, Session, Check, Cookie, Debug, Input, Image, Hash, Routes
+};
+use TempusProjectCore\Template\{
+    Issues, Views, Components
+};
+use TempusProjectCore\Template;
 
-class Install extends Controller
-{
-    private static $installer;
-    private static $user;
+class Install extends Controller {
+    private $installer;
 
-    public function __construct()
-    {
-        Debug::group("Controller: " . get_class($this), 1);
+    public function __construct() {
+        parent::__construct();
         self::$title = 'TTP Installer';
         self::$pageDescription = 'This is the install script for the tempus project.';
-
-        self::$installer = new Installer;
-
-        self::$template->noIndex();
-        self::$template->noFollow();
-
-        self::$template->set('menu-Welcome', 'disabled');
-        self::$template->set('menu-Terms', 'disabled');
-        self::$template->set('menu-Verify', 'disabled');
-        self::$template->set('menu-Configure', 'disabled');
-        self::$template->set('menu-Htaccess', 'disabled');
-        self::$template->set('menu-Install', 'disabled');
-        self::$template->set('menu-Resources', 'disabled');
-        self::$template->set('menu-User', 'disabled');
-        self::$template->set('menu-Complete', 'disabled');
-
-        if (self::$installer->getStatus() === false) {
-            $this->index();
-            exit;
+        $this->installer = new Installer;
+        Template::noIndex();
+        Template::noFollow();
+        Components::set('menu-Welcome', 'disabled');
+        Components::set('menu-Terms', 'disabled');
+        Components::set('menu-Verify', 'disabled');
+        Components::set('menu-Configure', 'disabled');
+        Components::set('menu-Htaccess', 'disabled');
+        Components::set('menu-Install', 'disabled');
+        Components::set('menu-Resources', 'disabled');
+        Components::set('menu-User', 'disabled');
+        Components::set('menu-Complete', 'disabled');
+        Components::set('installer-nav', Views::standardView('nav.installer'));
+        if ($this->installer->getStatus() === false) {
+            return $this->index();
         }
-        if (self::$installer->checkSession() !== false) {
-            $location = self::$installer->getStatus();
-            $this->$location();
-            exit();
+        if ($this->installer->checkSession() !== false) {
+            $location = $this->installer->getStatus();
+            return $this->$location();
         }
-        Issue::notice('We cannot verify your current install session. If you recieve this message in error, please delete App/install.json and begin the installation process again.');
-        exit();
+        Issues::add('notice', 'We cannot verify your current install session. If you recieve this message in error, please delete App/install.json and begin the installation process again.');
     }
-
-    public function __destruct()
-    {
-        Debug::log('Controller Destructing: '.get_class($this));
-        Debug::gend();
-        $this->build();
-    }
-
     /**
      * All traffic should come through the index page where the proper controller
      * is loaded based on your security hash and the location of the installer you
      * were last on.
      */
-    public function index()
-    {
-        self::$template->set('menu-Welcome', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Debug::log("Controller initiated: " . __METHOD__ . '.');
-        if (Check::form('installStart')) {
-            self::$installer->nextStep('terms', true);
+    public function index() {
+        Components::set('menu-Welcome', 'active');
+        if (Forms::Check('installStart')) {
+            $this->installer->nextStep('terms', true);
             return;
         }
-        $this->view('install.start');
+        Views::view('install.start');
     }
-    
-    public function terms()
-    {
-        self::$template->set('menu-Terms', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Please accept the install agreement and review the warnings in order to continue.');
-        self::$template->set('TERMS', self::$template->standardView('terms'));
-        if (!Check::form('installAgreement')) {
-            $this->view('install.agreement');
+    public function terms() {
+        Components::set('menu-Terms', 'active');
+        Issues::add('info', 'Please accept the install agreement and review the warnings in order to continue.');
+        Components::set('TERMS', Views::standardView('terms'));
+        if (!Forms::Check('installAgreement')) {
+            Views::view('install.agreement');
             return;
         }
-        self::$installer->nextStep('verify', true);
+        $this->installer->nextStep('verify', true);
+    }
+    public function verify() {
+        Components::set('menu-Verify', 'active');
+        Issues::add('info', 'Please ensure all checks pass in order to continue.');
+        if (!Input::exists()) {
+            Views::view('install.check');
+            return;
+        }
+        if (!Forms::Check('installCheck')) {
+            Issues::add('error', 'There was an error with the Installation.', Check::userErrors());
+            Views::view('install.check');
+            return;
+        }
+        $this->installer->nextStep('configure', true);
     }
 
-    public function verify()
-    {
-        self::$template->set('menu-Verify', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Please ensure all checks pass in order to continue.');
+    public function configure() {
+        Components::set('menu-Configure', 'active');
+        Components::set('TIMEZONELIST', Views::standardView('tz_dropdown'));
+        Issues::add('info', 'Configure your new installation.');
         if (!Input::exists()) {
-            $this->view('install.check');
+            Views::view('install.configure');
             return;
         }
-        if (!Check::form('installCheck')) {
-            Issue::error('There was an error with the Installation.', Check::userErrors());
-            $this->view('install.check');
-            return;
-        }
-        self::$installer->nextStep('configure', true);
-    }
-
-    public function configure()
-    {
-        self::$template->set('menu-Configure', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        self::$template->set('TIMEZONELIST', self::$template->standardView('timezoneDropdown'));
-        Issue::info('Configure your new installation.');
-        if (!Input::exists()) {
-            $this->view('install.configure');
-            return;
-        }
-        if (!Check::form('installConfigure')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('install.configure');
+        if (!Forms::Check('installConfigure')) {
+            Issues::add('error', 'There was an error with your form.', Check::userErrors());
+            Views::view('install.configure');
             return;
         }
         if (Input::exists('logo') && Image::upload('logo', 'System')) {
@@ -224,72 +197,77 @@ class Install extends Controller
                 'value' => 100
             ]
         ];
-        if (!Config::generateConfig($mods)) {
-            Issue::error('Config file already exists so the installer has been halted. If there was an error with installation, please delete App/config.php manually and try again. The installer should automatically bring you back to this step.');
+        if (!TheTempusProject::$activeConfig->generate(CONFIG_DIRECTORY . 'config.json', $mods)) {
+            Issues::add('error', 'Config file already exists so the installer has been halted. If there was an error with installation, please delete App/config.php manually and try again. The installer should automatically bring you back to this step.');
             return;
         }
-        self::$installer->nextStep('htaccess', true);
+        $this->installer->nextStep('routing', true);
     }
 
-    public function htaccess()
-    {
-        self::$template->set('menu-Htaccess', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Modify/Generate the htaccess file.');
+    public function routing() {
+        Components::set('menu-Htaccess', 'active');
+        Issues::add('info', 'Configure page routing.');
         if (!Input::exists()) {
-            $this->view('install.htaccess');
+            Views::view('install.routing');
             return;
         }
-        if (!Check::form('installhtaccess')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('install.htaccess');
+        if (!Forms::Check('installhtaccess')) {
+            Issues::add('error', 'There was an error with your form.', Check::userErrors());
+            Views::view('install.routing');
             return;
         }
-        self::$installer->checkHtaccess(true);
-        self::$installer->nextStep('install', true);
+        if ( Check::isNginx() ) {
+            if (!testRouting()) {
+                Issues::add('notice', 'There appears to be an issue with your configuration. Certain urls are not being routed as expected.');
+                Views::view('install.routing');
+                return;
+            }
+        }
+        if ( Check::isApache() ) {
+            if (!testRouting()) {
+                $this->installer->checkHtaccess(true);
+            }
+        }
+        $this->installer->nextStep('install', true);
     }
 
-    public function install()
-    {
-        self::$template->set('menu-Install', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Installing models');
-        $models = self::$installer->getModelVersionList('App/Models');
+    public function install() {
+        Components::set('menu-Install', 'active');
+        Issues::add('info', 'Installing models');
+        $models = $this->installer->getModelVersionList('App/Models');
         if (!Input::exists()) {
-            $this->view('install.models', $models);
+            Views::view('install.models', $models);
             return;
         }
-        if (!Check::form('installModels')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('install.models', $models);
+        if (!Forms::Check('installModels')) {
+            Issues::add('error', 'There was an error with your form.', Check::userErrors());
+            Views::view('install.models', $models);
             return;
         }
         $error = false;
         $models = Input::post('M_');
         foreach ($models as $model) {
-            if (!self::$installer->installModel($model, '', ['installResources' => false])) {
+            if (!$this->installer->installModel($model, '', ['installResources' => false])) {
                 $error = true;
             }
         }
         if ($error) {
-            Issue::error('There was an error with the Installation.', self::$installer->getErrors());
+            Issues::add('error', 'There was an error with the Installation.', $this->installer->getErrors());
             return;
         }
-        self::$installer->nextStep('resources', true);
+        $this->installer->nextStep('resources', true);
     }
 
-    public function resources()
-    {
-        self::$template->set('menu-Resources', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Generate and install resources.');
+    public function resources() {
+        Components::set('menu-Resources', 'active');
+        Issues::add('info', 'Generate and install resources.');
         if (!Input::exists()) {
-            $this->view('install.resources');
+            Views::view('install.resources');
             return;
         }
-        if (!Check::form('installResources')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('install.resources');
+        if (!Forms::Check('installResources')) {
+            Issues::add('error', 'There was an error with your form.', Check::userErrors());
+            Views::view('install.resources');
             return;
         }
         $flags = [
@@ -300,31 +278,29 @@ class Install extends Controller
             'installPreferences' => false
          ];
         $error = false;
-        $models = self::$installer->getModelList('App/Models');
+        $models = $this->installer->getModelList('App/Models');
         foreach ($models as $model) {
-            if (!self::$installer->installModel($model, 'App/Models', $flags)) {
+            if (!$this->installer->installModel($model, 'App/Models', $flags)) {
                 $error = true;
             }
         }
         if ($error) {
-            Issue::error('There was an error with the Installation.', self::$installer->getErrors());
+            Issues::add('error', 'There was an error with the Installation.', $this->installer->getErrors());
             return;
         }
-        self::$installer->nextStep('user', true);
+        $this->installer->nextStep('user', true);
     }
 
-    public function user()
-    {
-        self::$template->set('menu-User', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::info('Please register your administrator account.');
+    public function user() {
+        Components::set('menu-User', 'active');
+        Issues::add('info', 'Please register your administrator account.');
         if (!Input::exists()) {
-            $this->view('install.adminUser');
+            Views::view('install.adminUser');
             return;
         }
-        if (!Check::form('installAdminUser')) {
-            Issue::error('There was an error with your form.', Check::userErrors());
-            $this->view('install.adminUser');
+        if (!Forms::Check('installAdminUser')) {
+            Issues::add('error', 'There was an error with your form.', Check::userErrors());
+            Views::view('install.adminUser');
             return;
         }
         self::$user = $this->model('user');
@@ -338,23 +314,25 @@ class Install extends Controller
             'terms' => 1,
             'userGroup' => 1,
         ])) {
-            Issue::error('There was an error creating the admin user.');
+            Issues::add('error', 'There was an error creating the admin user.');
             return;
         }
-        self::$installer->nextStep('complete', true);
+        $this->installer->nextStep('complete', true);
     }
 
-    public function complete()
-    {
-        self::$template->set('menu-Complete', 'active');
-        self::$template->set('installer-nav', self::$template->standardView('navigation.installer'));
-        Issue::success('The Tempus Project has been installed successfully.');
+    public function complete() {
+        Components::set('menu-Complete', 'active');
+        Issues::add('success', 'The Tempus Project has been installed successfully.');
         Email::send(Input::post('email'), 'install', null, ['template' => true]);
-        $this->view('install.complete');
-        self::$installer->nextStep('delete');
+        Views::view('install.complete');
+        $this->installer->nextStep('delete');
     }
-    public function delete()
-    {
-        Issue::notice('Installation has been completed. Updates and installation can be managed in the admin panel under Installed. Please delete this file.');
+
+    public function delete() {
+        Issues::add('notice', 'Installation has been completed. Updates and installation can be managed in the admin panel under Installed. Please delete this file.');
     }
 }
+
+$app = new TheTempusProject();
+new Install;
+// $app->printDebug();

@@ -1,8 +1,3 @@
-# TTP Specific
-.htaccess
-Controllers/test.php
-composer.lock
-
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -22,13 +17,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# =========================
-# Operating System Files
-# =========================
-
 # OSX
-# =========================
-
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -50,6 +39,34 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-random.php
+
+# SublimeText
 *.sublime-project
 *.sublime-workspace
+
+# TheTempusProject Specific
+.htaccess
+composer.lock
+app/config/*
+!app/config/constants.php
+app/install.json
+app/config.default.json
+app/config.json
+
+# keep specific directories
+!uploads/images/.gitignore
+!bin/cli/.gitignore
+
+# keep main directories
+!css/.gitignore
+!vendor/.gitignore
+
+# me specific
+app/controllers/test.php
+app/controllers/admin/test.php
+random.php
+
+# TTP Specific
+.htaccess
+Controllers/test.php
+composer.lock

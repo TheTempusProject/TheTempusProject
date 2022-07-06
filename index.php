@@ -6,118 +6,86 @@
  * In this file we initiate all models we will need, authenticate sessions, set
  * template objects, and call appload to initialize the appropriate controller/method.
  *
- * @version 2.0
- * @author  Joey Kimsey <JoeyKimsey@thetempusproject.com>
+ * @version 3.0
+ * @author  Joey Kimsey <Joey@thetempusproject.com>
  * @link    https://TheTempusProject.com
  * @license https://opensource.org/licenses/MIT [MIT LICENSE]
  */
 namespace TheTempusProject;
 
-use TempusProjectCore\Classes\Pagination;
-use TempusProjectCore\Core\Controller;
-use TempusProjectCore\Functions\Routes;
-use TempusProjectCore\Core\Template;
-use TempusProjectCore\Classes\Config;
-use TempusProjectCore\Classes\Debug;
-use TempusProjectCore\Classes\Issue;
-use TempusProjectCore\Classes\Input;
-use TempusProjectCore\Classes\Redirect;
-use TempusProjectCore\App;
+require_once 'bin/autoload.php';
+require_once 'bin/tempus_project.php';
 
-require_once "init.php";
-
-class Appload extends Controller
-{
-    protected static $initiated = false;
-    protected static $session;
-    protected static $message;
-    /**
-     * The constructor takes care of everything that we will need before
-     * finally calling appload to instantiate the appropriate controller/method.
-     *
-     * @param string $urlDirected - A custom url for initiating the app
-     */
-    public function __construct($urlDirected = null)
-    {
-        // Prevents the application from initiating twice.
-        if (self::$initiated === true) {
-            return;
-        } else {
-            self::$initiated = true;
-        }
-        parent::__construct();
-        self::$session = $this->model('sessions');
-        self::$message = $this->model('message');
-
-        // Authenticate our session
-        self::$session->authenticate();
-
-        // Populate some of the Template Data
-        self::$template->set('SITENAME', Config::get('main/name'));
-        self::$template->set('RECAPTCHA_SITE_KEY', Config::get('recaptcha/siteKey'));
-        self::$template->set('RECAPTCHA', Template::standardView('recaptcha'));
-        self::$template->set('RURL', Routes::getUrl());
-        self::$template->addFilter('member', '#{MEMBER}(.*?){/MEMBER}#is', (self::$isMember ? '$1' : ''), true);
-        self::$template->addFilter('mod', '#{MOD}(.*?){/MOD}#is', (self::$isMod ? '$1' : ''), true);
-        self::$template->addFilter('admin', '#{ADMIN}(.*?){/ADMIN}#is', (self::$isAdmin ? '$1' : ''), true);
-        self::$message->loadInterface();
-        
-        // This needs to be moved somewhere else if possible
-        if (self::$isAdmin) {
-            if (file_exists(self::$location . "install.php")) {
-                if (Debug::status()) {
-                    Debug::warn("You have not removed the installer yet.");
-                } else {
-                    Issue::error("You have not removed the installer. This is a security risk that should be corrected immediately.");
-                }
-            }
-        }
-        
-        if (!empty($urlDirected)) {
-            $app = new App($urlDirected);
-        } else {
-            $app = new App();
-        }
-    }
-}
+use TheTempusProject\TheTempusProject;
+use TempusProjectCore\Functions\ {
+    Debug, Input, Redirect
+};
 
 /**
- * Instantiate the new instance of our application.
+ * Instantiate a new instance of our application.
  *
  * You can add to the conditional for any pages that you want to have
  * access to outside of the typical .htaccess redirect method.
  */
-Debug::group('Initiating TTP Application');
+$app = new TheTempusProject();
+
+// tracking should somehow be included in the plugin for it
+
 if (Input::exists('tracking')) {
     switch (Input::get('tracking')) {
         case 'pixel':
-            $appload = new Appload('Tracking/pixel');
-            redirect::to('Images/pixel.png');
+            // need to add something that will actually record the data here
+            $app->setUrl('tracking/pixel');
+            Redirect::to('images/pixel.png');
             break;
         default:
-            $appload = new Appload('Tracking/index');
+            $app->setUrl('tracking/index');
             break;
     }
 } elseif (Input::exists('error')) {
     switch (Input::get('error')) {
         case 'image404':
             Debug::error('Image not found');
-            redirect::to('Images/imageNotFound.png');
+            Redirect::to('images/imageNotFound.png');
             break;
         case 'upload404':
-            # code...
+            Debug::error('Upload Error');
+            $app->setUrl('error/upload404');
             break;
         case '404':
-            # code...
+            // unreachable, its going to url=404.html need better detection
+            Debug::error('MISSING Error');
+            $app->setUrl('error/404');
             break;
-        
         default:
-            $appload = new Appload('error/' . Input::exists('error'));
+            $app->setUrl('error/' . Input::get('error'));
             break;
     }
 } elseif (stripos($_SERVER['REQUEST_URI'], 'install.php')) {
-    $appload = new Appload('install/index');
-} else {
-    $appload = new Appload();
+    $app->setUrl('install/index');
 }
+// testRouting();
+$app->load();
+// $app->printDebug();
 Debug::gend();
+
+// if app isn't installed and install.php is there, point to install.php
+// if app isn't installed and install.php is gone, there is a fatal error
+
+// public static $location = null;
+// public static $base = null;
+
+// will not work unless inside a controller
+// self::$session->updatePage(self::$title);
+
+// this should be moved
+// if (!self::$isLoggedIn) {
+//     Issues::add('notice','You must be logged in to view this page.');
+//     exit();
+// }
+// if (!self::$isAdmin) {
+//     Issues::add('error','You do not have permission to view this page.');
+//     exit();
+// }
+// self::$log->admin("Deleted " . self::$tableName . ": $instance");
+// self::$log->admin("Cleared " . self::$tableName);
